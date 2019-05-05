@@ -1,0 +1,250 @@
+<!doctype html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<title>互联网设置</title>
+<link href="css/style_main.css" rel="stylesheet" type="text/css" />
+<link href="css/mainstyle.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/herouter.js"></script>
+<style type="text/css">
+<!--
+.update{ padding:30px 10px 0 0; border-bottom:1px #d3d3d3 solid;}
+.style2{ padding-top:10px; height:90px;}
+.style2 p{float:left; color:#FF0000; display:block; width:170px; line-height:20px; padding:4px 0 4px 35px; background:url(images/check3_07.png) no-repeat 2px center;}
+.style2 .subbtn2{ float:right; height:48px; width:240px;}
+.style2 .subbtn2 span{ float:right; cursor:pointer; display:block; height:48px; width:110px; margin-left:10px;line-height:48px; font-size:16px;background:#77d1df; color:#fff; text-align:center;}
+.style2 .subbtn2 span:hover{ background:#56bbcb;}
+.style2 .subbtn2 em{ display:block; width:240px; line-height:28px; font-style:normal; color:#ff6c00; text-align:right; }
+.style2 .subbtn2 .upload{  background:#ff6c00;}
+.style2 .subbtn2 .upload:hover{ background:#ff8227;}
+.uploadbtn{ position:absolute; display:block; height:48px; width:110px; border:1px #333 solid;filter:alpha(opacity=0);-moz-opacity:0;-khtml-opacity: 0;opacity: 0; cursor:pointer;}
+.uploadbtn input{height:48px; width:110px; cursor:pointer;}
+-->
+</style>
+</head>
+
+<script language="JavaScript" type="text/javascript">
+//document.write('<div id="loading" style="display: none;"><br><br><br>Uploading firmware <br><br> Please be patient and don\'t remove usb device if it presented...</div>');
+//var storageb = 1*<!--#exec cmd="web 2860 build storage"-->;
+var storageb = 0;
+var firmware_path = "";
+var secs
+var timerID = null
+var timerRunning = false
+var timeout = 3
+var delay = 1000
+
+function InitializeTimer(){
+	if(!storageb)
+		return;
+    // Set the length of the timer, in seconds
+    secs = timeout
+    StopTheClock()
+    StartTheTimer()
+}
+
+function StopTheClock(){
+    if(timerRunning)
+        clearTimeout(timerID)
+    timerRunning = false
+}
+
+function StartTheTimer(){
+	if(!storageb)
+		return;
+
+    if (secs==0){
+        StopTheClock()
+
+        timerHandler();
+
+        secs = timeout
+        StartTheTimer()
+    }else{
+        self.status = secs
+        secs = secs - 1
+        timerRunning = true
+        timerID = self.setTimeout("StartTheTimer()", delay)
+    }
+}
+
+function timerHandler(){
+	if(!storageb)
+		return;
+
+	makeRequest("/goform/storageGetFirmwarePath", "n/a", updatePage);
+}
+
+function updatePage() {
+	if(!storageb)
+		return;
+
+	if (http_request.readyState == 4) {
+		if (http_request.status == 200) {
+			updateStorageStatus( http_request.responseText);
+		} else {
+			//alert('There was a problem with the request.');
+		}
+	}
+}
+
+function updateStorageStatus(str)
+{
+	if(!storageb)
+		return;
+
+	if(firmware_path == str)
+		return;
+
+	firmware_path = str;
+	var paths = new Array();
+	paths = firmware_path.split("\n");
+
+	if(paths.length){
+		document.UploadFirmwareUSB.firmware_path.length = 0;
+		for(var i=0; i<paths.length; i++){
+			var j = document.UploadFirmwareUSB.firmware_path.options.length;
+			document.UploadFirmwareUSB.firmware_path.options[j] = new Option(paths[i].substring(12), paths[i], false, false);
+		}
+	}
+}
+
+var _singleton = 0;
+function uploadFirmwareCheck()
+{
+	if(_singleton)
+		return false;
+		
+	if(document.UploadFirmware.filename.value == "")
+	{
+		document.getElementById("note").style.display="none";
+		document.getElementById("error").style.display="block";
+		return false;
+	}
+	else
+	{
+		document.getElementById("error").style.display="none";	
+		document.getElementById("note").style.display="block";
+	}
+
+	//document.getElementById("loading").style.display="block";	
+	_singleton = 1;
+
+	document.getElementById("uploadFWLocation").style.display="none";
+	document.getElementById("note").style.display="none";
+	document.getElementById("info").style.display="block";
+	//window.setInterval("run();", 1000);
+	
+	document.getElementById("UploadFirmware").submit();
+	parent.showLocalupdating();
+		
+	return true;
+}
+
+function pageInit()
+{
+	var mUpgrade = "<!--#exec cmd="web 2860 nvram Force_mem_upgrade"-->";
+
+	if(storageb){		
+		makeRequest("/goform/storageGetFirmwarePath", "n/a");
+		InitializeTimer();
+	}
+
+	if(mUpgrade == "1")
+		document.ForceMemUpgrade.ForceMemUpgradeSelect.options.selectedIndex = 1;
+	else
+		document.ForceMemUpgrade.ForceMemUpgradeSelect.options.selectedIndex = 0;
+
+    document.UploadFirmware.UploadFirmwareSubmit.disabled = false;
+    if (storageb)
+    {
+	    display("table", "uploadFWUSBTable");
+	    display("table", "uploadFWUSBSubmit");
+	    display("table", "div_memupgrade");
+	    display("inline", "ForceMemUpgradeSubmit");
+	    document.ForceMemUpgrade.ForceMemUpgradeSubmit.disabled = false;
+    }
+    else
+    {
+	    display("none", "uploadFWUSBTable");
+	    display("none", "uploadFWUSBSubmit");
+	    display("none", "div_memupgrade");
+	    display("none", "ForceMemUpgradeSubmit");
+	    document.ForceMemUpgrade.ForceMemUpgradeSubmit.disabled = true;
+    }
+    document.UploadBootloader.UploadBootloaderSubmit.disabled = false;
+
+//	document.UploadFirmware.filename.disabled = false;
+	document.getElementById("loading").style.display="none";
+
+
+}
+
+$(function(){
+	var mode = "<!--#exec cmd="web 2860 nvram OperationMode"-->";
+	
+	if(mode != 1){
+		$('.ifdisabled').addClass('disabled');
+		
+		$('.disabled').click(function(event){  
+	        return false;  
+	    });
+	}
+	
+})
+
+//防止缓存
+//window.setInterval("refreshCookie()", 1000);  
+
+
+window.onload = function(){
+	var uploadFW = document.getElementById('uploadFWLocation');
+	var fileName = document.getElementById('file_name');
+	uploadFW.onchange = function(){
+		if(uploadFW.files[0]){
+			fileName.innerHTML = '系统升级文件：' + uploadFW.files[0].name;
+		}
+		
+	}
+}
+
+</script>
+
+<body>
+<div class="int">
+	<h1>高级设置</h1>
+    <div class="cfg">
+        <div class="cfgleft">
+            <ul>
+                <li><a class="ifdisabled" href="WANConfig.shtml">WAN设置</a></li>
+				<li><a href="entconfig.shtml">局域网设置</a></li>
+				<li><a class="ifdisabled" href="MACClone.shtml">MAC地址克隆</a></li>
+				<li><a class="ifdisabled" href="systemtime.shtml">系统时间管理</a></li>
+				<li class="on"><a href="sysupdate.shtml">系统升级</a></li>
+				<li><a href="restoredefault.shtml">恢复出厂设置</a></li>
+            </ul>
+        </div>
+        <div class="cfgright">
+			<div class="update">
+				<div>
+					当前版本：<!--#exec cmd="web 2860 sys sdkVersion"-->
+				</div>
+				<br><br><br>
+			</div>
+			<div class="style2">
+				<p id="note" style="display: block;">注意：升级过程中请保持电源供电！否则可能损坏路由器！</p>
+				<p id="error" style="display: none;">固件升级 <br>请指定文件.</p>
+				<p id="info" style="display: none;">文件上传中，请等待<span id="wait" style="font-size:16px; color:red">10</span>秒...</p>
+				<div class="subbtn2">
+					<form method="post" id="UploadFirmware" name="UploadFirmware" action="/cgi-bin/upload.cgi" enctype="multipart/form-data">	
+						<span input id="uploadFWApply" name="UploadFirmwareSubmit" onClick="uploadFirmwareCheck();">本地升级</span>
+						<span class="upload"><div class="uploadbtn"><input id="uploadFWLocation" name="filename" type="file" /></div>选择文件</span>
+					</form>
+				</div>
+				
+			</div>
+			<b id="file_name" style="margin-left: 16px;line-height: 40px; font-size: 16px;font-weight: normal;"></b>
+        </div>
+    </div>
+</div>
+</body>
+</html>

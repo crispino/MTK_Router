@@ -1,0 +1,1 @@
+cmd_applets/built-in.o :=  /opt/buildroot-gcc463/usr/bin/mipsel-linux-gcc -nostdlib -Wl,--fatal-warnings -L/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/lib -L/home/xiaoning/CMCC_CY/source/lib/lib -Wl,--fatal-warnings -L/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/lib -L/home/xiaoning/CMCC_CY/source/lib/lib  -r -o applets/built-in.o applets/applets.o

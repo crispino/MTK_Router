@@ -1,0 +1,745 @@
+
+<!-- Copyright 2011, MediaTek Inc. All Rights Reserved. -->
+<html>
+<head>
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" CONTENT="-1">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/style/normal_ws.css" type="text/css">
+<title>无线安全设置</title>
+</head>
+
+<script type="text/javascript" src="/shareFun.js"></script>
+<script language="JavaScript" type="text/javascript">
+var submit_buttons = ["secureApply", "secureCancel"];
+var MBSSID_MAX = 1*"1";
+var ACCESSPOLICYLIST_MAX = 64;
+var changed = 0;
+var old_MBSSID;
+var defaultShownMBSSID = "<!--#exec cmd="web 2860 nvram CurrentSSIDIndx"-->";
+var PhyMode = "9";
+var SSID = new Array();
+var PreAuth = new Array();
+var AuthMode = new Array();
+var EncrypType = new Array();
+var DefaultKeyID = new Array();
+var Key1Type = new Array();
+var Key1Str = new Array();
+var Key2Type = new Array();
+var Key2Str = new Array();
+var Key3Type = new Array();
+var Key3Str = new Array();
+var Key4Type = new Array();
+var Key4Str = new Array();
+var WPAPSK = new Array();
+var RekeyMethod = new Array();
+var RekeyInterval = new Array();
+var PMKCachePeriod = new Array();
+var IEEE8021X = new Array();
+var RADIUS_Server = new Array();
+var RADIUS_Port = new Array();
+var RADIUS_Key = new Array();
+var session_timeout_interval = new Array();
+var PMFMFPC = new Array();
+var PMFMFPR = new Array();
+var PMFSHA256 = new Array();
+var AccessPolicy = new Array();
+var AccessControlList = new Array();
+var WapiPskType = new Array();
+var WapiPsk = new Array();
+var WapiAsIpAddr = new Array();
+var WapiAsPort = new Array();
+var WapiAsCertPath = new Array();
+var WapiUserCertPath = new Array();
+var wapib = "0";
+var wpsenable = "0";
+var ht_disallow_tkip = "1";
+var wpa_support = 0;
+var pmf_support = "0";
+var dbdcb = "0";
+var dbdc_en = "";
+var mprofileb = "0";
+
+function checkHex(str){
+	var len = str.length;
+
+	for (var i=0; i<str.length; i++) {
+		if ((str.charAt(i) >= '0' && str.charAt(i) <= '9') ||
+		    (str.charAt(i) >= 'a' && str.charAt(i) <= 'f') ||
+		    (str.charAt(i) >= 'A' && str.charAt(i) <= 'F') ){
+			continue;
+		}else
+	        return false;
+	}
+	return true;
+}
+
+function checkInjection(str)
+{
+	var len = str.length;
+	for (var i=0; i<str.length; i++) {
+		if ( str.charAt(i) == '\r' || str.charAt(i) == '\n'){
+			return false;
+		}
+	}
+	return true;
+}
+
+function checkStrictInjection(str)
+{
+	var len = str.length;
+	for (var i=0; i<str.length; i++) {
+		if ( str.charAt(i) == ';' || str.charAt(i) == ',' ||
+			 str.charAt(i) == '\r' || str.charAt(i) == '\n'){
+			return false;
+		}
+	}
+	return true;
+}
+
+
+
+
+function deleteAccessPolicyListHandler()
+{
+	setTimeout("window.location.reload(true)", 5000);
+}
+
+function initAll()
+{
+	var str;
+
+	if (defaultShownMBSSID == "")
+		defaultShownMBSSID = 0;
+	if ((str = "<!--#exec cmd="web 2860 nvram SSID1"-->") != "")
+	{
+		SSID[0] = str;
+		Key1Str[0] = "<!--#exec cmd="web 2860 nvram Key1Str1"-->";
+		Key2Str[0] = "<!--#exec cmd="web 2860 nvram Key2Str1"-->";
+		Key3Str[0] = "<!--#exec cmd="web 2860 nvram Key3Str1"-->";
+		Key4Str[0] = "<!--#exec cmd="web 2860 nvram Key4Str1"-->";
+		WPAPSK[0] = "<!--#exec cmd="web 2860 nvram WPAPSK1"-->";
+		RADIUS_Key[0] = "<!--#exec cmd="web 2860 nvram RADIUS_Key1"-->";
+		AccessPolicy[0] = "<!--#exec cmd="web 2860 nvram AccessPolicy0"-->";
+		AccessControlList[0] = "<!--#exec cmd="web 2860 nvram AccessControlList0"-->";
+		WapiPsk[0] = "<!--#exec cmd="web 2860 nvram WapiPsk1"-->";
+	}
+/*
+	if ((str = "") != "")
+	{
+		SSID[1] = str;
+		Key1Str[1] = "";
+		Key2Str[1] = "";
+		Key3Str[1] = "";
+		Key4Str[1] = "";
+		WPAPSK[1] = "";
+		RADIUS_Key[1] = "";
+		AccessPolicy[1] = "0";
+		AccessControlList[1] = "";
+		WapiPsk[1] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[2] = str;
+		Key1Str[2] = "";
+		Key2Str[2] = "";
+		Key3Str[2] = "";
+		Key4Str[2] = "";
+		WPAPSK[2] = "";
+		RADIUS_Key[2] = "";
+		AccessPolicy[2] = "0";
+		AccessControlList[2] = "";
+		WapiPsk[2] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[3] = str;
+		Key1Str[3] = "";
+		Key2Str[3] = "";
+		Key3Str[3] = "";
+		Key4Str[3] = "";
+		WPAPSK[3] = "";
+		RADIUS_Key[3] = "";
+		AccessPolicy[3] = "0";
+		AccessControlList[3] = "";
+		WapiPsk[3] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[4] = str;
+		Key1Str[4] = "";
+		Key2Str[4] = "";
+		Key3Str[4] = "";
+		Key4Str[4] = "";
+		WPAPSK[4] = "";
+		RADIUS_Key[4] = "";
+		AccessPolicy[4] = "";
+		AccessControlList[4] = "";
+		WapiPsk[4] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[5] = str;
+		Key1Str[5] = "";
+		Key2Str[5] = "";
+		Key3Str[5] = "";
+		Key4Str[5] = "";
+		WPAPSK[5] = "";
+		RADIUS_Key[5] = "";
+		AccessPolicy[5] = "";
+		AccessControlList[5] = "";
+		WapiPsk[5] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[6] = str;
+		Key1Str[6] = "";
+		Key2Str[6] = "";
+		Key3Str[6] = "";
+		Key4Str[6] = "";
+		WPAPSK[6] = "";
+		RADIUS_Key[6] = "";
+		AccessPolicy[6] = "";
+		AccessControlList[6] = "";
+		WapiPsk[6] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[7] = str;
+		Key1Str[7] = "";
+		Key2Str[7] = "";
+		Key3Str[7] = "";
+		Key4Str[7] = "";
+		WPAPSK[7] = "";
+		RADIUS_Key[7] = "";
+		AccessPolicy[7] = "";
+		AccessControlList[7] = "";
+		WapiPsk[7] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[8] = str;
+		Key1Str[8] = "";
+		Key2Str[8] = "";
+		Key3Str[8] = "";
+		Key4Str[8] = "";
+		WPAPSK[8] = "";
+		RADIUS_Key[8] = "";
+		AccessPolicy[8] = "";
+		AccessControlList[8] = "";
+		WapiPsk[8] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[9] = str;
+		Key1Str[9] = "";
+		Key2Str[9] = "";
+		Key3Str[9] = "";
+		Key4Str[9] = "";
+		WPAPSK[9] = "";
+		RADIUS_Key[9] = "";
+		AccessPolicy[9] = "";
+		AccessControlList[9] = "";
+		WapiPsk[9] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[10] = str;
+		Key1Str[10] = "";
+		Key2Str[10] = "";
+		Key3Str[10] = "";
+		Key4Str[10] = "";
+		WPAPSK[10] = "";
+		RADIUS_Key[10] = "";
+		AccessPolicy[10] = "";
+		AccessControlList[10] = "";
+		WapiPsk[10] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[11] = str;
+		Key1Str[11] = "";
+		Key2Str[11] = "";
+		Key3Str[11] = "";
+		Key4Str[11] = "";
+		WPAPSK[11] = "";
+		RADIUS_Key[11] = "";
+		AccessPolicy[11] = "";
+		AccessControlList[11] = "";
+		WapiPsk[11] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[12] = str;
+		Key1Str[12] = "";
+		Key2Str[12] = "";
+		Key3Str[12] = "";
+		Key4Str[12] = "";
+		WPAPSK[12] = "";
+		RADIUS_Key[12] = "";
+		AccessPolicy[12] = "";
+		AccessControlList[12] = "";
+		WapiPsk[12] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[13] = str;
+		Key1Str[13] = "";
+		Key2Str[13] = "";
+		Key3Str[13] = "";
+		Key4Str[13] = "";
+		WPAPSK[13] = "";
+		RADIUS_Key[13] = "";
+		AccessPolicy[13] = "";
+		AccessControlList[13] = "";
+		WapiPsk[13] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[14] = str;
+		Key1Str[14] = "";
+		Key2Str[14] = "";
+		Key3Str[14] = "";
+		Key4Str[14] = "";
+		WPAPSK[14] = "";
+		RADIUS_Key[14] = "";
+		AccessPolicy[14] = "";
+		AccessControlList[14] = "";
+		WapiPsk[14] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[15] = str;
+		Key1Str[15] = "";
+		Key2Str[15] = "";
+		Key3Str[15] = "";
+		Key4Str[15] = "";
+		WPAPSK[15] = "";
+		RADIUS_Key[15] = "";
+		AccessPolicy[15] = "";
+		AccessControlList[15] = "";
+		WapiPsk[15] = "";
+	}
+*/
+
+	str = "<!--#exec cmd="web 2860 nvram PreAuth"-->";
+	PreAuth = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram AuthMode"-->";
+	AuthMode = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram EncrypType"-->";
+	EncrypType = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram DefaultKeyID"-->";
+	DefaultKeyID = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram Key1Type"-->";
+	Key1Type = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram Key2Type"-->";
+	Key2Type = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram Key3Type"-->";
+	Key3Type = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram Key4Type"-->";
+	Key4Type = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram RekeyMethod"-->";
+	RekeyMethod = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram RekeyInterval"-->";
+	RekeyInterval = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram PMKCachePeriod"-->";
+	PMKCachePeriod = str.split(";");
+	IEEE8021X = str.split(";");
+	str = "";
+	RADIUS_Server = str.split(";");
+	str = "1812";
+	RADIUS_Port = str.split(";");
+	str = "0";
+	session_timeout_interval = str.split(";");
+	if(pmf_support == "1"){
+		str = "";
+		PMFMFPC = str.split(";");
+		str = "";
+		PMFMFPR = str.split(";");
+		str = "";
+		PMFSHA256 = str.split(";");
+	}
+	str = "";
+	WapiPskType = str.split(";");
+	str = "";
+	WapiAsIpAddr = str.split(";");
+	str = "";
+	WapiAsPort = str.split(";");
+	str = "";
+	WapiAsCertPath = str.split(";");
+	str = "";
+	WapiUserCertPath = str.split(";");
+
+
+	for (var i=0; i<SSID.length; i++) {
+		/* !!!! IMPORTANT !!!!*/
+		if(IEEE8021X[i] == "1")
+			AuthMode[i] = "IEEE8021X";
+		if(AuthMode[i] == "OPEN" && EncrypType[i] == "NONE" && IEEE8021X[i] == "0")
+			AuthMode[i] = "Disable";
+		//alert("SSID"+i+": "+SSID[i]+", PreAuth"+i+": "+PreAuth[i]+", AuthMode"+i+": "+AuthMode[i]+", EncrypType"+i+": "+EncrypType[i]+", DefaultKeyID"+i+": "+DefaultKeyID[i]+", Key1Type"+i+": "+Key1Type[i]+", Key1Str"+i+": "+Key1Str[i]+", Key2Type"+i+": "+Key2Type[i]+", Key2Str"+i+": "+Key2Str[i]+", Key3Type"+i+": "+Key3Type[i]+", Key3Str"+i+": "+Key3Str[i]+", Key4Type"+i+": "+Key4Type[i]+", Key4Str"+i+": "+Key4Str[i]+", WPAPSK"+i+": "+WPAPSK[i]+", RekeyMethod"+i+": "+RekeyMethod[i]+", RekeyInterval"+i+": "+RekeyInterval[i]+", PMKCachePeriod"+i+": "+PMKCachePeriod[i]+", IEEE8021X"+i+": "+IEEE8021X[i]+", RADIUS_Server"+i+": "+RADIUS_Server[i]+", RADIUS_Port"+i+": "+RADIUS_Port[i]+", RADIUS_Key"+i+": "+RADIUS_Key[i]+", session_timeout_interval"+i+": "+session_timeout_interval[i]+", AccessPolicy"+i+": "+AccessPolicy[i]+", AccessControlList"+i+": "+AccessControlList[i]+WapiPskType[i]+" + "+WapiPsk[i]+" + "+WapiAsIpAddr[i]+" + "+WapiAsPort[i]+" + "+WapiAsCertPath[i]+" + "+WapiUserCertPath[i]);
+	}
+
+	//remove the security settings page
+	//LoadFields(defaultShownMBSSID);
+
+	// load Access Policy for MBSSID[selected]
+	LoadAP();
+	ShowAP(defaultShownMBSSID);
+}
+
+function checkData()
+{
+	var securitymode;
+	var wps_enable;
+//	var ssid = document.security_form.Ssid.value;
+	var EzEnable = "0";
+	var EzConfStatus = "0";
+	var easyconfArr = EzConfStatus.split(";");
+	var enableArr = EzEnable.split(";");
+	/* removed on request by prakhar WCNCR00150255
+	if (securitymode != "WPA2PSK" || document.security_form.cipher[1].checked != true)
+	{
+		if (enableArr[0] == 1 && easyconfArr[0] == 2)
+		{
+			alert("Please go to MAN page to set Easy Enable as disable.");
+			return false;
+		}
+	}
+	*/
+	
+	//remove security checking
+	/*
+	if ((dbdcb == "1") && (dbdc_en == "1")){
+		var wps_enable_list = wpsenable.split(";");
+		var ssid_idx = document.security_form.ssidIndex.value;
+
+		if (wps_enable_list.length > ssid_idx)
+			wps_enable = wps_enable_list[ssid_idx];
+		else
+			wps_enable = "0";
+	} else {
+		wps_enable = wpsenable;
+	}*/
+	/*
+	securitymode = document.security_form.security_mode.value;
+	if (securitymode == "Disable")
+	{
+		if (wps_enable != "0")
+			alert('该设置不安全!');
+	}
+	else if (securitymode == "OPEN" || securitymode == "SHARED" ||securitymode == "WEPAUTO")
+	{
+		if(! check_Wep(securitymode) )
+			return false;
+		if (wps_enable != "0")
+			alert("该项设置将关闭WPS!");
+	}
+	else if (securitymode == "WPAPSK" || securitymode == "WPA2PSK" || securitymode == "WPAPSKWPA2PSK" ) //  || security_mode == 5 
+	{
+		var keyvalue = document.security_form.passphrase.value;
+
+		if (keyvalue.length == 0){
+			alert('请输入wpapsk密码!');
+			return false;
+		}
+
+		if (keyvalue.length < 8){
+			alert('wpapsk至少为8个字符!');
+			return false;
+		}
+
+		if (keyvalue.length == 64 && checkHex(keyvalue) == false) {
+			alert('请输入8~63英文字符或64个16进制字符!');
+			return false;
+		}
+
+		if(checkInjection(document.security_form.passphrase.value) == false){
+			alert('密码中包含不合法字符.');
+			return false;
+		}
+
+		if(document.security_form.cipher[0].checked != true &&
+		   document.security_form.cipher[1].checked != true &&
+		   document.security_form.cipher[2].checked != true){
+			alert('请选择WPA算法.');
+			return false;
+		}
+
+		if(check_wpa() == false)
+			return false;
+	}
+	else if (securitymode == "IEEE8021X") // 802.1x
+	{
+		if( document.security_form.ieee8021x_wep[0].checked == false &&
+			document.security_form.ieee8021x_wep[1].checked == false){
+			alert('请选择802.1x WEP选项.');
+			return false;
+		}
+		if(check_radius() == false)
+			return false;
+	}
+	else if (securitymode == "WPA" || securitymode == "WPA1WPA2") //     WPA or WPA1WP2 mixed mode
+	{
+		if(check_wpa() == false)
+			return false;
+		if(check_radius() == false)
+			return false;
+	}
+	else if (securitymode == "WPA2") //         WPA2
+	{
+		if(check_wpa() == false)
+			return false;
+		if( document.security_form.PreAuthentication[0].checked == false &&
+			document.security_form.PreAuthentication[1].checked == false){
+			alert('请选择预认证选项.');
+			return false;
+		}
+
+		if(!document.security_form.PMKCachePeriod.value.length){
+			alert('请输入PMK缓存期.');
+			return false;
+		} else if (isNaN(document.security_form.PMKCachePeriod.value)) {
+			alert('请输入数字.');
+			return false;
+		}
+		if(check_radius() == false)
+			return false;
+	}
+	else if (securitymode == "WAICERT")
+	{
+		if(check_as() == false)
+			return false;
+	}
+	else if (securitymode == "WAIPSK")
+	{
+		var pskey = document.security_form.wapipsk_prekey.value;
+
+		if (pskey.length == 0)
+		{
+			alert('请输入WAPI PSK预共享密钥!');
+			return false;
+		}
+
+		if (pskey.length < 8)
+		{
+			alert('请至少输入8个字符的WAPI PSK预共享密钥!');
+			return false;
+		}
+
+		if (checkInjection(pskey) == false)
+		{
+			alert('预共享密钥中的无效字符。');
+			return false;
+		}
+
+		if (document.security_form.wapipsk_keytype.selectedIndex == 0 &&
+		    pskey.length%2 != 0)
+		{
+			alert('HEX类型的预共享密钥是2的倍数！');
+			return false;
+		}
+	}
+	*/
+
+	// check Access Policy
+	for(i=0; i<MBSSID_MAX; i++){
+
+
+		if( document.getElementById("newap_text_" + i).value != ""){
+			if(!checkMac(document.getElementById("newap_text_" + i).value)){
+				alert("Access Policy窗体中的mac地址无效.\n");
+				return false;
+			}
+			if ((document.getElementById("newap_text_" + i).value == "F4:4C:70:51:19:89") ||
+					(document.getElementById("newap_text_" + i).value == "F4:4C:70:51:19:88")) {
+				alert("The mac address is illegal!\n");
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+function submit_apply()
+{
+
+	if (checkData() == true){
+		changed = 0;
+		
+		return true;
+//		document.security_form.submit();
+//		opener.location.reload();
+		
+	}
+}
+
+
+function ShowAP(MBSSID)
+{
+	var i;
+	for(i=0; i<MBSSID_MAX; i++){
+		document.getElementById("apselect_"+i).selectedIndex	= AccessPolicy[i];
+		display("none", "AccessPolicy_"+i);
+	}
+
+	display("table", "AccessPolicy_"+MBSSID);
+}
+
+function LoadAP()
+{
+	for(var i=0; i<SSID.length; i++){
+		var j=0;
+		var aplist = new Array();
+
+		if(AccessControlList[i].length != 0){
+			aplist = AccessControlList[i].split(";");
+			for(j=0; j<aplist.length; j++){
+				document.getElementById("newap_"+i+"_"+j).value = aplist[j];
+			}
+
+			// hide the lastest <td>
+			if(j%2){
+				display("none", "newap_td_"+i+"_"+j);
+				j++;
+			}
+		}
+
+		// hide <tr> left
+		for(; j<ACCESSPOLICYLIST_MAX; j+=2){
+			display("none", "id_"+i+"_"+j);
+		}
+	}
+}
+
+
+
+function changeSecurityPolicyTableTitle(t)
+{
+	var title = document.getElementById("sp_title");
+	title.innerHTML = "\"" + t + "\"";
+}
+
+function delap(mbssid, num)
+{
+	makeRequest("/cgi-bin/makeRequest.cgi", "delAccessPolicyList"+"&"+"ra0"+"&"+mbssid+","+num, deleteAccessPolicyListHandler);
+}
+
+function initTranslation()
+{
+	var e;
+	/*
+	e = document.getElementById("secureAccessPolicy");
+	e.innerHTML = _("secure access policy");
+	e = document.getElementById("secureAccessPolicyCapable");
+	e.innerHTML = _("secure access policy capable");
+	e = document.getElementById("secureAccessPolicyCapableDisable");
+	e.innerHTML = _("wireless disable");
+	e = document.getElementById("secureAccessPolicyCapableAllow");
+	e.innerHTML = _("wireless allow");
+	e = document.getElementById("secureAccessPolicyCapableReject");
+	e.innerHTML = _("wireless reject ");
+	e = document.getElementById("secureAccessPolicyNew");
+	e.innerHTML = _("secure access policy new");
+	*/
+
+	e = document.getElementById("secureApply");
+	e.value = _("wireless apply");
+	e = document.getElementById("secureCancel");
+	e.value = _("wireless cancel");
+}
+
+function setChange(c){
+	changed = c;
+}
+
+</script>
+
+<body onload="initAll()">
+<div class="long_ndiv">
+<table class="body"><tbody><tr><td>
+
+<h1 id="securityTitle">无线客户端管理设置 </h1>
+<p id="securityIntroduction">设置无线网络的访问规则。拒绝或允许特定MAC客户端接入,即黑白名单。</p>
+<hr />
+
+<form method="post" name="security_form" action="/cgi-bin/wireless.cgi">
+<input type=hidden name=page value=HeMu_maclist>
+<input type=hidden name=wlan_conf value="2860">
+
+<!--									-->
+<!--	AccessPolicy for mbssid 		-->
+<!--									-->
+
+<script language="JavaScript" type="text/javascript">
+var aptable;
+
+for(aptable = 0; aptable < MBSSID_MAX; aptable++){
+	document.write(" <table id=AccessPolicy_"+ aptable +" border=1 bordercolor=#9babbd cellpadding=3 cellspacing=1 hspace=2 vspace=2 width=540>");
+	document.write(" <tbody> <tr> <td class=title colspan=2 > 访问策略</td></tr>");
+	document.write(" <tr> <td bgcolor=#E8F8FF class=head >"+" 策略"+"</td>");
+	document.write(" <td> <select name=apselect_"+ aptable + " id=apselect_"+aptable+" size=1 onchange=\"setChange(1)\">");
+	document.write(" 			<option value=0 >关闭</option> <option value=1 >允许</option><option value=2 >拒绝</option></select> </td></tr>");
+
+	for(i=0; i< ACCESSPOLICYLIST_MAX/2; i++){
+		input_name = "newap_"+ aptable +"_" + (2*i);
+		td_name = "newap_td_"+ aptable +"_" + (2*i);
+
+		document.write(" <tr id=id_"+aptable+"_");
+		document.write(i*2);
+		document.write("> <td id=");
+		document.write(td_name);
+		document.write("> <input style=\"width: 30px;\" value=Del onclick=\"delap("+aptable+", ");
+		document.write(2*i);
+		document.write(")\" type=button > <input id=");
+		document.write(input_name);
+		document.write(" size=16 maxlength=20 readonly></td>");
+
+		input_name = "newap_" + aptable + "_" + (2*i+1);
+		td_name = "newap_td_" + aptable + "_" + (2*i+1);
+		document.write("      <td id=");
+		document.write(td_name);
+		document.write("> <input style=\"width: 30px;\" value=Del onclick=\"delap("+aptable+", ");
+		document.write(2*i+1);
+		document.write(")\" type=button> <input id=");
+		document.write(input_name);
+		document.write(" size=16 maxlength=20 readonly></td> </tr>");
+	}
+
+	document.write("<tr><td bgcolor=#E8F8FF class=head  >增加无线设备的Mac:</td>");
+	document.write("	<td>	<input name=newap_text_"+aptable+" id=newap_text_"+aptable+" size=16 maxlength=20>	</td>	</tr> </tbody></table>");
+}
+</script>
+<br />
+<table border="0" cellpadding="2" cellspacing="1" width="540">
+  <tbody><tr align="center">
+
+    <td>
+      <input style="width: 120px;" value="应用" id="secureApply" onclick="submit_form(this, 6, submit_buttons, submit_apply)" type="button"> &nbsp; &nbsp;
+      <input style="width: 120px;" value="取消" id="secureCancel" type="reset" onClick="window.location.reload()" >
+    </td>
+  </tr>
+</tbody></table>
+</form>
+</td></tr>
+
+<!-- =============================== Waiting info ================================== -->
+<tr><td>
+<table name="div_waiting_img" id="div_waiting_img" width="600" style="visibility: hidden;">
+<tbody>
+  <tr align="center"><td id="cooldown_time_text"></td></tr>
+  <tr align="center">
+    <td><img src="/graphics/ajax-loader.gif"></td>
+  </tr>
+</tbody>
+</table>
+
+</td></tr></tbody></table>
+</div>
+</body>
+<head>
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" CONTENT="-1">
+</head>
+</html>

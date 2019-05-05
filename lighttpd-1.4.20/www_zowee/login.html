@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="KEYWords" Content="loginPageFlag">
+<meta http-equiv="Pragma" CONTENT="no-cache">
+<meta http-equiv="Cache-Control" CONTENT="no-cache">
+<meta http-equiv="Expires" CONTENT="-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+<title>Zowee</title>
+<link href="css/mainstyle.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery.vegas.min.js"></script>
+<script type="text/javascript" src="js/tinybox.js"></script>
+<script type="text/javascript" src="js/base64.js"></script>
+<script type="text/javascript" src="js/herouter.js"></script>
+<link href="css/jquery.vegas.css" rel="stylesheet" type="text/css" />
+<link href="css/and.css" rel="stylesheet" type="text/css" />
+
+
+<script language="JavaScript" type="text/javascript">
+	
+var xmlhttp;
+var xmlhttp2;
+var pwd;
+
+
+$(function() {
+  $.vegas({
+    src:'images/bodybg.jpg'
+  });
+});
+
+function create_base_auth(user, password) {
+  var tok = user + ':' + password;
+  
+  var obj=new Base64();
+  var hash=obj.Encode64(tok);
+  return "Basic " + hash;
+} 
+
+
+$(document).keydown(function(event){ 
+    if(event.keyCode == 13){ 
+        sendAuth();
+    }
+});
+
+
+function openNewUrl(url){
+    if(document.all){  
+        var gotoLink = document.createElement('a');   
+        gotoLink .href = url;  
+        document.body.appendChild(gotoLink);   
+        gotoLink .click();  
+    } 
+}
+
+function gotomain()
+{
+	var sendStr=''; //url µĲϊ�r xmlhttp=new XMLHttpRequest();
+	xmlhttp.onreadystatechange=function(){
+	    if (xmlhttp.readyState==4){   
+	        if(xmlhttp.status==200){
+    	var ResText = xmlhttp.responseText;
+    	var needLogin = isLogin(ResText);
+      if(0 == needLogin){	
+      	if (window.ActiveXObject) { // IE
+        	openNewUrl("main.shtml");
+				}
+				else if(navigator.userAgent.indexOf("MSIE")>0){
+					openNewUrl("main.shtml");
+				}
+				else{
+					setTimeout("javascript:location.href='main.shtml'", 1);	
+				}
+      }
+      else/* if(1 == needLogin)*/{    
+      	  alert("输入错误,请重新输入.");
+          window.location.reload();
+      }
+	        }
+	    }
+	}
+	xmlhttp.open('get','main.shtml',true,'admin',pwd);
+	xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+	xmlhttp.send(sendStr);
+}
+
+function callback(){  
+	
+  var maccept = "image/gif, image/ico, image/jpeg, image/pjpeg, image/pjpeg, application/x-shockwave-flash, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, application/xaml+xml, application/x-ms-xbap, application/x-ms-application, */*";
+  var Referer = "login.html";
+	
+  if (xmlhttp.readyState== 4) {
+    if (xmlhttp.status == 200){  
+    	
+    	var ResText = xmlhttp.responseText;
+    	var needLogin = isLogin(ResText);
+      if(0 == needLogin){	
+
+		gotomain();
+				
+      }
+      else/* if(1 == needLogin)*/{    
+      	  alert("输入错误,请重新输入.");
+          window.location.reload();
+      }
+    }
+    else if(xmlhttp.status == 401)
+    {
+		alert("密码不正确！");
+    }
+  }  
+}
+function toopen(){
+    if(document.getElementById("password").value=="admin"){
+           document.forms[0].action="main.shtml";
+           return true;
+        }else{
+        alert("密码不正确！")
+        return false;
+        }
+    }
+function sendAuth() {
+	
+	var maccept = "image/gif, image/ico, image/jpeg, image/pjpeg, image/pjpeg, application/x-shockwave-flash, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, application/xaml+xml, application/x-ms-xbap, application/x-ms-application, */*";
+
+   
+  with ( document.forms[0] ) {
+  	  pwd = password.value;
+	}	
+	
+ 	var auth = create_base_auth('admin',pwd); 
+  
+	if (window.XMLHttpRequest) { // Mozilla, Safari,...
+		xmlhttp = new XMLHttpRequest();
+		if (xmlhttp.overrideMimeType) {
+			xmlhttp.overrideMimeType('text/xml');
+		}
+	} else if (window.ActiveXObject) { // IE
+		try {
+			xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+			try {
+			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch (e) {}
+		}
+	}
+	if (!xmlhttp) {
+		alert('Giving up :( Cannot create an XMLHTTP instance');
+		return false;
+	}
+	xmlhttp.onreadystatechange = callback;
+	xmlhttp.open('GET', '/main.shtml',true,'admin',pwd);
+	xmlhttp.setRequestHeader("Authorization", auth);
+  	xmlhttp.setRequestHeader("Accept", maccept);
+	xmlhttp.send(null); 
+} 
+
+</script>
+</head>
+
+<body>
+<form method="post" action="main.shtml" name="myform">
+<div class="full">
+	<div class="slg"></div>
+	<div class="loginpart">
+		<input type="text" style="display:none">
+		<h2 class="err">请输入路由器管理员密码</h2>
+		<div class="inparea"><input type="password" id="password" name="password" class="loginInput" placeholder="请输入密码" value=""/>
+		<span></span>
+		</div>
+		<font color="#FFECEC"><h4>(初始密码:admin)</h4></font>
+		<div class="logbtn" ><b onclick="javascript:sendAuth()">登录</b></div>
+	</div>
+	<div class="dy" style="display:none">系统版本：v1.0</div>
+</div>
+</form>
+<div style="position:absolute; bottom:-6px; width:100%; margin:10 auto; height:35px;  font-size:14px; color:#fff; text-align:center;" >
+	为了获得更好的浏览效果，建议您使用IE8.0及以上版本浏览器登录本站点
+</div>
+
+</body>
+</html>

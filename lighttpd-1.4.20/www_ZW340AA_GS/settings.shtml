@@ -1,0 +1,290 @@
+<!doctype html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<title>配置管理</title>
+<link href="css/style_main.css" rel="stylesheet" type="text/css" />
+<link href="css/mainstyle.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/herouter.js"></script>
+<style type="text/css">
+<!--
+.selectinp{height:28px; border:1px #d2d2d2 solid; width:230px; line-height:26px; font-family:"微软雅黑";color:#666;padding:0 10px; background:#fff url(images/dropd.png) no-repeat right center;}
+.update{ padding:30px 10px 0 0; border-bottom:1px #d3d3d3 solid;}
+.style2 p{float:left; color:#FF0000; display:block; width:170px; line-height:20px; padding:4px 0 4px 35px; background:url(images/check3_07.png) no-repeat 2px center;}
+.style2 .subbtn2{ float:right; height:48px; width:2px;}
+.style2 .subbtn2 span{ float:right; cursor:pointer; display:block; height:48px; width:110px; margin-left:10px;line-height:48px; font-size:16px;background:#77d1df; color:#fff; text-align:center;}
+.style2 .subbtn2 span:hover{ background:#56bbcb;}
+.style2 .subbtn2 em{ display:block; width:240px; line-height:28px; font-style:normal; color:#ff6c00; text-align:right; }
+.style2 .subbtn2 .upload{  background:#ff6c00;}
+.style2 .subbtn2 .upload:hover{ background:#ff8227;}
+.uploadbtn{ position:absolute; display:block; height:48px; width:110px; border:1px #333 solid;filter:alpha(opacity=0);-moz-opacity:0;-khtml-opacity: 0;opacity: 0; cursor:pointer;}
+.uploadbtn input{height:48px; width:110px; cursor:pointer;}
+.cfgright td .showbtn:hover{
+   filter: alpha(opacity=.8);
+    -moz-opacity: .8;
+    -khtml-opacity: .8;
+    opacity: .8;
+}
+.cfgright td .showbtn{
+    cursor: pointer;
+    display: block;
+    height: 48px;
+    width: 110px;
+    margin-left: 10px;
+    line-height: 48px;
+    font-size: 16px;
+    background: #77d1df;
+    color: #fff;
+    text-align: center;
+    position: relative;
+}
+.showbtn .hidebtn{
+	  position: absolute;
+    display: block;
+    height: 48px;
+    width: 110px;
+    border: 1px #333 solid;
+    filter: alpha(opacity=0);
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+.cfgright td .showbtn1:hover{
+	filter: alpha(opacity=.8);
+    -moz-opacity: .8;
+    -khtml-opacity: .8;
+    opacity: .8;
+}
+.cfgright td .showbtn1{
+    cursor: pointer;
+    display: block;
+    height: 48px;
+    width: 150px;
+    line-height: 48px;
+    font-size: 16px;
+    background: #77d1df;
+    color: #fff;
+    text-align: center;
+    position: relative;
+}
+.showbtn1 .hidebtn{
+	  position: absolute;
+    display: block;
+    height: 48px;
+    width: 150px;
+    border: 1px #333 solid;
+    filter: alpha(opacity=0);
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+select {
+  border: solid 1px #000;
+  appearance:none;
+  -moz-appearance:none;
+  -webkit-appearance:none;
+}
+/*清除ie的默认选择框样式清除，隐藏下拉箭头*/
+select::-ms-expand { display: none; }
+-->
+</style>
+</head>
+
+<script language="JavaScript" type="text/javascript">
+//document.write('<div id="loading" style="display: none;"><br><br><br>Uploading firmware <br><br> Please be patient and don\'t remove usb device if it presented...</div>');
+//var storageb = 1*<!--#exec cmd="web 2860 build storage"-->;
+var rai = "<!--#exec cmd="web rtdev sys wif2_live"-->";
+var rae = "<!--#exec cmd="web wifi3 sys wifi3_live"-->";
+
+function submit_export_form(form)
+{
+//	var wifi_if = document.ExportSettings.WiFiIF.value;
+//	console.log("wifi_if="+wifi_if);
+//
+//	if ( wifi_if == "RT2860")
+//		//document.ExportSettings.action = "ExportRT2860Settings.sh";
+//		form.action = "/cgi-bin/ExportRT2860Settings.sh";
+//	else if ( wifi_if == "RTDEV")
+//		//document.ExportSettings.action = "ExportRTDEVSettings.sh";
+//		form.action = "/cgi-bin/ExportRTDEVSettings.sh";
+//	else if ( wifi_if == "WIFI3")
+//		//document.ExportSettings.action = "ExportWIFI3Settings.sh";
+//		form.action = "/cgi-bin/ExportWIFI3Settings.sh";
+//	else
+//		form.action = "/cgi-bin/ExportAllSettings.sh";
+
+	form.submit();
+}
+
+function submit_import_form(form)
+{
+	var fileName = document.getElementById('file_name');
+	if(fileName.innerHTML == ''){
+		alert('请选择配置文件');
+		return false;
+	}
+	console.log("RebootLater="+form.RebootLater.value);
+	
+	form.submit();
+	parent.showModeRptProcess();
+}
+
+
+
+
+$(function(){
+	var mode = "<!--#exec cmd="web 2860 nvram OperationMode"-->";
+	
+	if(mode != 1){
+		$('.ifdisabled').addClass('disabled');
+		
+		$('.disabled').click(function(event){  
+	        return false;  
+	    });
+	}
+	
+})
+
+
+window.onload = function(){
+	var uploadFW = document.getElementById('uploadFWLocation');
+	var fileName = document.getElementById('file_name');
+	uploadFW.onchange = function(){
+		if(uploadFW.files[0]){
+			fileName.innerHTML = '配置文件：' + uploadFW.files[0].name;
+		}
+		
+	}
+	
+	var cancelBtn = document.getElementById('setmanImpSetCancel');
+	cancelBtn.onclick = function(){
+		fileName.innerHTML = '';
+	}
+}
+
+</script>
+
+<body>
+	<div class="int">
+		<h1>高级设置</h1>
+		<div class="cfg">
+			<div class="cfgleft">
+				<ul>
+					<li>
+						<a class="ifdisabled" href="WANConfig.shtml">WAN设置</a>
+					</li>
+					<li>
+						<a href="entconfig.shtml">局域网设置</a>
+					</li>
+					<li>
+						<a class="ifdisabled" href="MACClone.shtml">MAC地址克隆</a>
+					</li>
+					<li>
+						<a class="ifdisabled" href="systemtime.shtml">系统时间管理</a>
+					</li>
+					<li>
+						<a href="sysupdate.shtml">系统升级</a>
+					</li>
+					<li>
+						<a href="restoredefault.shtml">恢复出厂设置</a>
+					</li>
+					<li class="on">
+						<a href="settings.shtml">配置管理</a>
+					</li>
+				</ul>
+			</div>
+			<div class="cfgright">
+					<p id="setmanIntroduction">您可以通过将系统设置导出到配置文件来保存系统设置, 通过导入文件恢复</p>
+					<br />
+					<!-- ================= Export ================= -->
+					<form method="post" name="ExportSettings" action="/cgi-bin/ExportSettings.sh">
+							<table width="470" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+								<!--<tr>
+									<td class="head" width="110">选择配置</td>
+									<td>
+										<select class="selectinp" name="WiFiIF" id="WiFiIF">
+											<option value="ALL">所有配置</option>
+											<option value="RT2860">设备和WiFi配置</option>
+										</select>
+									</td>
+								</tr>-->
+								<tr>
+									<td class="head" id="setmanExpSetButton" width="110">导出按钮</td>
+									<td>
+										<span class="showbtn1">
+											<div class="hidebtn">
+												<input style="height: 48px;cursor: pointer;width: 150px;"  id="setmanExpSetExport" name="Export"  type="button" onClick="submit_export_form(this.form)">
+											</div>
+											导出
+										</span>
+									</td>
+								</tr>
+							</table>
+					</form>
+					<br />
+					<!-- ================= Import ================= -->
+					<form method="post" name="ImportSettings" action="/cgi-bin/upload_settings.cgi" enctype="multipart/form-data">
+							<table width="470" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+								<tr>
+									<td class="title" colspan="2" id="setmanImpSet">导入设置</td>
+								</tr>
+								<tr style="display:none;">
+									<td>导入配置后重启</td>
+									<td>
+										<input type=radio name="RebootLater" value="0" checked>立刻
+										<input type=radio name="RebootLater" value="1">延后
+									</td>
+								</tr>
+								<tr>
+									<td class="head" id="setmanImpSetFileLocation" width="100">请选择配置文件</td>
+									<td>
+										<span class="showbtn" style="background: #ff6c00;">
+											<div class="hidebtn">
+												<input style="height: 48px;width: 110px;cursor: pointer;" id="uploadFWLocation" type="File" name="filename" size="20" maxlength="256">
+											</div>
+											选择文件
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td></td>
+									<td width="360" style="overflow: hidden;">
+										<b id="file_name" style="margin-left: 16px;line-height: 40px; font-size: 14px;font-weight: normal;"></b>
+									</td>
+								</tr>
+							</table>
+							<table width="470" border="0" cellpadding="2" cellspacing="1">
+								<tr align="center">
+									<td>
+										<ul style="overflow: hidden;margin-top: 16px;margin-left: 110px;">
+											<li style="float: left;">
+												<span class="showbtn1">
+													<div class="hidebtn">
+														<input type="button" style="height: 48px;width: 150px;cursor: pointer;"  value="导入" id="setmanImpSetImport" onClick="submit_import_form(this.form)">
+													</div>
+													导入
+												</span>
+											</li>
+											<li style="float: left;">
+												<span class="showbtn" style="background: #99e4f0;">
+													<div class="hidebtn">
+														<input type="reset" style="height: 48px;width: 110px;cursor: pointer;" value="取消" id="setmanImpSetCancel">
+													</div>
+													取消
+												</span>
+											</li>
+										</ul>
+									</td>
+								</tr>
+							</table>
+					</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+   
+   

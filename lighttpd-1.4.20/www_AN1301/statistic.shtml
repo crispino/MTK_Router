@@ -1,0 +1,130 @@
+
+<!-- Copyright 2011, MediaTek Inc. All Rights Reserved. -->
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/style/normal_ws.css" type="text/css">
+<title>统计</title>
+</head>
+<script language="JavaScript" type="text/javascript">
+
+function formCheck()
+{
+	if( document.SystemCommand.command.value == ""){
+		alert("Please specify a command.");
+		return false;
+	}
+
+	return true;
+}
+
+</script>
+
+<body>
+<div class="long_ndiv">
+<table class="body"><tr><td>
+
+<h1 id="statisticTitle">统计</h1>
+<p id="statisticIntroduction"> 数据统计</p>
+
+
+<table border="1" cellpadding="2" cellspacing="1" width="95%">
+<tbody>
+
+<!-- =================  MEMORY  ================= -->
+<tr>
+  <td class="title" colspan="2" id="statisticMM">内存</td>
+</tr>
+<tr>
+  <td class="head" id="statisticMMTotal">总内存: </td>
+  <td> 59524 kB
+</td>
+</tr>
+<tr>
+  <td class="head" id="statisticMMLeft">剩余内存: </td>
+  <td> 43596 kB
+</td>
+</tr>
+
+<!-- =================  WAN/LAN  ================== -->
+<tr>
+  <td class="title" colspan="2" id="statisticWANLAN">WAN/LAN</td>
+</tr>
+<tr>
+  <td class="head" id="statisticWANRxPkt">WAN上行数据包: </td>
+  <td> 5000</td>
+</tr>
+<tr>
+  <td class="head" id="statisticWANRxBytes">WAN上行字节数: </td>
+  <td> 521580</td>
+</tr>
+<tr>
+  <td class="head" id="statisticWANTxPkt">WAN下行数据包: </td>
+  <td> 912</td>
+</tr>
+<tr>
+  <td class="head" id="statisticWANTxBytes">WAN下行字节数: </td>
+  <td> 613260</td>
+</tr>
+<tr>
+  <td class="head" id="statisticLANRxPkt">LAN下行数据包: &nbsp; &nbsp; &nbsp; &nbsp;</td>
+  <td> 5000</td>
+</tr>
+<tr>
+  <td class="head" id="statisticLANRxBytes">LAN下行字节数: </td>
+  <td> 521580</td>
+</tr>
+<tr>
+  <td class="head" id="statisticLANTxPkt">LAN上行数据包: </td>
+  <td> 912</td>
+</tr>
+<tr>
+  <td class="head" id="statisticLANTxBytes">LAN上行字节数: </td>
+  <td> 613260</td>
+</tr>
+
+<!-- =================  ALL  ================= -->
+<tr>
+  <td class="title" colspan="2" id="statisticAllIF">所有接口</td>
+<tr>
+
+<script language="JavaScript" type="text/javascript">
+var i;
+var a = new Array();
+a = ["eth2.1","0","0","5","390","br0","5000","521580","912","613260","eth2","5000","591580","928","615800","eth2.2","0","0","6","468"];
+for(i=0; i<a.length; i+=5){
+	// name
+	document.write("<tr> <td class=head> 名称 </td><td class=head>");
+	document.write(a[i]);
+	document.write("</td></tr>");
+
+	// Order is important! rxpacket->rxbyte->txpacket->txbyte
+	// rxpacket
+	document.write("<tr> <td class=head> 接收包 </td><td>");
+	document.write(a[i+1]);
+	document.write("</td></tr>");
+
+	// rxbyte
+	document.write("<tr> <td class=head> 接收字节数 </td><td>");
+	document.write(a[i+2]);
+	document.write("</td></tr>");
+
+	// txpacket
+	document.write("<tr> <td class=head> 发送包 </td><td>");
+	document.write(a[i+3]);
+	document.write("</td></tr>");
+
+	// txbyte
+	document.write("<tr> <td class=head> 发送字节数 </td><td>");
+	document.write(a[i+4]);
+	document.write("</td></tr>");
+}
+</script>
+
+</tbody>
+</table>
+
+</td></tr></table>
+</div>
+</body></html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tree Page</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="style/normal_ws.css" rel="stylesheet">
+<script src="jquery-3.2.1.min.js "></script>
+<script src="bootstrap.min.js "></script>
+</head>
+
+<body style="background-color:#2bbdd4">
+<div class="panel-group" id="accordion">
+		<div class="panel panel-primary leftMenu">
+			<div class="panel-heading" id="menu_quickwizard" data-toggle="collapse" data-parent="#accordion" data-target="#collapseListGroup0">
+				<h4 class="panel-title">
+					运行模式
+				</h4>
+			</div>
+			<div id="collapseListGroup0" class="panel-collapse collapse in" aria-labelledby="menu_quickwizard">
+			
+			</div>
+		</div>
+		<div class="panel panel-primary leftMenu">						
+			<!-- 利用data-target指定要折叠的分组列表 -->
+			<div class="panel-heading" id="menu_net" data-toggle="collapse" data-parent="#accordion" data-target="#collapseListGroup5">
+				<h4 class="panel-title" >
+					网络设置
+				</h4>
+			</div>
+			<!-- .panel-collapse和.collapse标明折叠元素 .in表示要显示出来 -->
+			<div id="collapseListGroup5" class="panel-collapse collapse" aria-labelledby="menu_net">
+				<ul class="list-group">
+				  <li class="list-group-item net_lan dis_flag">
+					<button class="menu-item-left" id="net_lan" data-href="/lan.shtml">
+						<i class="icon-caret-right"></i>LAN
+					</button>
+				  </li> 
+				</ul>
+			</div>
+		</div><!--panel end-->
+		<div class="panel panel-primary leftMenu">						
+			<!-- 利用data-target指定要折叠的分组列表 -->
+			<div class="panel-heading" id="menu_wifi" data-toggle="collapse" data-parent="#accordion" data-target="#collapseListGroup1">
+				<h4 class="panel-title wifi-title">
+
+				</h4>
+			</div>
+			<!-- .panel-collapse和.collapse标明折叠元素 .in表示要显示出来 -->
+			<div id="collapseListGroup1" class="panel-collapse collapse" aria-labelledby="menu_wifi">
+				<ul class="list-group wifi_content">
+				  <!--li class="list-group-item">
+					<button class="menu-item-left" id="wifi_basic">
+						<i class="icon-caret-right"></i>基本设置
+					</button>
+				  </li>
+				  <li class="list-group-item">
+					<button class="menu-item-left" id="wifi_advanced">
+						<i class="icon-caret-right"></i>高级
+					</button>
+				  </li>
+				  <li class="list-group-item">
+					<button class="menu-item-left" id="wifi_securty">
+						<i class="icon-caret-right"></i>安全
+					</button>
+				  </li>
+				  <li class="list-group-item">
+					<button class="menu-item-left" id="wifi_wps">
+						<i class="icon-caret-right"></i>WPS设置
+					</button>
+				  </li>
+				  <li class="list-group-item">
+					<button class="menu-item-left" id="wifi_clients">
+						<i class="icon-caret-right"></i>无线客户端列表
+					</button>
+				  </li>    
+				 <li class="list-group-item">
+					<button class="menu-item-left" id="wifi_total">
+						<i class="icon-caret-right"></i>流量统计
+					</button>
+				  </li>-->
+				</ul>
+			</div>
+		</div><!--panel end-->
+		<div class="panel panel-primary leftMenu">						
+			<!-- 利用data-target指定要折叠的分组列表 -->
+			<div class="panel-heading" id="menu_sysmanager" data-toggle="collapse" data-target="#collapseListGroup4" data-parent="#accordion" >
+				<h4 class="panel-title">
+					系统管理
+				</h4>
+			</div>
+			<!-- .panel-collapse和.collapse标明折叠元素 .in表示要显示出来 -->
+			<div id="collapseListGroup4" class="panel-collapse collapse" aria-labelledby="menu_sysmanager">
+				<ul class="list-group">
+				  <li class="list-group-item sys_man dis_flag">
+					<!-- 利用data-target指定URL -->
+					<button class="menu-item-left" id="sys_man" data-href="/management.shtml">
+						<i class="icon-caret-right"></i>修改密码
+					</button>
+				  </li>
+				  <li class="list-group-item sys_update dis_flag">
+					<button class="menu-item-left" id="sys_update" data-href="/upload_firmware.shtml">
+						<i class="icon-caret-right"></i>升级固件
+					</button>
+				  </li>
+				  <li class="list-group-item sys_setting dis_flag">
+					<button class="menu-item-left" id="sys_setting" data-href="/settings.shtml">
+						<i class="icon-caret-right"></i>重启/恢复出厂
+					</button>
+				  </li>
+				  <li class="list-group-item sys_info dis_flag">
+					<button class="menu-item-left" id="sys_info" data-href="/status.shtml">
+						<i class="icon-caret-right"></i>状态
+					</button>
+				  </li>  
+				  <li class="list-group-item sys_total dis_flag">
+					<button class="menu-item-left" id="sys_total" data-href="/management_ntp.shtml">
+						<i class="icon-caret-right"></i>NTP设置
+					</button>
+				  </li>   
+				</ul>
+			</div>
+		</div><!--panel end-->
+	</div>
+	<script>		
+		var opmode = "0";
+		var auto_wan_build = "0";
+		var one_button_through_wall = "1";
+		var dhcpen = "0";
+		var vpnen = "1";
+		var qosb = "0";
+		var ipv6b = "1";
+		var hsb1 =	"0";
+		var sta =	"0";
+		var ad =	"0";
+		var sta_wsc =	"0";
+		var vht =	"0";
+		var dbdc_en = "";
+		var dbdc_en_rai = "";
+		var wdsb = "0";
+		var wscb = "1";
+		var rax = "0";
+		var ra_dbdcb = "0";
+		var ra_mprofileb = "0";
+		var apcli0b = "0";
+		var apcli0_en = "";
+
+		var rai = "0";
+		var ray = "0";
+		var hsb2 = "0";
+		var rai_dbdcb = "0";
+		var rai_mprofileb = "0";
+		var apclii0b = "0";
+		var apclii0_en = "";
+
+		var rae = "0";
+		var apclie0b = "0";
+		var apclie0_en = "";
+
+		var bssidNum_ra0 = 1*"4";
+		var bssidNum_rai = 1*"4";
+		var bssidNum_rae = 1*"";
+        $(function(){
+			menu_init();
+            $(".panel-heading").click(function(e){    
+				var cp = $(this);
+				$(".panel-heading").each(function() {
+				})
+				
+            });	
+			
+			$("#menu_quickwizard").click(function(e){
+				window.parent.frames['view'].location.href = "opmode.shtml";
+            });
+			
+			$("#menu_net").click(function(e){
+				window.parent.frames['view'].location.href = "lan.shtml";
+            });
+			
+			$("#menu_wifi").click(function(e){
+				window.parent.frames['view'].location.href = "basic.shtml";
+            });
+			
+			$("#menu_sysmanager").click(function(e){
+				window.parent.frames['view'].location.href = "management.shtml";
+            });
+
+			$(".menu-item-left").click(function(e){
+				window.parent.frames['view'].location.href = $(this).data('href');
+            });		
+			
+        });
+		
+		function addWifiLi(title, hrefstr){
+			var htmlstr = '<li class="list-group-item">'+
+				'<button class="menu-item-left" data-href="' + hrefstr + '">'+
+					'<i class="icon-caret-right"></i>'+ title +
+				'</button>'+
+			  '</li>';
+			 $('.wifi_content').append(htmlstr);
+		}
+		
+		function menu_init(){
+			if (opmode != "0"){
+				$(".net_wan").css("display","block");
+				if(auto_wan_build == "1"){
+					$(".net_autowan").css("display","block");
+				}
+				$(".net_router").css("display","block");
+			}
+			$(".net_lan").css("display","block");
+			if (dhcpen == "1"){
+				$(".net_dhcp").css("display","block");
+			}
+			if (vpnen == "1"){
+				//$(".net_vpn").css("display","block");
+			}
+			if (opmode == "1" && qosb == "1"){
+				$(".net_qos").css("display","block");
+			}
+			if (ipv6b == "1"){
+				/*$(".net_ipv6").css("display","block");*/
+			}
+			if ((opmode == '2' || sta == '1') && (vht == '1'))
+			{
+				$(".wifi-title").append('无线漫游设置');
+				addWifiLi('基本设置','/basic.shtml');
+				addWifiLi('高级设置','/advanced_vht.shtml');
+				addWifiLi('QoS','/qos.shtml');
+				addWifiLi('页面调查','/site_survey.shtml');
+				addWifiLi('配置文件','/profile.shtml');
+				if (sta_wsc == "1")
+					addWifiLi('WPS','/wps_sta.shtml');
+				addWifiLi('链接状态','/link_status.shtml');
+				addWifiLi('统计','/statistics.shtml');
+				if (ad == '1')
+					addWifiLi('Antenna Diversity','/ant_diversity.shtml');
+				addWifiLi('抓包','/sniffer.shtml');
+				addWifiLi('关于','/about.shtml');
+			}
+			else if (opmode == '2' || sta == '1')
+			{
+				$(".wifi-title").append('无线漫游设置');
+				addWifiLi('配置文件','/profile.shtml');
+				addWifiLi('链接状态','/link_status.shtml');
+				addWifiLi('Site Survey','/site_survey.shtml');
+				addWifiLi('统计','/statistics.shtml');
+				addWifiLi('高级','/advance.shtml');
+				addWifiLi('QoS','/qos.shtml');
+				addWifiLi('11n 配置','/11n_cfg.shtml');
+				if (sta_wsc == "1")
+					addWifiLi('WPS','/wps_sta.shtml');
+				if (ad == '1')
+					addWifiLi('Antenna Diversity','/ant_diversity.shtml');
+				addWifiLi('Sniffer','/sniffer.shtml');
+				addWifiLi('关于','/about.shtml');
+			}
+			else
+			{
+				$(".wifi-title").append('无线设置');
+				addWifiLi('基本设置','/basic.shtml');
+				addWifiLi('组播设置','/advanced.shtml');
+				//addWifiLi('安全','/security.shtml');
+				if (wdsb == "1")
+					addWifiLi('WDS','/wds.shtml');
+				if (wscb == "1")
+					addWifiLi('WPS','/wps.shtml');
+				addWifiLi('无线客户端管理','/wifi_access_control.shtml');
+				//var apcli0_en =	"";
+				if (opmode == "3" || (opmode == "0" && apcli0b == "1" && apcli0_en == "1")){
+					if((ra_dbdcb == "1") && (dbdc_en == "1") && (ra_mprofileb != "1")) {
+						addWifiLi('AP Client0','/apcli0.shtml');
+						addWifiLi('AP Client1','/apcli1.shtml');
+						if (wscb == "1") {
+							addWifiLi('AP Cli WPS0','/apcli0_wps.shtml');
+							addWifiLi('AP Cli WPS1','/apcli1_wps.shtml');
+						}
+					} else {
+						addWifiLi('AP Client','/apcli0.shtml');
+						if (wscb == "1")
+							addWifiLi('APCli WPS','/apcli0_wps.shtml');
+					}
+				}
+				//addWifiLi('客户端列表','/stainfo.shtml');
+				//addWifiLi('统计','/apstatistics.shtml');				
+				if (hsb1 == "1")
+					addWifiLi('Hotspot','/hotspot.shtml');	
+			
+			}
+			
+			if (opmode != "0") {
+				var pktfilterb = "1";
+				if (pktfilterb == "0") {
+					$(".firewall-title").append('NAT');
+				} else {
+					$(".firewall-title").append('防火墙');
+					$(".firewall_filter").css("display","block");
+					$(".firewall_securty").css("display","block");
+					$(".firewall_content").css("display","block");
+				}
+				$(".firewall_porttrans").css("display","block");
+				$(".firewall_trigger").css("display","block");
+				$(".firewall_dmz").css("display","block");
+			}else{
+				$("#firewar-panel").css("display","none")
+			}
+			$(".sys_man").css("display","block");
+			$(".sys_update").css("display","block");
+			$(".sys_setting").css("display","block");
+			$(".sys_info").css("display","block");
+			$(".sys_total").css("display","block");
+			/*$(".sys_command").css("display","block");*/
+		}
+        </script>
+</body>
+
+</html>

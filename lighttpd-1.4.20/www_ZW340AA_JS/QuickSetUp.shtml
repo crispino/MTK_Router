@@ -1,0 +1,461 @@
+<!doctype html> 
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<meta http-equiv="X-UA-Compatible" content="IE=8">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-control" content="no-cache">
+<meta http-equiv="Cache" content="no-cache">
+<title>互联网设置</title>
+<link href="css/mainstyle.css" rel="stylesheet" type="text/css" />
+<link href="css/style_main.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/herouter.js"></script>
+<style type="text/css">
+<!--
+.cfgright1{padding-left:160px; padding-top:10px; height:330px;}
+.cfgright1 td{ height:36px; font-size:14px;}
+.cfgright1 td span{ padding-left:40px; font-size:14px;}
+.cfgright1 .spheight{padding-left:100px; height:60px; }
+.cfgright1 td label{ font-size:14px; line-height:60px;}
+
+.box{ width:500px; height:40px; margin:auto auto; }      
+.r1{ height:1px; overflow:hidden; margin:0 5px; background:#56bbcb; }     
+.r2{ height:1px; overflow:hidden; margin:0 3px; border-left:2px solid #56bbcb; border-right:2px solid #56bbcb; }      
+.r3{ height:1px; overflow:hidden; margin:0 2px; border-left:1px solid #56bbcb; border-right:1px solid #56bbcb; }      
+.r4{ height:2px; margin:0 1px; overflow:hidden; border-left:1px solid #56bbcb; border-right:1px solid #56bbcb; }       
+.content{ height:30px; border-left:1px solid #56bbcb; border-right:1px solid #56bbcb; padding:7px 10px; } 
+.content h2{ color:#56bbcb; font-family:"微软雅黑"; font-size:16px;}
+
+#PPPOEUser{
+	display: none;
+}
+#PPPOEPassword{
+	display: none;
+}
+-->
+</style>
+
+<script type="text/javascript">
+
+var mode = "<!--#exec cmd="web 2860 sys connectType"-->";
+var old_wan_mode = "<!--#exec cmd="web 2860 sys wanConnectionMode"-->"
+//var mode = 'DHCP';
+var PingStatus = "<!--#exec cmd="web 2860 sys internetStatus"-->";
+//var PingStatus = "fail";
+var nInitSelectType = 0;
+var pppoereqflag;
+var isIEVers7to9;
+
+function AutoChoose(isAuto){
+
+    var visitBuf;
+    var conType;
+    var pppvisitBuf;
+    
+    if(isAuto == 0){
+    	  visitBuf = "none";
+    	  pppvisitBuf = "none";
+    	  conType = "DHCP";
+
+    }else if(isAuto == 1){
+    	  visitBuf = "";
+    	  pppvisitBuf = "none";
+    	  conType = "STATIC";
+    }else if(isAuto == 2){
+    		visitBuf = "none";
+    		pppvisitBuf = "table-row";
+    		conType = "PPPOE";
+    }
+    
+    /*
+    document.getElementById("ipAddr").style.display = visitBuf;
+    document.getElementById("netMask").style.display = visitBuf;
+    document.getElementById("gateway").style.display = visitBuf;
+    document.getElementById("priDNS").style.display = visitBuf;
+    document.getElementById("secDNS").style.display = visitBuf;
+    */
+	document.getElementById("PPPOEUser").style.display = pppvisitBuf;
+	document.getElementById("PPPOEPassword").style.display = pppvisitBuf;
+    document.quickSettingWan.connectionType.value = conType;  
+    
+} 
+
+function switch_conType(){
+	
+	if (document.quickSettingWan.conTp_radio[0].checked == true){
+		AutoChoose(0);
+	}
+	else if(document.quickSettingWan.conTp_radio[1].checked == true){
+		AutoChoose(1);
+	}
+	else if(document.quickSettingWan.conTp_radio[2].checked == true){
+		AutoChoose(2);
+	}
+}
+
+function check_value(){
+	var newSelect = 0;
+
+	if (document.quickSettingWan.conTp_radio[0].checked == true) { //DHCP
+		newSelect = 0;
+	}
+	else if (document.quickSettingWan.conTp_radio[1].checked == true) {      //STATIC
+		newSelect = 1;
+		if (!checkIpAddr(document.quickSettingWan.staticIp, false))
+			return false;
+		if (!checkIpAddr(document.quickSettingWan.staticNetmask, true))
+			return false;
+		if (document.quickSettingWan.staticGateway.value != "")
+			if (!checkIpAddr(document.quickSettingWan.staticGateway, false))
+				return false;
+		if (document.quickSettingWan.staticPriDns.value != "")
+			if (!checkIpAddr(document.quickSettingWan.staticPriDns, false))
+				return false;
+		if (document.quickSettingWan.staticSecDns.value != "")
+			if (!checkIpAddr(document.quickSettingWan.staticSecDns, false))
+				return false;
+	} 
+	else if (document.quickSettingWan.conTp_radio[2].checked == true) { // PPPOE
+		newSelect = 2;
+		if (document.quickSettingWan.pppoeUser.value == "" ||
+				document.quickSettingWan.pppoePass.value == "")
+		{
+			alert("PPPoE账户或密码不能为空！");
+			return false;
+		}
+	}	
+	else
+		return false;
+
+	if (newSelect != nInitSelectType)
+	{
+		return true;
+	}
+
+	return true;
+}
+
+function afterSubmit(){	
+  parent.TINY.box.hide();
+  parent.location.reload();
+}
+
+function redirect_intstatus()
+{
+	location.href="./intstatus.shtml?number=" + Math.random();
+	return;
+}
+
+function redirect_setwifi()
+{
+	location.href="./QuickSetwifi.shtml?number=" + Math.random();
+	return;
+}
+
+function wanSetting_apply(){
+	var newSelect = 0;
+
+	if (document.quickSettingWan.conTp_radio[0].checked == true) { //DHCP
+		newSelect = 0;
+	}
+	else if (document.quickSettingWan.conTp_radio[1].checked == true) {      //STATIC
+		newSelect = 1;
+	} 
+	else if (document.quickSettingWan.conTp_radio[2].checked == true) { // PPPOE
+		newSelect = 2;
+				
+		if (check_value() == false)
+		{
+			return;
+		}
+	}	
+
+	/* DHCP/0, STATIC/1, PPPOE/2 */
+	var wan_mode = 0;
+	if (old_wan_mode == "DHCP")
+		wan_mode = 0;
+	else if (old_wan_mode == "STATIC")
+		wan_mode = 1;
+	else if (old_wan_mode == "PPPOE")
+		wan_mode = 2;
+
+	if (wan_mode === newSelect && PingStatus == 1)
+	{
+		setTimeout("redirect_setwifi();",1000);
+	}
+	else
+	{
+		document.quickSettingWan.submit();
+
+		setTimeout("redirect_intstatus();",1000);
+	}
+}
+
+function initNoPassText()
+{
+	if(mode == "PPPOE")
+	{
+		//document.getElementById("fail").innerHTML="<b class=\"err\">经检测，您的上网方式可能为PPPOE，请手动设置账号和密码</b>";
+		$("h2").text("经检测：您的上网方式可能为宽带拨号!");
+	}else if(mode == "DHCP"){ //usual look as DHCP(AUTO) mode
+		//document.getElementById("fail").innerHTML="<b class=\"err\">经检测，您的上网方式可能为DHCP，请手动设置</b>";
+		$("h2").text("经检测：您的上网方式为自动获取！");
+	}else{
+		//document.getElementById("fail").innerHTML="<b class=\"err\">经检测，您的上网方式可能为DHCP，请手动设置</b>";
+		$("h2").text("经检测：您的上网方式为自动获取！");
+	}
+  
+	return true;
+}
+
+function run(){
+	var s = document.getElementById("wait");
+	if(s.innerHTML == 0){
+		return false;
+	}
+	s.innerHTML = s.innerHTML * 1 - 1;
+}
+
+function cancel(){	
+	document.getElementById("msg").innerHTML = "正在重新检测上网方式，请等待...<span id=\"wait\">3</span>秒";
+	$("b.cancel").text("检测中...");
+	window.setInterval("run();", 1000);
+	setTimeout("location.reload();", 3000);
+	
+}
+function pppoeSetting_showpasswd(){
+	
+	if (document.getElementById("pppoePass").type=="password" )
+	{
+document.getElementById("pppoePass").value="";
+
+		document.getElementById("pppoePass").type="text";
+	}
+}
+	
+function GetQueryString(name)
+{
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+	var r = window.location.search.substr(1).match(reg);
+	if (r != null) return unescape(r[2]); return null;
+}
+
+function getBrowserInfo()
+{
+	var agent = navigator.userAgent.toLowerCase() ;
+	
+	var IEVersion;
+	var regStr_ie = /msie [\d.]+;/gi ;
+
+	//IE
+	if(agent.indexOf("msie ") > 0)
+	{
+		IEVersion = agent.match(regStr_ie);
+		if (agent.match(/7./i)=="7.")
+			isIEVers7to9 = 1;
+		else if (agent.match(/8./i)=="8.")
+			isIEVers7to9 = 1;
+		else if (agent.match(/9./i)=="9.")
+			isIEVers7to9 = 1;
+		else
+			isIEVers7to9 = 0;
+	}
+	else
+		isIEVers7to9 = 0;
+}
+
+
+$(document).ready(function(){	
+	var opmode = "<!--#exec cmd="web 2860 nvram OperationMode"-->";
+	if (opmode != 1) redirect_setwifi();
+	
+	var pppvisitBuf;
+	pppoereqflag = GetQueryString("netmode");
+	
+	getBrowserInfo();
+	
+	if (PingStatus != 1)	{ //未连接到互联网
+		var port_status = "<!--#exec cmd="web 2860 sys portStatus"-->";
+		var every_port = new Array();
+		every_port = port_status.split(",");
+		isWanPortPlug = every_port[0];
+
+		if (isWanPortPlug == 0)
+		{
+			$("h2").text("经检测：宽带口网线未插入！");
+			$("table:gt(0)").css({"display":"none"});
+			$("b#next").css({"display":"none"});
+			if(isIEVers7to9 == 1)
+			{
+				$("b.cancel").css({"bottom":"0px"});
+			}
+		}
+		else
+		{
+			$("table:gt(0)").css({"display":"block"});
+			$("b#next").css({"display":"block"});
+			$("b.cancel").css({"display":"none"});
+			initNoPassText();
+		}
+		if (mode == "PPPOE"){ 
+			document.quickSettingWan.conTp_radio[2].checked = true;
+			nInitSelectType = 0;
+			
+			document.getElementById("PPPOEUser").style.display = "table-row";
+			document.getElementById("PPPOEPassword").style.display = "table-row";
+			document.quickSettingWan.connectionType.value="PPPOE";
+		}
+		else{
+			if (pppoereqflag != "1")
+			{  // pppoe, but failed for connect resaon
+				document.quickSettingWan.conTp_radio[0].checked = true;
+				nInitSelectType = 2;
+				
+				document.quickSettingWan.connectionType.value="DHCP";
+			}
+			else
+			{  // pppoe, but failed for author, only used for 网络状态通过点击重新设置
+				document.quickSettingWan.conTp_radio[2].checked = true;
+				nInitSelectType = 0;
+				
+				document.getElementById("PPPOEUser").style.display = "table-row";
+				document.getElementById("PPPOEPassword").style.display = "table-row";
+				document.quickSettingWan.connectionType.value="PPPOE";
+			}
+		}
+	}else{ //已经连接到互联网
+		$("b.cancel").css({"display":"none"});
+	  
+		if (mode == "PPPOE"){ 
+			document.quickSettingWan.conTp_radio[2].checked = true;  
+			AutoChoose(2);
+			nInitSelectType = 2;
+			$("h2").text("经检测：您的上网方式可能为宽带拨号!");
+		}
+		else{
+			document.quickSettingWan.conTp_radio[0].checked = true;    
+			AutoChoose(0);
+			nInitSelectType = 0;
+			$("h2").text("经检测：您的上网方式为自动获取！");
+		}
+	}
+});
+</script>
+</head>
+	
+<body>
+<form method=post name="quickSettingWan" id="quickSettingWan" action="/cgi-bin/internet.cgi" >
+<input type=hidden name=page value=HeMu_Wan>
+<div class="int">
+	<input type="hidden" name="testvalue" value="hellobaby">
+<h1 align="center" style="color: #cccccc;"><span style="font-size:20px;line-height:50px; color: #000000;padding-left:0;font-weight:bold;">(第一步)互联网设置<em>--></em></span>(第二步)无线设置—>(第三步)完成</h1>
+			<br>
+			<div class="box">   
+				<div class="top">
+					<div class="r1"></div>
+					<div class="r2"></div>
+					<div class="r3"></div>
+					<div class="r4"></div>
+				</div>
+				<div class="content">
+						<table style="margin:auto;">
+							<tr>	
+								<td><img src="./images/check3_07.png"/></td>
+								<td>&nbsp;&nbsp;</td>
+								<td>
+									<h2 id="msg"></h2>
+								</td>
+							</tr>
+						</table>					
+				</div>
+				<div class="bottom">
+					<div class="r4"></div>
+					<div class="r3"></div>
+					<div class="r2"></div>
+					<div class="r1"></div>
+				</div>
+			</div>
+    <div class="cfg">
+			<!--div id="fail" class="c1" style="width:500px"><b class="err">经检测，您的上网方式可能为DHCP，请手动设置账号和密码</b></div>
+			<div id="pass" class="c1" style="width:360px"><b>经检测，您的上网方式为DHCP</b></div-->
+        <div class="cfgright1">
+          <table width="70%" border="0" cellspacing="0" cellpadding="0">
+            	<tr>
+            		<td width="40%">您可以选择上网方式：</td>
+            		<td width="5%">&nbsp;</td>
+            		<td width="55%">
+            			<input class="radiobox" type="radio" name="conTp_radio"  onClick="switch_conType()"  value="0">自动获取（DHCP）<br>
+            			<br><div style="display:none">
+            			<input class="radiobox" type="radio" name="conTp_radio"  onClick="switch_conType()"  value="1">静态方式（静态IP）<br>
+            			</div>
+            			<input class="radiobox" type="radio" name="conTp_radio"  onClick="switch_conType()"  value="2">宽带账号（PPPoE）
+            		</td><br><br>	
+            	</tr>	
+              <!--tr>
+                <td width="35%" >
+                <input class="radiobox" type="radio" name="conTp_radio" id="conTp_radio" onClick="switch_conType()"  value="0">动态方式（DHCP)
+                </td>
+                <td width="35%" >
+                        				
+								<input class="radiobox" type="radio" name="conTp_radio" id="conTp_radio" onClick="switch_conType()"  value="1">静态方式（静态IP）
+								
+                </td>
+                <td width="30%" >
+                	<input class="radiobox" type="radio" name="conTp_radio" id="conTp_radio" onClick="switch_conType()"  value="2">PPPOE方式		
+                	</td>
+              </tr>
+              <tr id="ipAddr">
+                <td><span>IP地址</span></td>
+                <td><input class="inp1" type="text" name="staticIp" value=""/></td>
+              	<td width="30%" ></td>
+              </tr>
+              <tr id="netMask">
+                <td><span>子网掩码</span></td>
+                <td><input class="inp1" type="text" name="staticNetmask" value="" /></td>
+              </tr>
+              <tr id="gateway">
+                <td><span>网关</span></td>
+                <td><input class="inp1" type="text" name="staticGateway" value="" /></td>
+              </tr>
+              <tr id="priDNS">
+                <td><span>首选DNS</span></td>
+                <td><input class="inp1" type="text" name="staticPriDns" value="" /></td>
+              </tr>
+              <tr id="secDNS">
+                <td><span>备用DNS</span></td>
+                <td><input class="inp1" type="text" name="staticSecDns" value="" /></td>
+              </tr-->
+          </table>    
+					<table width="70%" border="0" cellspacing="0" cellpadding="0" > 
+							<br>             
+              <tr id="PPPOEUser">
+              	<td><span>PPPoE账户</span></td>	
+  							<td><input class="inp1" type="text"  name="pppoeUser" value="pppoe_user" /></td>            	
+              </tr>
+							<tr id="PPPOEPassword">
+								<td><span>PPPoE密码</span></td>	
+								<td><input class="inp1" id="pppoePass" onClick="pppoeSetting_showpasswd()" type="password"  name="pppoePass" value="pppoe_passwd"  /></td>            	
+							</tr>
+          </table>
+            <tr style="display: none; ">
+							  <td><input name="connectionType" id="connectionType" value=""  style="display: none;"/></td>
+							  <td><input name="hostname" id="hostname" value="0"  style="display: none;"/></td>
+							  <td><input name="macCloneEnbl" id="macCloneEnbl" value=0  style="display: none;"/></td>
+							  <td><input name="macCloneMac" id="macCloneMac" value=""  style="display: none;"/></td>
+							  <td><input name="pppoeOPMode" id="pppoeOPMode" value=""  style="display: none;"/></td>
+							  <td><input name="pppoeRedialPeriod" id="pppoeRedialPeriod" value=""  style="display: none;"/></td>
+						</tr>
+            <div class="subpart">
+                <ul>
+                    <li><b id="next" onClick="javascript:wanSetting_apply();">下一步</b></li>
+                    <li><b class="cancel" onClick="cancel();">再次检测</b></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="c2"></div>
+</div>
+</form>
+</body>
+</html>

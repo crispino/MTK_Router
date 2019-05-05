@@ -1,0 +1,5 @@
+---- andlink_debug Matches (5 in 2 files) ----
+Debug.h (libcoap-4.1.1):extern int andlink_debug;
+Debug.h (libcoap-4.1.1):				if (andlink_debug) \
+Qlink_demo.c:int andlink_debug = 0;
+Qlink_demo.c:	andlink_debug = atoi(nvram_get(RT2860_NVRAM, "andlink_debug"));

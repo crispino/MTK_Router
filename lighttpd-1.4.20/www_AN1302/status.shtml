@@ -1,0 +1,185 @@
+
+<!-- Copyright 2011, MediaTek Inc. All Rights Reserved. -->
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/style/normal_ws.css" type="text/css">
+<title>Access Point Status</title>
+</head>
+
+<script type="text/javascript" src="/shareFun.js"></script>
+<script language="JavaScript" type="text/javascript">
+function showOpMode()
+{
+	var opmode = 1* <!--#exec cmd="web 2860 nvram OperationMode"-->;
+	if (opmode == 0)
+		document.write("Bridge Mode");
+	else if (opmode == 1)
+		document.write("Gateway Mode");
+	else if (opmode == 2)
+		document.write("Ethernet Converter Mode");
+	else if (opmode == 3)
+		document.write("AP Client Mode");
+	else
+		document.write("Unknown");
+}
+
+function showPortStatus()
+{
+	var str = "<!--#exec cmd="web 2860 sys portStatus"-->";
+	var all = new Array();
+
+	if(str == "-1"){
+		document.write("not support");
+		return ;
+	}
+
+	all = str.split(",");
+	for(i=0; i< all.length-1; i+=3){
+		document.write("<td>");
+		if(all[i] == "1"){
+			if(all[i+1] == "10")
+				document.write("<img src=/graphics/10.gif> ");
+			else if(all[i+1] == "100")
+				document.write("<img src=/graphics/100.gif> ");
+
+//			if(all[i+2] == "F")
+//				document.write("Full ");
+//			else(all[i+2] == "H")
+//				document.write("Half ");
+		}else if(all[i] == "0"){
+				document.write("<img src=/graphics/empty.gif> ");
+		}
+		document.write("</td>");
+	}
+}
+
+function PageInit()
+{
+	var ethtoolb = "<!--#exec cmd="web 2860 build ethtool"-->";
+
+	if (ethtoolb == "1")
+	{
+		//display("block", "statusEthPortStatus");
+		display("table", "div_ethtool");
+	}
+	else
+	{
+		//display("none", "statusEthPortStatus");
+		display("none", "div_ethtool");
+	}
+}
+</script>
+
+<body onload="PageInit()">
+<div class="long_ndiv">
+<table class="body"><tr><td>
+<H1 id="statusTitle">设备状态信息</H1>
+<P id="statusIntroduction">查看当前设备状态信息. </P>
+
+<table width="95%" border="1" cellpadding="2" cellspacing="1">
+<!-- ================= System Info ================= -->
+<tr>
+  <td class="title" colspan="2" id="statusSysInfo">系统信息</td>
+</tr>
+<tr>
+  <td class="head" id="statusSDKVersion">SDK版本</td>
+  <td><!--#exec cmd="web 2860 sys sdkVersion"--> (<!--#exec cmd="web 2860 sys buildTime"-->)</td>
+</tr>
+<tr>
+  <td class="head" id="devType">设备型号</td>
+  <td>AN1303</td>
+</tr>
+<tr>
+<tr>
+  <td class="head" id="swVersion">软件版本</td>
+  <td>V3.0.01</td>
+</tr>
+<tr>
+  <td class="head" id="hwVersion">硬件版本</td>
+  <td>H31.01</td>
+</tr>
+<tr>
+  <td class="head" id="statusSysUpTime">系统运行时间</td>
+  <td><!--#exec cmd="web 2860 sys uptime"--></td>
+</tr>
+<tr>
+  <td class="head" id="statusSysPlatform">System Platform</td>
+  <td><!--#exec cmd="web 2860 sys platform"--></td>
+</tr>
+<tr>
+  <td class="head" id="statusOPMode">运行模式</td>
+  <td><script type="text/javascript">showOpMode();</script></td>
+</tr>
+<!-- ================= Internet Configurations ================= -->
+
+<!--
+<tr>
+  <td class="title" colspan="2" id="statusInternetConfig">网络配置</td>
+</tr>
+<tr>
+  <td class="head" id="statusConnectedType">连接类型</td>
+  <td>DHCP </td>
+</tr>
+<tr>
+  <td class="head" id="statusWANIPAddr">WAN口IP地址</td>
+  <td>192.168.0.253</td>
+</tr>
+<tr>
+  <td class="head" id="statusSubnetMask">子网掩码</td>
+  <td>255.255.255.0</td>
+</tr>
+<tr>
+  <td class="head" id="statusDefaultGW">默认网关</td>
+  <td></td>
+</tr>
+<tr>
+  <td class="head" id="statusPrimaryDNS">首选DNS服务器</td>
+  <td>168.95.1.1</td>
+</tr>
+<tr>
+  <td class="head" id="statusSecondaryDNS">备用DNS服务器</td>
+  <td>8.8.8.8</td>
+</tr>
+<tr>
+  <td class="head" id="statusWANMAC">MAC地址</td>
+  <td>F4:4C:70:51:19:88</td>
+</tr> -->
+<!-- ================= Local Network ================= -->
+<tr>
+  <td class="title" colspan="2" id="statusLocalNet">局域网</td>
+</tr>
+<tr>
+  <td class="head" id="statusLANIPAddr">局域网IP地址</td>
+  <td><!--#exec cmd="web 2860 sys lanIpAddr"--></td>
+</tr>
+<tr>
+  <td class="head" id="statusLocalNetmask">局域网子网掩码</td>
+  <td><!--#exec cmd="web 2860 sys lanNetmask"--></td>
+</tr>
+<tr>
+  <td class="head" id="statusLANMAC">MAC地址</td>
+  <td><!--#exec cmd="web 2860 sys lanMacAddr"--></td>
+</tr>
+<!-- ================= Other Information ================= -->
+</table>
+
+
+<table border="0" id="div_ethtool">
+<tr>
+  <td>
+    <H1 id="statusEthPortStatus">以太网端口状态</H1>
+  </td>
+</tr>
+<tr>
+  <td>
+    <script type="text/javascript">showPortStatus();</script>
+  </td>
+</tr>
+</table>
+
+</td></tr></table>
+</div>
+</body>
+</html>

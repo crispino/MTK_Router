@@ -1,0 +1,438 @@
+<!doctype html> 
+<head>
+<meta name="KEYWords" Content="mainPageFlag">
+<meta http-equiv="Pragma" CONTENT="no-cache">
+<meta http-equiv="Cache-Control" CONTENT="no-cache">
+<meta http-equiv="Expires" CONTENT="-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+<title>和目路由器-中国移动</title>
+<link href="css/mainstyle.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery.vegas.min.js"></script>
+<script type="text/javascript" src="js/tinybox.js"></script>
+<script type="text/javascript" src="js/herouter.js"></script>
+<script type="text/javascript" src="/shareFun.js"></script>
+
+<link href="css/jquery.vegas.css" rel="stylesheet" type="text/css" />
+<link href="css/and.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="css/icons.css" />
+<link rel="stylesheet" type="text/css" href="css/style1.css" />
+
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="css/style1_ie8.css" />
+<![endif]-->
+<script type="text/javascript">
+
+var WIFIAuthMode = "OPEN";
+var wifi_off='0';
+var EncrypType='NONE';	
+var IEEE8021X  = '0';
+var ConMode = "DHCP";
+var WANIP = "";
+var isWanPortPlug = "fail";
+var isNeedWizard = "";
+var PingStatus = "";
+var newUrl;
+var mode = "";
+var apcliStatus = "";
+var wireless_count =0;
+var version = "";
+
+$(function() {
+  $.vegas({
+    src:'images/bodybg.jpg'
+  });
+});
+function resetMenu(){
+ TINY.box.show({iframe:'sysstate.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:460,fixed:false,maskopacity:40})
+ 
+	 $("#bt-menu").removeClass("bt-menu-open");
+	 $("#bt-menu").addClass("bt-menu-close");
+	 
+}
+function advsetting(){
+ TINY.box.show({iframe:'WANConfig.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:420,fixed:false,maskopacity:40})
+			if(mode == 1){
+				TINY.box.show({
+					iframe: 'WANConfig.shtml?number=' + Math.random(),
+					boxid: 'frameless',
+					width: 700,
+					height: 420,
+					fixed: false,
+					maskopacity: 40
+				})
+			}else{
+				TINY.box.show({
+					iframe: 'entconfig.shtml?number=' + Math.random(),
+					boxid: 'frameless',
+					width: 700,
+					height: 420,
+					fixed: false,
+					maskopacity: 40
+				})
+			}
+			
+	$("#bt-menu").removeClass("bt-menu-open");
+	$("#bt-menu").addClass("bt-menu-close");
+	
+}
+
+function wireless_setting(){
+ TINY.box.show({iframe:'wireless_guest.shtml?number=' + Math.random(), boxid:'frameless', width:700,height:420,fixed:false,maskopacity:40})
+ 
+	$("#bt-menu").removeClass("bt-menu-open");
+	 $("#bt-menu").addClass("bt-menu-close");	
+}
+
+function reload()
+{
+  window.location.href="/login.html?number=" + Math.random();
+}
+
+function showupdating(){
+	setTimeout("TINY.box.show({html:'<div class=waiting2 style=display:;><h2>路由升级中，请稍候</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})",3000);
+	setTimeout("TINY.box.show({html:'<div class=waiting3 style=display:;><h2>请勿断电！升级中，请关闭本页面并在5分钟后使用和路由。</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})",10000);
+	setTimeout("TINY.box.hide();reload();", 85000);
+}
+
+function showLocalupdating(){
+	setTimeout("TINY.box.show({html:'<div class=waiting2 style=display:;><h2>路由升级中，请稍候</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})",60000);
+	setTimeout("TINY.box.show({html:'<div class=waiting3 style=display:;><h2>请勿断电！升级中，请关闭本页面并在5分钟后使用和路由。</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})",60000);
+	setTimeout("TINY.box.hide();reload();", 120000);
+}
+
+function restored_reload()
+{
+	window.location.href="/login.html?number=" + Math.random();
+}
+
+function showrestoring(){
+	setTimeout("TINY.box.show({html:'<div class=waiting3 style=display:;><h2>重启中，无线网络将断开，请关闭页面并在1分钟后重新进入</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})",1000);
+	setTimeout("TINY.box.hide();restored_reload()", 70000);
+}
+
+function showchangepwd(){
+	setTimeout("TINY.box.show({html:'<div class=waiting3 style=display:;><h2>密码修改成功，请重新登录</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})",2000);
+	setTimeout("TINY.box.hide();reload();", 6000);
+}
+
+function reload_main()
+{
+  window.location.href="/main.html";
+}
+
+		function showConfProcess() {
+			setTimeout("TINY.box.show({html:'<div class=waiting3 style=display:;><h2>设置成功，无线网络将断开，请关闭页面并在30秒后重新进入</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})", 3000);
+			setTimeout("TINY.box.hide();reload_main();", 20000);
+		}
+
+		function showWifiConfProcess() {
+			setTimeout("TINY.box.show({html:'<div class=waiting2 style=display:;><h2>正在设置路由器，请稍候</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})", 2000);
+			setTimeout("TINY.box.show({html:'<div class=waiting3 style=display:;><h2>设置成功，无线网络将断开，请关闭页面并在1分钟后重新进入</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})", 5000);
+			setTimeout("TINY.box.hide();reload_main();", 20000);
+		}
+
+		function showSettingProcess() {
+			setTimeout("TINY.box.show({html:'<div class=waiting2 style=display:;><h2>正在保存设置,请稍候</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})", 2000);
+			setTimeout("TINY.box.show({html:'<div class=waiting3 style=display:;><h2>设置成功，无线网络将断开，请在30秒后重新进入本页面</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})", 5000);
+			setTimeout("TINY.box.hide();reload_main();", 20000);
+		}
+		
+		function showModeSetProcess() {
+			setTimeout("TINY.box.show({html:'<div class=waiting2 style=display:;><h2>正在保存设置,请稍候</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})", 2000);
+			setTimeout("TINY.box.show({html:'<div class=waiting3 style=display:;><h2>设置成功，无线网络将断开，请在30秒后重新进入本页面</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})", 5000);
+			setTimeout("TINY.box.hide();reload_main();", 30000);
+		}
+		
+		function showModeRptProcess() {
+			setTimeout("TINY.box.show({html:'<div class=waiting2 style=display:;><h2>正在保存设置,请稍候</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})", 3000);
+			setTimeout("TINY.box.show({html:'<div class=waiting3 style=display:;><h2>无线网络将断开，请在30秒后重新进入页面</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})", 5000);
+			setTimeout("TINY.box.hide();reload_main();", 40000);
+		}
+
+function  getNewLinkValue(value)
+{
+  newUrl = value;
+}
+
+function reloadNewMain()
+{
+	window.location.replace(newUrl);
+}
+
+function showEntProcess(){
+	setTimeout("TINY.box.show({html:'<div class=waiting3 style=display:;><h2>正在保存设置，请稍候...</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})",2000);
+	//setTimeout("TINY.box.hide();Alert('设置成功，无线网络将断开，请在30秒后重新进入本页面', 30);",30000);
+	setTimeout("TINY.box.show({html:'<div class=waiting3 style=display:;><h2>设置成功，无线网络将断开，请在30秒后重新进入本页面</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5});",30000);
+	setTimeout("reloadNewMain();", 60000);
+}
+
+function openwifipage()
+{
+	TINY.box.show({iframe:'wifisetting1.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:420,fixed:false,maskopacity:40})		
+}
+function openMACpage()
+{
+	TINY.box.show({iframe:'wireless_mac.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:420,fixed:false,maskopacity:40})		
+}
+function openQuick()
+{
+	TINY.box.show({iframe:'QuickSetUp.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:420,fixed:false,maskopacity:40})
+}
+function doUpdateInternetStatus()
+{
+        if (http_request.readyState == 4) {
+                if (http_request.status == 200) {
+                        PingStatus = (http_request.responseText).toUpperCase();
+                        //internet ico
+                        if (PingStatus == "0") {  // router , not internet
+                             $("#internet").removeClass("intbridge");
+                             $("#internet").addClass("interr");  
+                             $("#intbtn").attr("onclick", "Showintconfig()");
+                         }else if (PingStatus == "1") { // route, internet
+                             $("#internet").removeClass("intbridge");
+                             $("#internet").removeClass("interr");
+                             $("#intbtn").attr("onclick", "Showintconfig()");                                                    
+                         }else if (PingStatus == "2") { // bridge, not internet
+                             $("#internet").addClass("intbridge");
+                             $("#internet").addClass("intok");  
+                             $("#intbtn").removeAttr("onclick");
+                         }else if (PingStatus == "3") { // bridge, internet 
+                             $("#internet").addClass("intbridge");
+                             $("#internet").removeClass("intok");
+                             $("#intbtn").removeAttr("onclick");
+
+                         }
+                } else {
+                        //alert("Can\'t get the Internet status.");
+                }
+        }
+}
+
+function startGetInternetStatusRequest()
+{
+	makeRequest("/cgi-bin/makeRequest.cgi" , "getInternetStatus", doUpdateInternetStatus);
+}
+
+
+$(document).ready(function(){
+
+    $.ajax({
+        url: "globalConfig.shtml?number=" + Math.random(),
+		async: false,
+        type: "GET",
+        success: function(data){
+			$("#security_data").html(data);
+			mode = $('#ttt_operationMode').val();
+			isNeedWizard = $('#ttt_isNeedWizard').val();
+			PingStatus = $('#ttt_pingStatus').val();
+			apcliStatus = $('#ttt_apcliStatus').val();
+			wireless_count = $('#ttt_wirelessCount').val();
+			version = $('#ttt_version').val();
+			console.log("operationMode: %s, isNeedWizard:%s, pingStatus:%s, apcliStatus:%s, wirelessCount:%s",
+				mode, isNeedWizard, PingStatus, apcliStatus, wireless_count, version);			
+					if(mode != 1){
+						$('.firewall').addClass('disableline');
+					}	
+					
+				}
+	});
+	
+	//wifi enable
+	if(wifi_off == 0){
+		  
+          $("#wifistate").addClass("wifiok");  
+	}else{
+		  $("#wifistate").addClass("wificlose");
+	}
+
+	//internet ico
+	doUpdateInternetStatus();
+
+			if(mode == 1) {
+//				$('#qrcode').attr('src','images/qrcode_route.png');
+				if(PingStatus != "1") {
+					$("#internet").addClass("interr");
+				} else {
+					$("#internet").removeClass("interr");
+				}
+			} else {
+//				$('#qrcode').attr('src','images/qrcode.png');
+				$("#internet").addClass("intok");
+				$("#intbtn").removeAttr("onclick");
+			}
+
+    setInterval("startGetInternetStatusRequest()",5000);
+	
+	if(isNeedWizard == 1)
+	{
+		if(mode == 3 && apcliStatus == "Disconnect")
+      		TINY.box.show({iframe:'apcliscan.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:530,fixed:false,maskopacity:40})
+      	else if(mode == 3 && apcliStatus == "Connected")
+      		TINY.box.show({iframe:'routermodeconfig.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:530,fixed:false,maskopacity:40})
+      	else
+      		TINY.box.show({iframe:'QuickSetUp.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:420,fixed:false,maskopacity:40})
+	} 
+	else
+	{
+		if(mode == 3 && apcliStatus == "Disconnect")
+      		TINY.box.show({iframe:'apcliscan.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:530,fixed:false,maskopacity:40})
+      	else if(mode == 3 && apcliStatus == "Connected")
+      		TINY.box.show({iframe:'routermodeconfig.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:530,fixed:false,maskopacity:40})
+	}
+	
+	$("#wireless_count").text(wireless_count);
+	$("#version").text("版本：" + version + "（中国移动江苏公司1.0版本）");
+});
+
+function reboot_alert()
+{
+    if (confirm("您确定需要重启吗?")){ 
+        document.reboot.submit(); 
+        showrestoring();
+    }else{ 
+    	  /*do nothing*/
+    }
+}
+
+function routerMode()
+{
+	if(mode == 3)
+		TINY.box.show({iframe:'apcliscan.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:530,fixed:false,maskopacity:40});
+	else
+		TINY.box.show({iframe:'routermodeconfig.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:530,fixed:false,maskopacity:40});
+
+}
+		function firewall() {
+			
+			if(mode == 1){
+					TINY.box.show({
+					iframe: 'ALGconfig.shtml?number=' + Math.random(),
+					boxid: 'frameless',
+					width: 700,
+					height: 420,
+					fixed: false,
+					maskopacity: 40
+				})
+	
+				$("#bt-menu").removeClass("bt-menu-open");
+				$("#bt-menu").addClass("bt-menu-close");
+
+			}else{
+				return false;
+			}
+			
+		}
+
+function ShowChangepasswd()
+{
+	TINY.box.show({iframe:'changepassword.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:420,fixed:false,maskopacity:40})
+}
+function ShowQuickSetUp()
+{
+	TINY.box.show({iframe:'QuickSetUp.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:420,fixed:false,maskopacity:40})
+}
+
+function ShowShowSysLog()
+{
+	TINY.box.show({iframe:'ShowSysLog.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:420,fixed:false,maskopacity:40})
+}
+function Showintconfig()
+{
+	TINY.box.show({iframe:'intconfig.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:420,fixed:false,maskopacity:40})
+}
+function Showwifisetting1()
+{
+	TINY.box.show({iframe:'wifisetting1.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:450,fixed:false,maskopacity:40})
+}
+function Showdevicemag()
+{
+	TINY.box.show({iframe:'devicemag.shtml?number=' + Math.random(),boxid:'frameless',width:700,height:530,fixed:false,maskopacity:40})
+}
+
+</script>
+</head>
+
+
+<body>
+<div class="head">
+	<div class="logo"></div>
+	<div class="menu">
+			<ul>
+				<li class="line" onClick="firewall()"><strong><span class="firewall">防火墙管理</span></strong></li>
+			<li class="line" onClick="ShowChangepasswd()"><strong><span>修改管理员密码</span></strong></li>
+			<li class="line" onClick="ShowQuickSetUp()" ><strong><span class="qc"><b>设置向导</b></span></strong></li>
+				<li class="line" onClick="ShowShowSysLog()"><strong><span class="qc"><b>系统日志</b></span></strong></li>
+			<form method="post" name="reboot" target="submitFrame" id="reboot" action="/cgi-bin/adm.cgi">
+			<input type="hidden" name="page" value="loadreboot"/>
+			<li><strong><span class="reset" onClick="javascript:reboot_alert();"><b>重启路由</b></span></strong></li>
+			</form>
+			<!--for reboot submint-->
+			<iframe style="width:0; height:0; margin-top:-10px; visibility:hidden; display:none;" name="submitFrame" src="about:blank"></iframe>
+		</ul>
+	</div>
+</div>
+<div class="mainsetting">
+	<div class="ccbg">
+
+		<div class="section2">
+			<div class="linkstate">
+				<div class="btnarea">
+					<div class="btnint"  onclick="routerMode()">
+						<span><em id="routermode" style="padding-left:54px">工作模式</span><strong></strong>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="section1">
+			<div id="internet" class="intstate">
+				<div class="intok "></div>
+				<div class="btnarea">
+					<div class="btnint" id="intbtn" style="position:absolute;" onClick="Showintconfig()" >
+						<b></b><span>互联网</span><strong></strong>
+					</div>
+				</div>
+				<div class="stateline"></div>
+			</div>
+			<div class="wifistate" id="wifistate">
+				<div class="wifiok"></div>
+				<div class="btnarea">
+					<div class="btnint" id="wifibtn" onClick="Showwifisetting1()">
+						<b></b><span>无线</span><strong></strong>
+					</div>
+				</div>
+				<div class="stateline"></div>
+			</div>
+			
+		</div>
+		<div class="section2">
+			<div class="linkstate">
+				<div class="btnarea">
+					<div class="btnint"  onclick="Showdevicemag()">
+						<span><em id="wireless_count">0</em>台无线设备连接到和目路由器</span><strong></strong>
+					</div>
+				</div>
+			</div>
+		</div>
+</div>
+
+		<div class="testmusic" id="bottomNav">
+			<!--<div class="qrcode" ><img id="qrcode" src="" /></div>-->
+			<div class="footer" id="version"></div>
+		</div>
+
+<nav id="bt-menu" class="bt-menu">
+	<ul>
+		<a href="#" onClick="resetMenu();" ><span style="background:url(images/sysstate.png) no-repeat center center;  display:block; width:90px; height:80px;"></span></a>
+		<a href="#" onClick="wireless_setting();" ><span style="background:url(images/wifi_dd.png) no-repeat center center; display:block; width:90px; height:80px;"></span></a>
+		<a href="#" onClick="advsetting();" ><span style="background:url(images/advsetting.png) no-repeat center center; display:block; width:90px; height:80px;"></span></a>
+	</ul>
+</nav>
+<div id="security_data" style="display:none"></div>
+</body>
+<script src="js/classie.js"></script>
+<script src="js/borderMenu.js"></script>
+</html>

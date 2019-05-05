@@ -1,0 +1,252 @@
+
+body { 
+    color:#676767;
+}
+* {
+	-moz-transition: all 0.3s ease-in;
+	-webkit-transition: all 0.3s ease-in;
+	-o-transition: all 0.3s ease-in;
+	transition: all 0.3s ease-in;
+}
+*:hover {
+	-moz-transition: all 0.3s ease-in;
+	-webkit-transition: all 0.3s ease-in;
+	-o-transition: all 0.3s ease-in;
+	transition: all 0.3s ease-in;
+}
+
+
+.int {
+	height:410px; 
+	width:670px; 
+	overflow:hidden; 
+	background:#fcfcfa url(../images/fullbg.gif) repeat-x; 
+	padding:5px 15px;
+}
+.int h1 {
+	font-size:18px; 
+	line-height:50px; 
+	border-bottom:1px #d3d3d3 solid;
+}
+.int h1 span {
+	font-size:12px; 
+	color:#919191; 
+	padding-left:15px; 
+	font-weight:normal;
+}
+.int .rb {
+	float:right; 
+	margin-left:10px;
+	background:#99e4f0; 
+}
+.int .cancel {
+	background:#99e4f0; 
+}
+.int .unselect {
+	background:#d2d2d2;
+}
+.int .unselect2 {
+	margin-right:5px;
+	background:#d2d2d2;
+}
+.int .unselect3{
+	margin-left:5px;
+	background:#d2d2d2;
+}
+
+
+.cfg {
+	padding:15px 0; 
+	height:330px;
+}
+.cfgleft {
+	float:left; 
+	width:185px; 
+	height:330px;
+	background:url(../images/cfgleftbg.png) repeat-y;
+}
+.cfgleft ul{}
+.cfgleft li {
+	cursor:pointer; 
+	height:40px; 
+	line-height:40px; 
+	font-size:14px; 
+	color:#666; 
+	border-left:4px #dfdfdf solid ; 
+	padding-left:12px;
+}
+.cfgleft li a,.cfgleft li a:visited {
+	color:#666; 
+	display:block; 
+	height:40px;
+	width:170px; 
+}
+.cfgleft li a:hover,.cfgleft li a:active {
+	text-decoration:none;
+}
+.cfgleft li:hover {
+	border-left:4px #1e9ec5 solid;  
+	font-weight:bold;
+}
+.cfgleft li.on {
+	border-left:4px #1e9ec5 solid;
+	color:#1e9ec5; 
+	font-weight:bold; 
+	font-size:14px; 
+	background:#EEEEED url(../images/arrow1.png) no-repeat 170px center;
+}
+.cfgleft li.on a {
+	color:#1e9ec5;
+}
+
+
+.cfgright {
+	float:right; 
+	width:470px; 
+	height:330px;
+}
+.cfgright td {
+	height:36px; 
+	font-size:14px;
+}
+.cfgright td span {
+	font-size:14px;
+}
+.cfgright .spheight {
+	height:60px; 
+}
+.cfgright td label {
+	font-size:14px; 
+	line-height:60px;
+}
+.cfgright td em {
+	font-style:normal;  
+	color:#ff7428; 
+	background:url(../images/check.png) no-repeat left bottom; 
+}
+.cfgright td i { 
+    color:#999; 
+	font-style:normal;
+}
+
+.inp1 {
+	height:26px; 
+	border:1px #d2d2d2 solid; 
+	width:160px;font-family:"微软雅黑"; 
+	color:#666; 
+}
+.inp2 {
+	height:26px; 
+	border:1px #d2d2d2 solid; 
+	width:160px;
+	font-family:"微软雅黑"; 
+	color:#666; 
+	background-color: #ECEDEB;
+	border:0;
+}
+.inp3 {
+	height:26px;
+	border:1px #d2d2d2 solid; 
+	font-family:"微软雅黑"; 
+	color:#666; 
+}
+
+
+
+.subpart {
+	height:48px; 
+	padding-left:120px; 
+	padding-top:25px;
+}
+.subpart ul{}
+.subpart li {
+	float:left; 
+	padding-right:10px;
+}
+.subpart b {
+	display:block; 
+	height:48px; 
+	cursor:pointer; 
+	width:150px; 
+	font-weight:normal; 
+	float:left; 
+	background:#77d1df; 
+	font-size:18px; 
+	color:#fff; 
+	text-align:center; 
+	line-height:48px;
+}
+.subpart b:hover {
+	background:#56bbcb;
+}
+.subpart .cancel {
+	width:110px; 
+	background:#99e4f0; 
+}
+.subpart .apply {
+	display:block; 
+	font-family:"微软雅黑"; 
+	height:48px; 
+	cursor:pointer; 
+	width:150px; 
+	font-weight:normal; 
+	float:left; 
+	background:#77d1df; 
+	font-size:18px; 
+	color:#fff; 
+	text-align:center; 
+	line-height:48px;
+	border:none;
+}
+.subpart .apply:hover {
+	background:#56bbcb;
+}
+
+
+.selectswitch {
+	height:29px;
+}
+.selectswitch em {
+	float:left; 
+	height:20px; 
+	width:20px; 
+	display:block; 
+	margin:4px; 
+	padding:0;
+}
+.selectswitch .closestate {
+	background:url(../images/wifistateicon.png) no-repeat;
+}
+.selectswitch .openstate {
+	background:url(../images/wifistateicon.png) no-repeat 0 -40px;
+}
+.selectswitch span {
+	float:left; 
+	padding-left:0px; 
+	background:url(../images/selbg.png) no-repeat; 
+	width:55px; 
+	height:29px; 
+	display:block;
+}
+.selectswitch strong {
+	display:block; 
+	margin:3px; 
+	height:23px; 
+	width:49px; 
+	background:url(../images/select.png) no-repeat right center; 
+	cursor:pointer;
+}
+.switchoff{}
+.switchoff .closestate {
+	background-position:0 -20px;
+}
+.switchoff .openstate {
+	background-position:0 -60px;
+}
+.switchoff  strong {
+	background-position:left center;
+}
+
+.radiobox {
+	margin-top:-2px;
+}

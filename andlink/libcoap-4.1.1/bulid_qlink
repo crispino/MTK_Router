@@ -1,0 +1,3 @@
+#/bin/bash
+export BUILD_SO=1
+make -f Makefile_QLink CC=mipsel-openwrt-linux-gcc AR=mipsel-openwrt-linux-ar LD=mipsel-openwrt-linux-ld $1

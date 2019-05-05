@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# place the commands to run after the pppd dial up successfully.
+
+if [ -x /bin/qos_run ]; then
+	echo "/bin/qos_run"
+	/bin/qos_run
+fi
+
+if [ -x /sbin/qos_custom.sh ]; then
+	echo "/sbin/qos_custom.sh"
+	/sbin/qos_custom.sh
+fi
+
+if [ -x /sbin/ddns.sh ]; then
+	echo "/sbin/ddns.sh"
+	/sbin/ddns.sh
+fi
+
+if [ -x /sbin/config-udhcpd.sh ]; then
+	echo "/sbin/config-udhcpd.sh $DNS1 $DNS2"
+	/sbin/config-udhcpd.sh -d $DNS1 $DNS2
+fi
+
+pppoe_mtu=`nvram_get 2860 wan_pppoe_mtu`
+
+if [ "$pppoe_mtu" != "" ]; then
+	echo "$pppoe_mtu" > /sys/class/net/ppp0/mtu
+
+fi
+
+# notify goahead that WAN IP has been acquired/updated.
+killall -SIGTSTP goahead
+killall -SIGTSTP nvram_daemon

@@ -1,0 +1,1679 @@
+
+<!-- Copyright 2011, MediaTek Inc. All Rights Reserved. -->
+<html>
+<head>
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" CONTENT="-1">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/style/normal_ws.css" type="text/css">
+<title>无线安全设置</title>
+</head>
+
+<script type="text/javascript" src="/shareFun.js"></script>
+<script language="JavaScript" type="text/javascript">
+var submit_buttons = ["secureApply", "secureCancel"];
+var MBSSID_MAX = 1*"1";
+var ACCESSPOLICYLIST_MAX = 64;
+var changed = 0;
+var old_MBSSID;
+var defaultShownMBSSID = "<!--#exec cmd="web 2860 nvram CurrentSSIDIndx"-->";
+var PhyMode = "9";
+var SSID = new Array();
+var PreAuth = new Array();
+var AuthMode = new Array();
+var EncrypType = new Array();
+var DefaultKeyID = new Array();
+var Key1Type = new Array();
+var Key1Str = new Array();
+var Key2Type = new Array();
+var Key2Str = new Array();
+var Key3Type = new Array();
+var Key3Str = new Array();
+var Key4Type = new Array();
+var Key4Str = new Array();
+var WPAPSK = new Array();
+var RekeyMethod = new Array();
+var RekeyInterval = new Array();
+var PMKCachePeriod = new Array();
+var IEEE8021X = new Array();
+var RADIUS_Server = new Array();
+var RADIUS_Port = new Array();
+var RADIUS_Key = new Array();
+var session_timeout_interval = new Array();
+var PMFMFPC = new Array();
+var PMFMFPR = new Array();
+var PMFSHA256 = new Array();
+var AccessPolicy = new Array();
+var AccessControlList = new Array();
+var WapiPskType = new Array();
+var WapiPsk = new Array();
+var WapiAsIpAddr = new Array();
+var WapiAsPort = new Array();
+var WapiAsCertPath = new Array();
+var WapiUserCertPath = new Array();
+var wapib = "0";
+var wpsenable = "0";
+var ht_disallow_tkip = "1";
+var wpa_support = 0;
+var pmf_support = "0";
+var dbdcb = "0";
+var dbdc_en = "";
+var mprofileb = "0";
+
+function checkHex(str){
+	var len = str.length;
+
+	for (var i=0; i<str.length; i++) {
+		if ((str.charAt(i) >= '0' && str.charAt(i) <= '9') ||
+		    (str.charAt(i) >= 'a' && str.charAt(i) <= 'f') ||
+		    (str.charAt(i) >= 'A' && str.charAt(i) <= 'F') ){
+			continue;
+		}else
+	        return false;
+	}
+	return true;
+}
+
+function checkInjection(str)
+{
+	var len = str.length;
+	for (var i=0; i<str.length; i++) {
+		if ( str.charAt(i) == '\r' || str.charAt(i) == '\n'){
+			return false;
+		}
+	}
+	return true;
+}
+
+function checkStrictInjection(str)
+{
+	var len = str.length;
+	for (var i=0; i<str.length; i++) {
+		if ( str.charAt(i) == ';' || str.charAt(i) == ',' ||
+			 str.charAt(i) == '\r' || str.charAt(i) == '\n'){
+			return false;
+		}
+	}
+	return true;
+}
+
+function WapiCertUpdateHTML()
+{
+	if (http_request.readyState == 4 && http_request.status == 200) {
+		var all_str = http_request.responseText;
+		var field = all_str.split('\t');
+		var cert = document.getElementById("wapicert_ascert");
+
+		if (field[0].length > 0)
+			cert.options[cert.length] = new Option(field[0], field[0]);
+		cert = document.getElementById("wapicert_usercert");
+		if (field[1].length > 0)
+			cert.options[cert.length] = new Option(field[1], field[1]);
+	}
+}
+
+function WapiCertUpdate()
+{
+	makeRequest("/cgi-bin/makeRequest.cgi", "updateWapiCert", WapiCertUpdateHTML);
+}
+
+function deleteAccessPolicyListHandler()
+{
+	setTimeout("window.location.reload(true)", 5000);
+}
+
+function initAll()
+{
+	var str;
+
+	if (defaultShownMBSSID == "")
+		defaultShownMBSSID = 0;
+	if ((str = "<!--#exec cmd="web 2860 nvram SSID1"-->") != "")
+	{
+		SSID[0] = str;
+		Key1Str[0] = "<!--#exec cmd="web 2860 nvram Key1Str1"-->";
+		Key2Str[0] = "<!--#exec cmd="web 2860 nvram Key2Str1"-->";
+		Key3Str[0] = "<!--#exec cmd="web 2860 nvram Key3Str1"-->";
+		Key4Str[0] = "<!--#exec cmd="web 2860 nvram Key4Str1"-->";
+		WPAPSK[0] = "<!--#exec cmd="web 2860 nvram WPAPSK1"-->";
+		RADIUS_Key[0] = "<!--#exec cmd="web 2860 nvram RADIUS_Key1"-->";
+		AccessPolicy[0] = "<!--#exec cmd="web 2860 nvram AccessPolicy0"-->";
+		AccessControlList[0] = "<!--#exec cmd="web 2860 nvram AccessControlList0"-->";
+		WapiPsk[0] = "<!--#exec cmd="web 2860 nvram WapiPsk1"-->";
+	}
+/*
+	if ((str = "") != "")
+	{
+		SSID[1] = str;
+		Key1Str[1] = "";
+		Key2Str[1] = "";
+		Key3Str[1] = "";
+		Key4Str[1] = "";
+		WPAPSK[1] = "";
+		RADIUS_Key[1] = "";
+		AccessPolicy[1] = "0";
+		AccessControlList[1] = "";
+		WapiPsk[1] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[2] = str;
+		Key1Str[2] = "";
+		Key2Str[2] = "";
+		Key3Str[2] = "";
+		Key4Str[2] = "";
+		WPAPSK[2] = "";
+		RADIUS_Key[2] = "";
+		AccessPolicy[2] = "0";
+		AccessControlList[2] = "";
+		WapiPsk[2] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[3] = str;
+		Key1Str[3] = "";
+		Key2Str[3] = "";
+		Key3Str[3] = "";
+		Key4Str[3] = "";
+		WPAPSK[3] = "";
+		RADIUS_Key[3] = "";
+		AccessPolicy[3] = "0";
+		AccessControlList[3] = "";
+		WapiPsk[3] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[4] = str;
+		Key1Str[4] = "";
+		Key2Str[4] = "";
+		Key3Str[4] = "";
+		Key4Str[4] = "";
+		WPAPSK[4] = "";
+		RADIUS_Key[4] = "";
+		AccessPolicy[4] = "";
+		AccessControlList[4] = "";
+		WapiPsk[4] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[5] = str;
+		Key1Str[5] = "";
+		Key2Str[5] = "";
+		Key3Str[5] = "";
+		Key4Str[5] = "";
+		WPAPSK[5] = "";
+		RADIUS_Key[5] = "";
+		AccessPolicy[5] = "";
+		AccessControlList[5] = "";
+		WapiPsk[5] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[6] = str;
+		Key1Str[6] = "";
+		Key2Str[6] = "";
+		Key3Str[6] = "";
+		Key4Str[6] = "";
+		WPAPSK[6] = "";
+		RADIUS_Key[6] = "";
+		AccessPolicy[6] = "";
+		AccessControlList[6] = "";
+		WapiPsk[6] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[7] = str;
+		Key1Str[7] = "";
+		Key2Str[7] = "";
+		Key3Str[7] = "";
+		Key4Str[7] = "";
+		WPAPSK[7] = "";
+		RADIUS_Key[7] = "";
+		AccessPolicy[7] = "";
+		AccessControlList[7] = "";
+		WapiPsk[7] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[8] = str;
+		Key1Str[8] = "";
+		Key2Str[8] = "";
+		Key3Str[8] = "";
+		Key4Str[8] = "";
+		WPAPSK[8] = "";
+		RADIUS_Key[8] = "";
+		AccessPolicy[8] = "";
+		AccessControlList[8] = "";
+		WapiPsk[8] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[9] = str;
+		Key1Str[9] = "";
+		Key2Str[9] = "";
+		Key3Str[9] = "";
+		Key4Str[9] = "";
+		WPAPSK[9] = "";
+		RADIUS_Key[9] = "";
+		AccessPolicy[9] = "";
+		AccessControlList[9] = "";
+		WapiPsk[9] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[10] = str;
+		Key1Str[10] = "";
+		Key2Str[10] = "";
+		Key3Str[10] = "";
+		Key4Str[10] = "";
+		WPAPSK[10] = "";
+		RADIUS_Key[10] = "";
+		AccessPolicy[10] = "";
+		AccessControlList[10] = "";
+		WapiPsk[10] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[11] = str;
+		Key1Str[11] = "";
+		Key2Str[11] = "";
+		Key3Str[11] = "";
+		Key4Str[11] = "";
+		WPAPSK[11] = "";
+		RADIUS_Key[11] = "";
+		AccessPolicy[11] = "";
+		AccessControlList[11] = "";
+		WapiPsk[11] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[12] = str;
+		Key1Str[12] = "";
+		Key2Str[12] = "";
+		Key3Str[12] = "";
+		Key4Str[12] = "";
+		WPAPSK[12] = "";
+		RADIUS_Key[12] = "";
+		AccessPolicy[12] = "";
+		AccessControlList[12] = "";
+		WapiPsk[12] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[13] = str;
+		Key1Str[13] = "";
+		Key2Str[13] = "";
+		Key3Str[13] = "";
+		Key4Str[13] = "";
+		WPAPSK[13] = "";
+		RADIUS_Key[13] = "";
+		AccessPolicy[13] = "";
+		AccessControlList[13] = "";
+		WapiPsk[13] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[14] = str;
+		Key1Str[14] = "";
+		Key2Str[14] = "";
+		Key3Str[14] = "";
+		Key4Str[14] = "";
+		WPAPSK[14] = "";
+		RADIUS_Key[14] = "";
+		AccessPolicy[14] = "";
+		AccessControlList[14] = "";
+		WapiPsk[14] = "";
+	}
+	if ((str = "") != "")
+	{
+		SSID[15] = str;
+		Key1Str[15] = "";
+		Key2Str[15] = "";
+		Key3Str[15] = "";
+		Key4Str[15] = "";
+		WPAPSK[15] = "";
+		RADIUS_Key[15] = "";
+		AccessPolicy[15] = "";
+		AccessControlList[15] = "";
+		WapiPsk[15] = "";
+	}
+*/
+
+	str = "<!--#exec cmd="web 2860 nvram PreAuth"-->";
+	PreAuth = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram AuthMode"-->";
+	AuthMode = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram EncrypType"-->";
+	EncrypType = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram DefaultKeyID"-->";
+	DefaultKeyID = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram Key1Type"-->";
+	Key1Type = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram Key2Type"-->";
+	Key2Type = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram Key3Type"-->";
+	Key3Type = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram Key4Type"-->";
+	Key4Type = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram RekeyMethod"-->";
+	RekeyMethod = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram RekeyInterval"-->";
+	RekeyInterval = str.split(";");
+	str = "<!--#exec cmd="web 2860 nvram PMKCachePeriod"-->";
+	PMKCachePeriod = str.split(";");
+	IEEE8021X = str.split(";");
+	str = "";
+	RADIUS_Server = str.split(";");
+	str = "1812";
+	RADIUS_Port = str.split(";");
+	str = "0";
+	session_timeout_interval = str.split(";");
+	if(pmf_support == "1"){
+		str = "";
+		PMFMFPC = str.split(";");
+		str = "";
+		PMFMFPR = str.split(";");
+		str = "";
+		PMFSHA256 = str.split(";");
+	}
+	str = "";
+	WapiPskType = str.split(";");
+	str = "";
+	WapiAsIpAddr = str.split(";");
+	str = "";
+	WapiAsPort = str.split(";");
+	str = "";
+	WapiAsCertPath = str.split(";");
+	str = "";
+	WapiUserCertPath = str.split(";");
+
+
+	for (var i=0; i<SSID.length; i++) {
+		/* !!!! IMPORTANT !!!!*/
+		if(IEEE8021X[i] == "1")
+			AuthMode[i] = "IEEE8021X";
+		if(AuthMode[i] == "OPEN" && EncrypType[i] == "NONE" && IEEE8021X[i] == "0")
+			AuthMode[i] = "Disable";
+		//alert("SSID"+i+": "+SSID[i]+", PreAuth"+i+": "+PreAuth[i]+", AuthMode"+i+": "+AuthMode[i]+", EncrypType"+i+": "+EncrypType[i]+", DefaultKeyID"+i+": "+DefaultKeyID[i]+", Key1Type"+i+": "+Key1Type[i]+", Key1Str"+i+": "+Key1Str[i]+", Key2Type"+i+": "+Key2Type[i]+", Key2Str"+i+": "+Key2Str[i]+", Key3Type"+i+": "+Key3Type[i]+", Key3Str"+i+": "+Key3Str[i]+", Key4Type"+i+": "+Key4Type[i]+", Key4Str"+i+": "+Key4Str[i]+", WPAPSK"+i+": "+WPAPSK[i]+", RekeyMethod"+i+": "+RekeyMethod[i]+", RekeyInterval"+i+": "+RekeyInterval[i]+", PMKCachePeriod"+i+": "+PMKCachePeriod[i]+", IEEE8021X"+i+": "+IEEE8021X[i]+", RADIUS_Server"+i+": "+RADIUS_Server[i]+", RADIUS_Port"+i+": "+RADIUS_Port[i]+", RADIUS_Key"+i+": "+RADIUS_Key[i]+", session_timeout_interval"+i+": "+session_timeout_interval[i]+", AccessPolicy"+i+": "+AccessPolicy[i]+", AccessControlList"+i+": "+AccessControlList[i]+WapiPskType[i]+" + "+WapiPsk[i]+" + "+WapiAsIpAddr[i]+" + "+WapiAsPort[i]+" + "+WapiAsCertPath[i]+" + "+WapiUserCertPath[i]);
+	}
+	UpdateMBSSIDList();
+	LoadFields(defaultShownMBSSID);
+
+	// load Access Policy for MBSSID[selected]
+	LoadAP();
+	ShowAP(defaultShownMBSSID);
+}
+
+function checkData()
+{
+	var securitymode;
+	var wps_enable;
+//	var ssid = document.security_form.Ssid.value;
+	securitymode = document.security_form.security_mode.value;
+	var EzEnable = "0";
+	var EzConfStatus = "0";
+	var easyconfArr = EzConfStatus.split(";");
+	var enableArr = EzEnable.split(";");
+	/* removed on request by prakhar WCNCR00150255
+	if (securitymode != "WPA2PSK" || document.security_form.cipher[1].checked != true)
+	{
+		if (enableArr[0] == 1 && easyconfArr[0] == 2)
+		{
+			alert("Please go to MAN page to set Easy Enable as disable.");
+			return false;
+		}
+	}
+	*/
+
+	if ((dbdcb == "1") && (dbdc_en == "1")){
+		var wps_enable_list = wpsenable.split(";");
+		var ssid_idx = document.security_form.ssidIndex.value;
+
+		if (wps_enable_list.length > ssid_idx)
+			wps_enable = wps_enable_list[ssid_idx];
+		else
+			wps_enable = "0";
+	} else {
+		wps_enable = wpsenable;
+	}
+
+	securitymode = document.security_form.security_mode.value;
+	if (securitymode == "Disable")
+	{
+		if (wps_enable != "0")
+			alert('该设置不安全!');
+	}
+	else if (securitymode == "OPEN" || securitymode == "SHARED" ||securitymode == "WEPAUTO")
+	{
+		if(! check_Wep(securitymode) )
+			return false;
+		if (wps_enable != "0")
+			alert("该项设置将关闭WPS!");
+	}
+	else if (securitymode == "WPAPSK" || securitymode == "WPA2PSK" || securitymode == "WPAPSKWPA2PSK" /* || security_mode == 5 */)
+	{
+		var keyvalue = document.security_form.passphrase.value;
+
+		if (keyvalue.length == 0){
+			alert('请输入wpapsk密码!');
+			return false;
+		}
+
+		if (keyvalue.length < 8){
+			alert('wpapsk至少为8个字符!');
+			return false;
+		}
+
+		if (keyvalue.length == 64 && checkHex(keyvalue) == false) {
+			alert('请输入8~63英文字符或64个16进制字符!');
+			return false;
+		}
+
+		if(checkInjection(document.security_form.passphrase.value) == false){
+			alert('密码中包含不合法字符.');
+			return false;
+		}
+
+		if(document.security_form.cipher[0].checked != true &&
+		   document.security_form.cipher[1].checked != true &&
+		   document.security_form.cipher[2].checked != true){
+			alert('请选择WPA算法.');
+			return false;
+		}
+
+		if(check_wpa() == false)
+			return false;
+	}
+	else if (securitymode == "IEEE8021X") // 802.1x
+	{
+		if( document.security_form.ieee8021x_wep[0].checked == false &&
+			document.security_form.ieee8021x_wep[1].checked == false){
+			alert('请选择802.1x WEP选项.');
+			return false;
+		}
+		if(check_radius() == false)
+			return false;
+	}
+	else if (securitymode == "WPA" || securitymode == "WPA1WPA2") //     WPA or WPA1WP2 mixed mode
+	{
+		if(check_wpa() == false)
+			return false;
+		if(check_radius() == false)
+			return false;
+	}
+	else if (securitymode == "WPA2") //         WPA2
+	{
+		if(check_wpa() == false)
+			return false;
+		if( document.security_form.PreAuthentication[0].checked == false &&
+			document.security_form.PreAuthentication[1].checked == false){
+			alert('请选择预认证选项.');
+			return false;
+		}
+
+		if(!document.security_form.PMKCachePeriod.value.length){
+			alert('请输入PMK缓存期.');
+			return false;
+		} else if (isNaN(document.security_form.PMKCachePeriod.value)) {
+			alert('请输入数字.');
+			return false;
+		}
+		if(check_radius() == false)
+			return false;
+	}
+	else if (securitymode == "WAICERT")
+	{
+		if(check_as() == false)
+			return false;
+	}
+	else if (securitymode == "WAIPSK")
+	{
+		var pskey = document.security_form.wapipsk_prekey.value;
+
+		if (pskey.length == 0)
+		{
+			alert('请输入WAPI PSK预共享密钥!');
+			return false;
+		}
+
+		if (pskey.length < 8)
+		{
+			alert('请至少输入8个字符的WAPI PSK预共享密钥!');
+			return false;
+		}
+
+		if (checkInjection(pskey) == false)
+		{
+			alert('预共享密钥中的无效字符。');
+			return false;
+		}
+
+		if (document.security_form.wapipsk_keytype.selectedIndex == 0 &&
+		    pskey.length%2 != 0)
+		{
+			alert('HEX类型的预共享密钥是2的倍数！');
+			return false;
+		}
+	}
+
+	// check Access Policy
+	for(i=0; i<MBSSID_MAX; i++){
+
+
+		if( document.getElementById("newap_text_" + i).value != ""){
+			if(!checkMac(document.getElementById("newap_text_" + i).value)){
+				alert("Access Policy窗体中的mac地址无效.\n");
+				return false;
+			}
+			if ((document.getElementById("newap_text_" + i).value == "F4:4C:70:51:19:89") ||
+					(document.getElementById("newap_text_" + i).value == "F4:4C:70:51:19:88")) {
+				alert("The mac address is illegal!\n");
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+function check_wpa()
+{
+	if(document.security_form.cipher[0].checked != true &&
+	   document.security_form.cipher[1].checked != true &&
+	   document.security_form.cipher[2].checked != true){
+		alert('请选择WPA算法.');
+		return false;
+	}
+
+	// there is no tkip-aes mixed mode in WPA-PSK.
+	if ((document.security_form.security_mode.value == "WPA" ||
+	     document.security_form.security_mode.value == "WPAPSK") &&
+	     document.security_form.cipher[2].checked == true)
+	{
+		document.security_form.cipher[0].checked = true;
+		document.security_form.cipher[1].checked = false;
+		document.security_form.cipher[2].checked = false;
+	}
+
+	if(isNaN(document.security_form.keyRenewalInterval.value) == true){
+		alert('请输入有效的密钥更新间隔');
+		return false;
+	}
+	if(document.security_form.keyRenewalInterval.value == 0){
+		alert('续订密钥间隔等于0，所以设备不会刷新密钥');
+	}
+	if (ht_disallow_tkip == "1" && document.security_form.cipher[0].checked)
+		alert("禁用TKIP / WEP加密功能，因此11N速率将关闭！");
+
+	return true;
+}
+
+function check_as()
+{
+	if (!document.security_form.wapicert_asipaddr.value.length)
+	{
+		alert("请输入认证服务器IP地址!");
+		return false;
+	}
+
+	if (!document.security_form.wapicert_asport.value.length)
+	{
+		alert("请输入认证服务器端口号!");
+		return false;
+	}
+
+	if (checkIpAddr(document.security_form.wapicert_asipaddr, false) == false)
+	{
+		alert("请输入合法的认证服务器IP地址!");
+		return false;
+	}
+
+	if( (checkRange(document.security_form.wapicert_asport.value, 1, 1, 65535)==false) ||
+		(isNaN(document.security_form.wapicert_asport.value) == true)){
+		alert('请输入认证服务器端口号.');
+		return false;
+	}
+}
+
+function check_radius()
+{
+	if(!document.security_form.RadiusServerIP.value.length){
+		alert('请输入radius服务器IP地址.');
+		return false;
+	}
+	if(!document.security_form.RadiusServerPort.value.length){
+		alert('请输入radius服务器端口号.');
+		return false;
+	}
+	if(!document.security_form.RadiusServerSecret.value.length){
+		alert('请输入radius服务器公钥.');
+		return false;
+	}
+
+	if(checkIpAddr(document.security_form.RadiusServerIP, false) == false){
+		alert('请输入合法的radius服务器IP地址.');
+		return false;
+	}
+	if( (checkRange(document.security_form.RadiusServerPort.value, 1, 1, 65535)==false) ||
+		(isNaN(document.security_form.RadiusServerPort.value) == true)){
+		alert('请输入合法的radius服务器端口号.');
+		return false;
+	}
+	if(checkStrictInjection(document.security_form.RadiusServerSecret.value)==false){
+		alert('公钥包含不合法字符.');
+		return false;
+	}
+
+	if(document.security_form.RadiusServerSessionTimeout.value.length){
+		if(isNaN(document.security_form.RadiusServerSessionTimeout.value) == true){
+			alert('请输入有效的会话超时号码，或者将其留空.');
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function securityMode(c_f)
+{
+	var security_mode;
+
+
+	changed = c_f;
+
+	hideWep();
+
+	display("none", "div_wpa");
+	display("none", "div_wpa_algorithms");
+	display("none", "wpa_passphrase");
+	display("none", "wpa_key_renewal_interval");
+	display("none", "wpa_PMK_Cache_Period");
+	display("none", "wpa_preAuthentication");
+	document.security_form.cipher[0].disabled = true;
+	document.security_form.cipher[1].disabled = true;
+	document.security_form.cipher[2].disabled = true;
+	document.security_form.passphrase.disabled = true;
+	document.security_form.keyRenewalInterval.disabled = true;
+	document.security_form.PMKCachePeriod.disabled = true;
+	document.security_form.PreAuthentication.disabled = true;
+
+	// 802.1x
+	display("none", "div_radius_server");
+	display("none", "div_8021x_wep");
+	document.security_form.ieee8021x_wep.disable = true;
+	document.security_form.RadiusServerIP.disable = true;
+	document.security_form.RadiusServerPort.disable = true;
+	document.security_form.RadiusServerSecret.disable = true;
+	document.security_form.RadiusServerSessionTimeout.disable = true;
+	document.security_form.RadiusServerIdleTimeout.disable = true;
+
+	// wapi
+	display("none", "div_wapi_psk");
+	document.security_form.wapipsk_prekey.disabled = true;
+	document.security_form.wapipsk_keytype.disabled = true;
+	display("none", "div_wapi_cert");
+	document.security_form.wapicert_asipaddr.disabled = true;
+	document.security_form.wapicert_asport.disabled = true;
+	document.security_form.wapicert_ascert.disabled = true;
+	document.security_form.wapicert_usercert.disabled = true;
+
+	// PMF
+	display("none", "div_wpa2_pmf")
+	document.security_form.PMFMFPC.disabled = true;
+	document.security_form.PMFMFPR.disabled = true;
+	document.security_form.PMFSHA256.disabled = true;
+
+	security_mode = document.security_form.security_mode.value;
+
+	if (security_mode == "OPEN" || security_mode == "SHARED" ||security_mode == "WEPAUTO")
+	{
+		showWep(security_mode);
+	}else if (security_mode == "WPAPSK" || security_mode == "WPA2PSK" || security_mode == "WPAPSKWPA2PSK"){
+		<!-- WPA -->
+		display("table", "div_wpa");
+		display("table-row", "div_wpa_algorithms");
+		document.security_form.cipher[0].disabled = false;
+		document.security_form.cipher[1].disabled = false;
+
+		// deal with TKIP-AES mixed mode
+		if(security_mode == "WPA2PSK" || security_mode == "WPAPSKWPA2PSK")
+			document.security_form.cipher[2].disabled = false;
+
+		if(security_mode == "WPA2PSK"){
+			// PMF
+			display("table", "div_wpa2_pmf")
+			document.security_form.PMFMFPC.disabled = false;
+			document.security_form.PMFMFPR.disabled = false;
+			document.security_form.PMFSHA256.disabled = false;
+		}
+
+		display("table-row", "wpa_passphrase");
+		document.security_form.passphrase.disabled = false;
+
+		display("table-row", "wpa_key_renewal_interval");
+		document.security_form.keyRenewalInterval.disabled = false;
+	}else if (security_mode == "WPA" || security_mode == "WPA2" || security_mode == "WPA1WPA2") //wpa enterprise
+	{
+		display("table", "div_wpa");
+		display("table-row", "div_wpa_algorithms");
+		document.security_form.cipher[0].disabled = false;
+		document.security_form.cipher[1].disabled = false;
+		display("table-row", "wpa_key_renewal_interval");
+		document.security_form.keyRenewalInterval.disabled = false;
+
+		<!-- 802.1x -->
+		display("table", "div_radius_server");
+		document.security_form.RadiusServerIP.disable = false;
+		document.security_form.RadiusServerPort.disable = false;
+		document.security_form.RadiusServerSecret.disable = false;
+		document.security_form.RadiusServerSessionTimeout.disable = false;
+		document.security_form.RadiusServerIdleTimeout.disable = false;
+
+		if(security_mode == "WPA2" || security_mode == "WPA1WPA2")
+			document.security_form.cipher[2].disabled = false;
+
+		if(security_mode == "WPA2"){
+			display("table-row", "wpa_preAuthentication");
+			document.security_form.PreAuthentication.disabled = false;
+			display("table-row", "wpa_PMK_Cache_Period");
+			document.security_form.PMKCachePeriod.disabled = false;
+
+			// PMF
+			display("table", "div_wpa2_pmf")
+			document.security_form.PMFMFPC.disabled = false;
+			document.security_form.PMFMFPR.disabled = false;
+			document.security_form.PMFSHA256.disabled = false;
+		}
+
+	}else if (security_mode == "IEEE8021X"){ // 802.1X-WEP
+		display("table", "div_8021x_wep");
+		display("table", "div_radius_server");
+		document.security_form.ieee8021x_wep.disable = false;
+		document.security_form.RadiusServerIP.disable = false;
+		document.security_form.RadiusServerPort.disable = false;
+		document.security_form.RadiusServerSecret.disable = false;
+		document.security_form.RadiusServerSessionTimeout.disable = false;
+		//document.security_form.RadiusServerIdleTimeout.disable = false;
+	}
+	else if (security_mode == "WAIPSK") {
+		display("table", "div_wapi_psk");
+		document.security_form.wapipsk_prekey.disabled = false;
+		document.security_form.wapipsk_keytype.disabled = false;
+	} else if (security_mode == "WAICERT") {
+		display("table", "div_wapi_cert");
+		document.security_form.wapicert_asipaddr.disabled = false;
+		document.security_form.wapicert_asport.disabled = false;
+		document.security_form.wapicert_ascert.disabled = false;
+		document.security_form.wapicert_usercert.disabled = false;
+		WapiCertUpdate();
+	}
+}
+
+function hideWep()
+{
+	display("none", "div_wep");
+}
+function showWep(mode)
+{
+	<!-- WEP -->
+	display("table", "div_wep");
+	//document.security_form.wep_auth_type.disabled = false;
+}
+
+
+function check_Wep(securitymode)
+{
+	var defaultid = document.security_form.wep_default_key.value;
+	var key_input;
+
+	if ( defaultid == 1 )
+		var keyvalue = document.security_form.wep_key_1.value;
+	else if (defaultid == 2)
+		var keyvalue = document.security_form.wep_key_2.value;
+	else if (defaultid == 3)
+		var keyvalue = document.security_form.wep_key_3.value;
+	else if (defaultid == 4)
+		var keyvalue = document.security_form.wep_key_4.value;
+
+	if (keyvalue.length == 0 &&  (securitymode == "SHARED" || securitymode == "OPEN" || securitymode == "WEPAUTO")){ // shared wep  || md5
+		alert('请输入wep密码'+defaultid+' !');
+		return false;
+	}
+
+	var keylength = document.security_form.wep_key_1.value.length;
+	if (keylength != 0){
+		if (document.security_form.WEP1Select.options.selectedIndex == 0){
+			if(keylength != 5 && keylength != 13) {
+				alert('wep密码保护5-13个字符 !');
+				return false;
+			}
+			if(checkInjection(document.security_form.wep_key_1.value)== false){
+				alert('Wep密码保护不合法字符');
+				return false;
+			}
+		}
+		if (document.security_form.WEP1Select.options.selectedIndex == 1){
+			if(keylength != 10 && keylength != 26) {
+				alert('wep密码长度在10-26字符长度之间1 !');
+				return false;
+			}
+			if(checkHex(document.security_form.wep_key_1.value) == false){
+				alert('WEP密钥格式错误!');
+				return false;
+			}
+		}
+	}
+
+	keylength = document.security_form.wep_key_2.value.length;
+	if (keylength != 0){
+		if (document.security_form.WEP2Select.options.selectedIndex == 0){
+			if(keylength != 5 && keylength != 13) {
+				alert('请输入5-13字符的wep密钥2!');
+				return false;
+			}
+			if(checkInjection(document.security_form.wep_key_2.value)== false){
+				alert('Wep密钥2包含不合法的长度.');
+				return false;
+			}
+		}
+		if (document.security_form.WEP2Select.options.selectedIndex == 1){
+			if(keylength != 10 && keylength != 26) {
+				alert('请输入10-26长度的wep密钥2!');
+				return false;
+			}
+			if(checkHex(document.security_form.wep_key_2.value) == false){
+				alert('WEP密钥2格式错误');
+				return false;
+			}
+		}
+	}
+
+	keylength = document.security_form.wep_key_3.value.length;
+	if (keylength != 0){
+		if (document.security_form.WEP3Select.options.selectedIndex == 0){
+			if(keylength != 5 && keylength != 13) {
+				alert('请输入5-13个字符的wep密钥3 !');
+				return false;
+			}
+			if(checkInjection(document.security_form.wep_key_3.value)== false){
+				alert('WEP密钥3包含不合法字符.');
+				return false;
+			}
+		}
+		if (document.security_form.WEP3Select.options.selectedIndex == 1){
+			if(keylength != 10 && keylength != 26) {
+				alert('请输入10-26字符的WEP密钥3 !');
+				return false;
+			}
+			if(checkHex(document.security_form.wep_key_3.value) == false){
+				alert('WEP密钥3格式错误!');
+				return false;
+			}
+		}
+	}
+
+	keylength = document.security_form.wep_key_4.value.length;
+	if (keylength != 0){
+		if (document.security_form.WEP4Select.options.selectedIndex == 0){
+			if(keylength != 5 && keylength != 13) {
+				alert('请输入5-13个字符的WEP密钥4!');
+				return false;
+			}
+			if(checkInjection(document.security_form.wep_key_4.value)== false){
+				alert('Wep密钥4包含不合法字符');
+				return false;
+			}
+		}
+		if (document.security_form.WEP4Select.options.selectedIndex == 1){
+			if(keylength != 10 && keylength != 26) {
+				alert('请输入10-26个字符的WEP密钥4!');
+				return false;
+			}
+
+			if(checkHex(document.security_form.wep_key_4.value) == false){
+				alert('WEP密钥4格式错误!');
+				return false;
+			}
+		}
+	}
+	if (ht_disallow_tkip == "1")
+		alert("禁用TKIP / WEP加密，因此11N速率将关闭!");
+
+	return true;
+}
+
+function submit_apply()
+{
+
+	if (checkData() == true){
+		changed = 0;
+
+		return true;
+//		document.security_form.submit();
+//		opener.location.reload();
+	}
+}
+
+function LoadFields(MBSSID)
+{
+	var result;
+	var wps_enable;
+
+	if ((dbdcb == "1") && (dbdc_en == "1")){
+		var wps_enable_list = wpsenable.split(";");
+
+		if (wps_enable_list.length > MBSSID)
+			wps_enable = wps_enable_list[MBSSID];
+		else
+			wps_enable = "0";
+		//console.log("wps_enable_list.length="+ wps_enable_list.length +" MBSSID="+ MBSSID +" wps_enable="+ wps_enable +" wpsenable="+ wpsenable);
+	} else {
+		wps_enable = wpsenable;
+	}
+
+	// Security Policy
+	sp_select = document.getElementById("security_mode");
+
+	sp_select.options.length = 0;
+
+	sp_select.options[sp_select.length] = new Option("关闭",		"Disable",	false, AuthMode[MBSSID] == "Disable");
+	sp_select.options[sp_select.length] = new Option("OPENWEP",	"OPEN",	false, AuthMode[MBSSID] == "OPEN");
+	if (wps_enable == "0")
+	{
+		sp_select.options[sp_select.length] = new Option("SHAREDWEP","SHARED", 	false, AuthMode[MBSSID] == "SHARED");
+
+		sp_select.options[sp_select.length] = new Option("WEPAUTO", "WEPAUTO",	false, AuthMode[MBSSID] == "WEPAUTO");
+	}
+	if (wps_enable == "0" && wpa_support == 1) {
+		sp_select.options[sp_select.length] = new Option("WPA", "WPA",		false, AuthMode[MBSSID] == "WPA");
+		sp_select.options[sp_select.length] = new Option("WPA-PSK", "WPAPSK",	false, AuthMode[MBSSID] == "WPAPSK");
+	}
+	//if (wps_enable == "0")
+		//sp_select.options[sp_select.length] = new Option("WPA2", "WPA2",		false, AuthMode[MBSSID] == "WPA2");
+	sp_select.options[sp_select.length] = new Option("WPA2-PSK", "WPA2PSK",	false, AuthMode[MBSSID] == "WPA2PSK");
+	sp_select.options[sp_select.length] = new Option("WPAPSKWPA2PSK", "WPAPSKWPA2PSK",	false, AuthMode[MBSSID] == "WPAPSKWPA2PSK");
+	//if (wps_enable == "0")
+		//sp_select.options[sp_select.length] = new Option("WPA1WPA2","WPA1WPA2",	false, AuthMode[MBSSID] == "WPA1WPA2");
+
+	//if (wps_enable == "0")
+		//sp_select.options[sp_select.length] = new Option("802.1X",	"IEEE8021X",false, AuthMode[MBSSID] == "IEEE8021X");
+	if (wapib == "1")
+	{
+		sp_select.options[sp_select.length] = new Option("WAPI-PSK", "WAIPSK",	false, AuthMode[MBSSID] == "WAIPSK");
+		sp_select.options[sp_select.length] = new Option("WAPI-Certificate", "WAICERT",	false, AuthMode[MBSSID] == "WAICERT");
+	}
+	// WEP
+	document.getElementById("WEP1").value = Key1Str[MBSSID];
+	document.getElementById("WEP2").value = Key2Str[MBSSID];
+	document.getElementById("WEP3").value = Key3Str[MBSSID];
+	document.getElementById("WEP4").value = Key4Str[MBSSID];
+
+	document.getElementById("WEP1Select").selectedIndex = (Key1Type[MBSSID] == "0" ? 1 : 0);
+	document.getElementById("WEP2Select").selectedIndex = (Key2Type[MBSSID] == "0" ? 1 : 0);
+	document.getElementById("WEP3Select").selectedIndex = (Key3Type[MBSSID] == "0" ? 1 : 0);
+	document.getElementById("WEP4Select").selectedIndex = (Key4Type[MBSSID] == "0" ? 1 : 0);
+
+	document.getElementById("wep_default_key").selectedIndex = parseInt(DefaultKeyID[MBSSID]) - 1 ;
+
+	// WPA
+	if(EncrypType[MBSSID] == "TKIP")
+		document.security_form.cipher[0].checked = true;
+	else if(EncrypType[MBSSID] == "AES")
+		document.security_form.cipher[1].checked = true;
+	else if(EncrypType[MBSSID] == "TKIPAES")
+		document.security_form.cipher[2].checked = true;
+
+	document.getElementById("passphrase").value = WPAPSK[MBSSID];
+	document.getElementById("keyRenewalInterval").value = RekeyInterval[MBSSID];
+	document.getElementById("PMKCachePeriod").value = PMKCachePeriod[MBSSID];
+	//document.getElementById("PreAuthentication").value = PreAuth[MBSSID];
+	if(PreAuth[MBSSID] == "0")
+		document.security_form.PreAuthentication[0].checked = true;
+	else
+		document.security_form.PreAuthentication[1].checked = true;
+
+	//802.1x wep
+	if(IEEE8021X[MBSSID] == "1"){
+		if(EncrypType[MBSSID] == "WEP")
+			document.security_form.ieee8021x_wep[1].checked = true;
+		else
+			document.security_form.ieee8021x_wep[0].checked = true;
+	}
+
+	document.getElementById("RadiusServerIP").value = RADIUS_Server[MBSSID];
+	document.getElementById("RadiusServerPort").value = RADIUS_Port[MBSSID];
+	document.getElementById("RadiusServerSecret").value = RADIUS_Key[MBSSID];
+	document.getElementById("RadiusServerSessionTimeout").value = session_timeout_interval[MBSSID];
+
+	// PMF
+	if(pmf_support == "1"){
+		if (PMFMFPC[MBSSID] == "1")
+			document.security_form.PMFMFPC[0].checked = true;
+		else
+			document.security_form.PMFMFPC[1].checked = true;
+		if (PMFMFPR[MBSSID] == "1")
+			document.security_form.PMFMFPR[0].checked = true;
+		else
+			document.security_form.PMFMFPR[1].checked = true;
+		if (PMFSHA256[MBSSID] == "1")
+			document.security_form.PMFSHA256[0].checked = true;
+		else
+			document.security_form.PMFSHA256[1].checked = true;
+	}
+
+	// wapi
+	document.security_form.wapicert_asipaddr.value = WapiAsIpAddr[MBSSID];
+	for (var i=0;i<document.security_form.wapicert_ascert.length;i++)
+	{
+		var temp = document.security_form.wapicert_ascert.options[i].value;
+		if (temp == WapiAsCertPath[MBSSID])
+			document.security_form.wapicert_ascert.selectedIndex = i;
+	}
+	for (i=0;i<document.security_form.wapicert_usercert.length;i++)
+	{
+		var temp = document.security_form.wapicert_usercert.options[i].value;
+		if (temp == WapiUserCertPath[MBSSID])
+			document.security_form.wapicert_usercert.selectedIndex = i;
+	}
+	document.security_form.wapipsk_prekey.value = WapiPsk[MBSSID];
+	if (WapiPskType[MBSSID] == "1")
+		document.security_form.wapipsk_keytype.selectedIndex = 1;
+	else
+		document.security_form.wapipsk_keytype.selectedIndex = 0;
+
+	securityMode(0);
+}
+
+function ShowAP(MBSSID)
+{
+	var i;
+	for(i=0; i<MBSSID_MAX; i++){
+		document.getElementById("apselect_"+i).selectedIndex	= AccessPolicy[i];
+		display("none", "AccessPolicy_"+i);
+	}
+
+	display("table", "AccessPolicy_"+MBSSID);
+}
+
+function LoadAP()
+{
+	for(var i=0; i<SSID.length; i++){
+		var j=0;
+		var aplist = new Array();
+
+		if(AccessControlList[i].length != 0){
+			aplist = AccessControlList[i].split(";");
+			for(j=0; j<aplist.length; j++){
+				document.getElementById("newap_"+i+"_"+j).value = aplist[j];
+			}
+
+			// hide the lastest <td>
+			if(j%2){
+				display("none", "newap_td_"+i+"_"+j);
+				j++;
+			}
+		}
+
+		// hide <tr> left
+		for(; j<ACCESSPOLICYLIST_MAX; j+=2){
+			display("none", "id_"+i+"_"+j);
+		}
+	}
+}
+
+function selectMBSSIDChanged()
+{
+	// check if any security settings changed
+	if(changed){
+		ret = confirm("你确认忽略修改么?");
+		if(!ret){
+			document.security_form.ssidIndex.options.selectedIndex = old_MBSSID;
+			return false;
+		}
+		else
+			changed = 0;
+	}
+
+	var selected = document.security_form.ssidIndex.options.selectedIndex;
+
+	// backup for user cancel action
+	old_MBSSID = selected;
+
+	MBSSIDChange(selected);
+}
+
+/*
+ * When user select the different SSID, this function would be called.
+ */
+function MBSSIDChange(selected)
+{
+	// load wep/wpa/802.1x table for MBSSID[selected]
+	LoadFields(selected);
+
+	// update Access Policy for MBSSID[selected]
+	ShowAP(selected);
+
+	// radio button special case
+	WPAAlgorithms = EncrypType[selected];
+	IEEE8021XWEP = IEEE8021X[selected];
+	PreAuthentication = PreAuth[selected];
+
+	changeSecurityPolicyTableTitle(SSID[selected]);
+
+	// clear all new access policy list field
+	for(i=0; i<MBSSID_MAX; i++)
+		document.getElementById("newap_text_"+i).value = "";
+
+	return true;
+}
+
+function changeSecurityPolicyTableTitle(t)
+{
+	var title = document.getElementById("sp_title");
+	title.innerHTML = "\"" + t + "\"";
+}
+
+function delap(mbssid, num)
+{
+	makeRequest("/cgi-bin/makeRequest.cgi", "delAccessPolicyList"+"&"+"ra0"+"&"+mbssid+","+num, deleteAccessPolicyListHandler);
+}
+
+function initTranslation()
+{
+	var e = document.getElementById("secureSelectSSID");
+	e.innerHTML = _("secure select ssid");
+	e = document.getElementById("secureSSIDChoice");
+	e.innerHTML = _("secure ssid choice");
+
+	e = document.getElementById("securityTitle");
+	e.innerHTML = _("secure ssid title");
+	e = document.getElementById("securityIntroduction");
+	e.innerHTML = _("secure ssid introduction");
+	e = document.getElementById("sp_title");
+	e.innerHTML = _("secure security policy");
+	e = document.getElementById("secureSecureMode");
+	e.innerHTML = _("secure security mode");
+
+	e = document.getElementById("secureWEP");
+	e.innerHTML = _("secure wep");
+	e = document.getElementById("secureWEPDefaultKey");
+	e.innerHTML = _("secure wep default key");
+	e = document.getElementById("secureWEPDefaultKey1");
+	e.innerHTML = _("secure wep default key1");
+	e = document.getElementById("secureWEPDefaultKey2");
+	e.innerHTML = _("secure wep default key2");
+	e = document.getElementById("secureWEPDefaultKey3");
+	e.innerHTML = _("secure wep default key3");
+	e = document.getElementById("secureWEPDefaultKey4");
+	e.innerHTML = _("secure wep default key4");
+	e = document.getElementById("secureWEPKey");
+	e.innerHTML = _("secure wep key");
+	e = document.getElementById("secureWEPKey1");
+	e.innerHTML = _("secure wep key1");
+	e = document.getElementById("secureWEPKey2");
+	e.innerHTML = _("secure wep key2");
+	e = document.getElementById("secureWEPKey3");
+	e.innerHTML = _("secure wep key3");
+	e = document.getElementById("secureWEPKey4");
+	e.innerHTML = _("secure wep key4");
+
+	e = document.getElementById("secreWPA");
+	e.innerHTML = _("secure wpa");
+	e = document.getElementById("secureWPAAlgorithm");
+	e.innerHTML = _("secure wpa algorithm");
+	e = document.getElementById("secureWPAPassPhrase");
+	e.innerHTML = _("secure wpa pass phrase");
+	e = document.getElementById("secureWPAKeyRenewInterval");
+	e.innerHTML = _("secure wpa key renew interval");
+	e = document.getElementById("secureWPAPMKCachePeriod");
+	e.innerHTML = _("secure wpa pmk cache period");
+	e = document.getElementById("secureWPAPreAuth");
+	e.innerHTML = _("secure wpa preauth");
+	e = document.getElementById("secureWPAPreAuthDisable");
+	e.innerHTML = _("wireless disable");
+	e = document.getElementById("secureWPAPreAuthEnable");
+	e.innerHTML = _("wireless enable");
+
+	e = document.getElementById("secure8021XWEP");
+	e.innerHTML = _("secure 8021x wep");
+	e = document.getElementById("secure1XWEP");
+	e.innerHTML = _("secure 1x wep");
+	e = document.getElementById("secure1XWEPDisable");
+	e.innerHTML = _("wireless disable");
+	e = document.getElementById("secure1XWEPEnable");
+	e.innerHTML = _("wireless enable");
+
+	e = document.getElementById("secureRadius");
+	e.innerHTML = _("secure radius");
+	e = document.getElementById("secureRadiusIPAddr");
+	e.innerHTML = _("secure radius ipaddr");
+	e = document.getElementById("secureRadiusPort");
+	e.innerHTML = _("secure radius port");
+	e = document.getElementById("secureRadiusSharedSecret");
+	e.innerHTML = _("secure radius shared secret");
+	e = document.getElementById("secureRadiusSessionTimeout");
+	e.innerHTML = _("secure radius session timeout");
+	e = document.getElementById("secureRadiusIdleTimeout");
+	e.innerHTML = _("secure radius idle timeout");
+
+	/*
+	e = document.getElementById("secureAccessPolicy");
+	e.innerHTML = _("secure access policy");
+	e = document.getElementById("secureAccessPolicyCapable");
+	e.innerHTML = _("secure access policy capable");
+	e = document.getElementById("secureAccessPolicyCapableDisable");
+	e.innerHTML = _("wireless disable");
+	e = document.getElementById("secureAccessPolicyCapableAllow");
+	e.innerHTML = _("wireless allow");
+	e = document.getElementById("secureAccessPolicyCapableReject");
+	e.innerHTML = _("wireless reject ");
+	e = document.getElementById("secureAccessPolicyNew");
+	e.innerHTML = _("secure access policy new");
+	*/
+
+	e = document.getElementById("secureApply");
+	e.value = _("wireless apply");
+	e = document.getElementById("secureCancel");
+	e.value = _("wireless cancel");
+}
+
+function UpdateMBSSIDList()
+{
+	document.security_form.ssidIndex.length = 0;
+
+	for(var i=0; i<SSID.length; i++){
+		var j = document.security_form.ssidIndex.options.length;
+		document.security_form.ssidIndex.options[j] = new Option(SSID[i], i, false, false);
+	}
+
+	document.security_form.ssidIndex.options.selectedIndex = defaultShownMBSSID;
+	old_MBSSID = defaultShownMBSSID;
+	changeSecurityPolicyTableTitle(SSID[defaultShownMBSSID]);
+}
+
+function setChange(c){
+	changed = c;
+}
+
+var WPAAlgorithms;
+function onWPAAlgorithmsClick(type)
+{
+	if(type == 0 && WPAAlgorithms == "TKIP") return;
+	if(type == 1 && WPAAlgorithms == "AES") return;
+	if(type == 2 && WPAAlgorithms == "TKIPAES") return;
+	setChange(1);
+}
+
+var IEEE8021XWEP;
+function onIEEE8021XWEPClick(type)
+{
+	if(type == 0 && IEEE8021XWEP == false) return;
+	if(type == 1 && IEEE8021XWEP == true) return;
+	setChange(1);
+}
+
+var PreAuthentication;
+function onPreAuthenticationClick(type)
+{
+	if(type == 0 && PreAuthentication == false) return;
+	if(type == 1 && PreAuthentication == true) return;
+	setChange(1);
+}
+
+function open_wapi_cert_upload(target)
+{
+	if (target == "user")
+		window.open("wapi_cert_user_upload.html","wapi_cert_user_upload","toolbar=no, location=yes, scrollbars=yes, resizable=no, width=500, height=500");
+	else if (target == "as")
+		window.open("wapi_cert_as_upload.html","wapi_cert_as_upload","toolbar=no, location=yes, scrollbars=yes, resizable=no, width=500, height=500");
+}
+</script>
+
+<body onload="initAll()">
+<div class="long_ndiv">
+<table class="body"><tbody><tr><td>
+
+<h1 id="securityTitle">无线网络安全/加密设置 </h1>
+<p id="securityIntroduction">设置无线网络的安全/加密以防止未被授权的存取與监听。.</p>
+<hr />
+
+<form method="post" name="security_form" action="/cgi-bin/wireless.cgi">
+<input type=hidden name=page value=security>
+<input type=hidden name=wlan_conf value="2860">
+
+<!-- ---------------------  MBSSID Selection  --------------------- -->
+<table border="1" cellpadding="2" cellspacing="1" width="540">
+<tbody><tr>
+  <td class="title" colspan="2" id="secureSelectSSID">选择 SSID</td>
+</tr>
+  <tr>
+    <td class="head" id="secureSSIDChoice">SSID 选项</td>
+    <td>
+      <select name="ssidIndex" size="1" onchange="selectMBSSIDChanged()">
+			<!-- ....Javascript will update options.... -->
+      </select>
+    </td>
+  </tr>
+</tbody></table>
+
+<hr />
+
+<table border="1" bordercolor="#9babbd" cellpadding="3" cellspacing="1" hspace="2" vspace="2" width="540">
+  <tbody><tr>
+
+    <td class="title" colspan="2"> <span id="sp_title">安全原则 </span></td>
+  </tr>
+  <tr id="div_security_infra_mode" name="div_security_infra_mode">
+    <td class="head" id="secureSecureMode">安全模式</td>
+    <td>
+      <select name="security_mode" id="security_mode" size="1" onchange="securityMode(1)">
+			<!-- ....Javascript will update options.... -->
+      </select>
+
+    </td>
+  </tr>
+</tbody></table>
+<br>
+
+<!-- WEP -->
+<table id="div_wep" name="div_wep" border="1" bordercolor="#9babbd" cellpadding="3" cellspacing="1" hspace="2" vspace="2" width="540" style="visibility: hidden;">
+  <tbody><tr>
+    <td class="title" colspan="4" id="secureWEP">有线等效保密（WEP）</td>
+  </tr>
+
+  <tr>
+    <td class="head" colspan="2" id="secureWEPDefaultKey">默认密钥</td>
+    <td colspan="2">
+      <select name="wep_default_key" id="wep_default_key" size="1" onchange="setChange(1)">
+	<option value="1" id="secureWEPDefaultKey1">密钥 1</option>
+	<option value="2" id="secureWEPDefaultKey2">密钥 2</option>
+	<option value="3" id="secureWEPDefaultKey3">密钥 3</option>
+	<option value="4" id="secureWEPDefaultKey4">密钥 4</option>
+      </select>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="head1" rowspan="4" id="secureWEPKey">WEP 密钥</td>
+    <td class="head2" id="secureWEPKey1">WEP 密钥 1 :</td>
+    <td><input name="wep_key_1" id="WEP1" maxlength="26" value="" onKeyUp="setChange(1)"></td>
+    <td><select id="WEP1Select" name="WEP1Select" onchange="setChange(1)">
+		<option value="1">ASCII字符</option>
+		<option value="0">16进制</option>
+		</select></td>
+  </tr>
+
+  <tr>
+    <td class="head2" id="secureWEPKey2">WEP 密钥 2 : </td>
+    <td><input name="wep_key_2" id="WEP2" maxlength="26" value="" onKeyUp="setChange(1)"></td>
+    <td><select id="WEP2Select" name="WEP2Select" onchange="setChange(1)">
+		<option value="1">ASCII字符</option>
+		<option value="0">16进制</option>
+		</select></td>
+  </tr>
+  <tr>
+    <td class="head2" id="secureWEPKey3">WEP 密钥 3 : </td>
+    <td><input name="wep_key_3" id="WEP3" maxlength="26" value="" onKeyUp="setChange(1)"></td>
+    <td><select id="WEP3Select" name="WEP3Select" onchange="setChange(1)">
+		<option value="1">ASCII字符</option>
+		<option value="0">16进制</option>
+		</select></td>
+  </tr>
+  <tr>
+    <td class="head2" id="secureWEPKey4">WEP 密钥 4 : </td>
+    <td><input name="wep_key_4" id="WEP4" maxlength="26" value="" onKeyUp="setChange(1)"></td>
+    <td><select id="WEP4Select" name="WEP4Select" onchange="setChange(1)">
+		<option value="1">ASCII字符</option>
+		<option value="0">16进制</option>
+		</select></td>
+  </tr>
+
+</tbody></table>
+
+<!-- WPA -->
+<table id="div_wpa" name="div_wpa" border="1" bordercolor="#9babbd" cellpadding="3" cellspacing="1" hspace="2" vspace="2" width="540" style="visibility: hidden;">
+
+  <tbody><tr>
+    <td class="title" colspan="2" id="secreWPA">WPA</td>
+  </tr>
+  <tr id="div_wpa_algorithms" name="div_wpa_algorithms" style="visibility: hidden;">
+    <td class="head" id="secureWPAAlgorithm">WPA 算法</td>
+    <td>
+      <input name="cipher" id="cipher" value="0" type="radio" onClick="onWPAAlgorithmsClick(0)">TKIP &nbsp;
+      <input name="cipher" id="cipher" value="1" type="radio" onClick="onWPAAlgorithmsClick(1)">AES &nbsp;
+      <input name="cipher" id="cipher" value="2" type="radio" onClick="onWPAAlgorithmsClick(2)">TKIPAES &nbsp;
+    </td>
+  </tr>
+  <tr id="wpa_passphrase" name="wpa_passphrase" style="visibility: hidden;">
+    <td class="head" id="secureWPAPassPhrase">密钥</td>
+    <td>
+      <input name="passphrase" id="passphrase" size="28" maxlength="64" value="" onKeyUp="setChange(1)">
+    </td>
+  </tr>
+
+  <tr id="wpa_key_renewal_interval" name="wpa_key_renewal_interval" style="visibility: hidden;">
+    <td class="head" id="secureWPAKeyRenewInterval">密钥更新周期</td>
+    <td>
+      <input name="keyRenewalInterval" id="keyRenewalInterval" size="6" maxlength="7" value="3600" onKeyUp="setChange(1)"> 秒 &nbsp;&nbsp;(0 ~ 4194303)
+    </td>
+  </tr>
+
+  <tr id="wpa_PMK_Cache_Period" name="wpa_PMK_Cache_Period" style="visibility: hidden;">
+    <td class="head" id="secureWPAPMKCachePeriod">成对主钥缓存周期</td>
+    <td>
+      <input name="PMKCachePeriod" id="PMKCachePeriod" size="4" maxlength="4" value="" onKeyUp="setChange(1)"> 分
+    </td>
+  </tr>
+
+  <tr id="wpa_preAuthentication" name="wpa_preAuthentication" style="visibility: hidden;">
+    <td class="head" id="secureWPAPreAuth">预认证</td>
+    <td>
+      <input name="PreAuthentication" id="PreAuthentication" value="0" type="radio" onClick="onPreAuthenticationClick(0)"><font id="secureWPAPreAuthDisable">关闭 &nbsp;</font>
+      <input name="PreAuthentication" id="PreAuthentication" value="1" type="radio" onClick="onPreAuthenticationClick(1)"><font id="secureWPAPreAuthEnable">开启 &nbsp;</font>
+    </td>
+  </tr>
+</tbody></table>
+
+<!-- 802.1x -->
+<!-- WEP  -->
+<table id="div_8021x_wep" name="div_8021x_wep" border="1" bordercolor="#9babbd" cellpadding="3" cellspacing="1" hspace="2" vspace="2" width="640" style="visibility: hidden;">
+  <tbody>
+  <tr>
+    <td class="title" colspan="2" id="secure8021XWEP">802.1x WEP</td>
+  </tr>
+  <tr>
+		<td class="head" id="secure1XWEP"> WEP </td>
+		<td>
+	      <input name="ieee8021x_wep" id="ieee8021x_wep" value="0" type="radio" onClick="onIEEE8021XWEPClick(0)"><font id="secure1XWEPDisable">关闭 &nbsp;</font>
+    	  <input name="ieee8021x_wep" id="ieee8021x_wep" value="1" type="radio" onClick="onIEEE8021XWEPClick(1)"><font id="secure1XWEPEnable">开启</font>
+		</td>
+  </tr>
+</tbody></table>
+
+<table id="div_radius_server" name="div_radius_server" border="1" bordercolor="#9babbd" cellpadding="3" cellspacing="1" hspace="2" vspace="2" width="540" style="visibility: hidden;">
+<tbody>
+   <tr>
+    <td class="title" colspan="2" id="secureRadius">Radius 服务器</td>
+   </tr>
+    <tr>
+		<td bgcolor="#E8F8FF"  class="head" id="secureRadiusIPAddr"> IP 地址 </td>
+		<td> <input name="RadiusServerIP" id="RadiusServerIP" size="16" maxlength="32" value="" onKeyUp="setChange(1)"> </td>
+	</tr>
+    <tr>
+		<td bgcolor="#E8F8FF"  class="head" id="secureRadiusPort"> 端口 </td>
+		<td> <input name="RadiusServerPort" id="RadiusServerPort" size="5" maxlength="5" value="" onKeyUp="setChange(1)"> </td>
+	</tr>
+    <tr>
+		<td bgcolor="#E8F8FF"  class="head" id="secureRadiusSharedSecret"> 公钥 </td>
+		<td> <input name="RadiusServerSecret" id="RadiusServerSecret" size="16" maxlength="64" value="" onKeyUp="setChange(1)"> </td>
+	</tr>
+    <tr>
+		<td bgcolor="#E8F8FF"  class="head" id="secureRadiusSessionTimeout"> 会话超时 </td>
+		<td> <input name="RadiusServerSessionTimeout" id="RadiusServerSessionTimeout" size="3" maxlength="4" value="0" onKeyUp="setChange(1)"> </td>
+	</tr>
+    <tr>
+		<td bgcolor="#E8F8FF"  class="head" id="secureRadiusIdleTimeout"> 空闲超时 </td>
+		<td> <input name="RadiusServerIdleTimeout" id="RadiusServerIdleTimeout" size="3" maxlength="4" value="" onKeyUp="setChange(1)" readonly> </td>
+	</tr>
+
+</tbody></table>
+
+<!-- PMF -->
+<table id="div_wpa2_pmf" name="div_wpa2_pmf" border="1" bordercolor="#9babbd" cellpadding="3" cellspacing="1" hspace="2" vspace="2" width="540" style="visibility: hidden;">
+  <tr>
+    <td class="title" colspan="3" id="WPA2PMF">PMF</td>
+  </tr>
+  <tr>
+    <td class="head" id="PMFMFPC_title">MFPC</td>
+    <td>
+      <input name="PMFMFPC" id="PMFMFPCEnable" value="1" type="radio">开启 &nbsp;
+      <input name="PMFMFPC" id="PMFMFPCDisable" value="0" type="radio">关闭 &nbsp;
+    </td>
+  </tr>
+  <tr>
+    <td class="head" id="PMFMFPR_title">MFPR</td>
+    <td>
+      <input name="PMFMFPR" id="PMFMFPREnable" value="1" type="radio">开启 &nbsp;
+      <input name="PMFMFPR" id="PMFMFPRDisable" value="0" type="radio">关闭 &nbsp;
+    </td>
+  </tr>
+  <tr>
+    <td class="head" id="PMFSHA256_title">MFPSHA256</td>
+    <td>
+      <input name="PMFSHA256" id="PMFSHA256Enable" value="1" type="radio">开启 &nbsp;
+      <input name="PMFSHA256" id="PMFSHA256Disable" value="0" type="radio">关闭 &nbsp;
+    </td>
+  </tr>
+</table>
+
+<!-- WAPI PSK -->
+<table id="div_wapi_psk" name="div_wapi_psk" border="1" bordercolor="#9babbd" cellpadding="3" cellspacing="1" hspace="2" vspace="2" width="540" style="visibility: hidden;">
+  <tr>
+    <td class="title" colspan="3" id="wapiWAPIPSK">WAPI-PSK</td>
+  </tr>
+  <tr>
+    <td class="head" id="wapiPreKey">预置共享密钥</td>
+    <td>
+      <input type="text" name="wapipsk_prekey" size="28" maxlength="64" value="">
+    </td>
+    <td>
+      <select name="wapipsk_keytype">
+        <option value="0" selected>16进制</option>
+	<option value="1">ASCII字符</option>
+      </select>
+    </td>
+  </tr>
+</table>
+
+<!-- WAPI Cert -->
+<table id="div_wapi_cert" name="div_wapi_cert" border="1" bordercolor="#9babbd" cellpadding="3" cellspacing="1" hspace="2" vspace="2" width="540" style="visibility: hidden;">
+  <tr>
+    <td class="title" colspan="2" id="wapiWAPICERT">WAPI-整数</td>
+  </tr>
+  <tr>
+    <td class="head" id="wapiAsIPAddr">AS IP 地址 </td>
+    <td>
+      <input type="text" name="wapicert_asipaddr" size="16" maxlength="32" value="">
+    </td>
+  </tr>
+  <tr>
+    <td class="head" id="wapiAsPort">AS 端口</td>
+    <td>
+      <input type="text" name="wapicert_asport" size="5" maxlength="5" value="3810" readOnly>
+    </td>
+  </tr>
+  <tr>
+    <td class="head" id="wapiAsCert">AS 证书</td>
+    <td>
+      <select name="wapicert_ascert" id="wapicert_ascert" size="1">
+      </select>
+      <input type="button" value="Install" name="wapi_as_cert_upload" id="wapiASCertInstall" onClick="open_wapi_cert_upload('as')">
+      <input type="button" value="Refresh" name="wapi_cert_refresh" onClick="WapiCertUpdate()">
+    </td>
+  </tr>
+  <tr>
+    <td class="head" id="wapiUserCert">User 证书</td>
+    <td>
+      <select name="wapicert_usercert" id="wapicert_usercert" size="1">
+      </select>
+      <input type="button" value="安装" name="wapi_apuser_cert_upload" id="wapiUserCertInstall" onClick="open_wapi_cert_upload('user')">
+      <input type="button" value="刷新" name="wapi_cert_refresh" onClick="WapiCertUpdate()">
+    </td>
+  </tr>
+</table>
+
+<!--									-->
+<!--	AccessPolicy for mbssid 		-->
+<!--									-->
+
+<script language="JavaScript" type="text/javascript">
+var aptable;
+
+for(aptable = 0; aptable < MBSSID_MAX; aptable++){
+	document.write(" <table id=AccessPolicy_"+ aptable +" border=1 bordercolor=#9babbd cellpadding=3 cellspacing=1 hspace=2 vspace=2 width=540>");
+	document.write(" <tbody> <tr> <td class=title colspan=2 > 访问策略</td></tr>");
+	document.write(" <tr> <td bgcolor=#E8F8FF class=head >"+" 策略"+"</td>");
+	document.write(" <td> <select name=apselect_"+ aptable + " id=apselect_"+aptable+" size=1 onchange=\"setChange(1)\">");
+	document.write(" 			<option value=0 >关闭</option> <option value=1 >允许</option><option value=2 >拒绝</option></select> </td></tr>");
+
+	for(i=0; i< ACCESSPOLICYLIST_MAX/2; i++){
+		input_name = "newap_"+ aptable +"_" + (2*i);
+		td_name = "newap_td_"+ aptable +"_" + (2*i);
+
+		document.write(" <tr id=id_"+aptable+"_");
+		document.write(i*2);
+		document.write("> <td id=");
+		document.write(td_name);
+		document.write("> <input style=\"width: 30px;\" value=Del onclick=\"delap("+aptable+", ");
+		document.write(2*i);
+		document.write(")\" type=button > <input id=");
+		document.write(input_name);
+		document.write(" size=16 maxlength=20 readonly></td>");
+
+		input_name = "newap_" + aptable + "_" + (2*i+1);
+		td_name = "newap_td_" + aptable + "_" + (2*i+1);
+		document.write("      <td id=");
+		document.write(td_name);
+		document.write("> <input style=\"width: 30px;\" value=Del onclick=\"delap("+aptable+", ");
+		document.write(2*i+1);
+		document.write(")\" type=button> <input id=");
+		document.write(input_name);
+		document.write(" size=16 maxlength=20 readonly></td> </tr>");
+	}
+
+	document.write("<tr><td bgcolor=#E8F8FF class=head  >增加无线设备的Mac:</td>");
+	document.write("	<td>	<input name=newap_text_"+aptable+" id=newap_text_"+aptable+" size=16 maxlength=20>	</td>	</tr> </tbody></table>");
+}
+</script>
+<br />
+<table border="0" cellpadding="2" cellspacing="1" width="540">
+  <tbody><tr align="center">
+
+    <td>
+      <input style="width: 120px;" value="应用" id="secureApply" onclick="submit_form(this, 6, submit_buttons, submit_apply)" type="button"> &nbsp; &nbsp;
+      <input style="width: 120px;" value="取消" id="secureCancel" type="reset" onClick="window.location.reload()" >
+    </td>
+  </tr>
+</tbody></table>
+</form>
+</td></tr>
+
+<!-- =============================== Waiting info ================================== -->
+<tr><td>
+<table name="div_waiting_img" id="div_waiting_img" width="600" style="visibility: hidden;">
+<tbody>
+  <tr align="center"><td id="cooldown_time_text"></td></tr>
+  <tr align="center">
+    <td><img src="/graphics/ajax-loader.gif"></td>
+  </tr>
+</tbody>
+</table>
+
+</td></tr></tbody></table>
+</div>
+</body>
+<head>
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" CONTENT="-1">
+</head>
+</html>

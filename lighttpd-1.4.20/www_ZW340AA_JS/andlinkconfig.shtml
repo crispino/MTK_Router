@@ -1,0 +1,130 @@
+<!doctype html> 
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<title>互联网设置</title>
+<link href="css/style_main.css" rel="stylesheet" type="text/css" />
+<link href="css/mainstyle.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/herouter.js"></script>
+<style type="text/css">
+<!--
+.configbtn{ height:52px; padding-left:4px; padding-top:10px;}
+.configbtn .cancel{display:block; cursor:pointer; width:150px; font-weight:normal;
+				background:#77d1df; font-size:16px; color:#fff; text-align:center; text-vlaign:center;}
+.configbtn b:hover{ background:#56bbcb;}
+-->
+</style>
+<script type="text/javascript">
+
+var andlink_switch = "<!--#exec cmd="web 2860 nvram andlink_switch"-->";
+var click_num;
+
+$(document).ready(function() {
+	click_num = 0;
+	if(andlink_switch == 0){
+	    $("#state").addClass("switchoff");
+	    document.andlink_setting.andlinkEnable.value= 0;     
+	} else {
+		$("#state").removeClass("switchoff");
+		document.andlink_setting.andlinkEnable.value= 1; 
+	}
+	
+	$("#switch").click(function(){
+		click_num++;
+		if(click_num%2 == 1){
+			//turn to open
+		  if(andlinkEnable==0){
+			  $("#state").removeClass("switchoff");
+			    document.andlink_setting.andlinkEnable.value= 1;	
+			  }else{
+			  $("#state").addClass("switchoff");
+			    document.andlink_setting.andlinkEnable.value= 0;
+			 }
+		} else {
+		  if(andlinkEnable == 0){
+			  $("#state").addClass("switchoff");
+			    document.andlink_setting.andlinkEnable.value= 0;
+			  } else {
+			  $("#state").removeClass("switchoff");
+			    document.andlink_setting.andlinkEnable.value= 1;
+			 }			
+		}
+	})
+
+});
+
+function andlinkEnableSumbit()
+{
+	Alert("正在保存设置，请稍候", 10);	
+	setTimeout("Alert('设置成功，无线网络将断开，请在30秒后重新进入本页面',25)", 10100);
+	$.ajax({
+		type: "post",
+		url: "/cgi-bin/adm.cgi",     
+		data: $("#andlink_setting").serialize(),    
+		success: function(data){
+			//alert("保存成功！");
+		},
+		error: function(data) {
+			//alert("保存失败！\n" + data);
+		}
+	});
+	
+	var andlinkEnable = 1- parseInt(document.andlink_setting.andlinkEnable.value);
+}
+
+
+//防止缓存
+window.setInterval("refreshCookie()", 1000);  
+
+</script>
+</head>
+
+<body>
+<h1 id="lTitle"></h1>
+<p id="lIntroduction"></p>
+<div class="int">
+	<h1>高级设置</h1>
+    <div class="cfg">
+        <div class="cfgleft">
+            <ul>
+		        <li><a href="WANConfig.shtml">WAN设置</a></li>
+						<li><a href="entconfig.shtml">局域网设置</a></li>
+						<li class="on"><a href="MACClone.shtml">MAC地址克隆</a></li>
+						<li><a href="systemtime.shtml">系统时间管理</a></li>
+						<li><a href="sysupdate.shtml">系统升级</a></li>
+						<li><a href="restoredefault.shtml">恢复出厂设置</a></li>
+						<li><a href="andlinkconfig.shtml">组网设置</a></li>
+            </ul>
+        </div>
+
+
+<form method="post" name="andlink_setting" id="andlink_setting" action="/cgi-bin/adm.cgi">
+<input type=hidden name=page value="andlinkConfig">
+<div class="cfgright" style="padding-top:12px;">
+    <div style="border-bottom:1px #efefef solid; padding-bottom:15px;">
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+		    <tr>
+			    <td width="25%" colspan="2"><span>和家亲</span></td>
+				<td width="75%">
+				    <div class="selectswitch" id="state">
+					    <em class="closestate"></em><span><strong id="switch"></strong></span><em class="openstate"></em>
+						</div>
+					<input type="hidden" id="andlinkEnable" name="andlinkEnable" value="1">
+				</td>
+			</tr>
+		</table>
+
+	<div class="subpart">
+	    <ul>
+		    <li><b onclick="andlinkEnableSumbit();">保存</b></li>
+			<li><b class="cancel" onClick="javascript:parent.TINY.box.hide();">取消</b></li>
+		</ul>
+	</div>
+</div>
+</form>
+
+  </div>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,84 @@
+﻿<!doctype html> 
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<title>互联网设置</title>
+<link href="css/mainstyle.css" rel="stylesheet" type="text/css" />
+<link href="css/style_main.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+</head>
+
+<script language="JavaScript" type="text/javascript">
+function save()
+{
+	var newpass = document.Adm.newpass.value;
+	var admpass = document.Adm.admpass.value;
+	var len = newpass.length;
+	if (document.Adm.admuser.value == "") {
+		alert("请指定管理员用户名.");
+		return false;
+	}
+	if (document.Adm.admpass.value == "") {
+		alert("请指定管理员密码.");
+		return false;
+	}
+	if (document.Adm.admpass.value !== document.Adm.newpass.value) {
+		alert("请与新密码保持一致.");
+		return false;
+	}
+	
+	document.Adm.submit();
+	parent.showchangepwd();
+	return true;
+}
+
+function showchangepwd(){
+	setTimeout("TINY.box.show({html:'<div class=waiting3 style=display:;><h2>密码修改成功，请重新登录</h2><div class=animation></div></div>',animate:false,close:false,boxid:'',top:5})",2000);
+	setTimeout("TINY.box.hide();reload();", 6000);
+}
+
+function setLanguage()
+{
+	document.cookie="language="+document.Lang.langSelection.value+"; path=/";
+	parent.menu.location.reload();
+	return true;
+}
+</script>
+
+<body>
+<div class="int">
+	<h1>修改和路由管理界面登录密码</h1>
+    <div class="cfg">
+      <div class="cfgright">
+		<form method="post" name="Adm" action="/cgi-bin/adm.cgi">
+        <input type=hidden name=page value=sysAdm>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            	<tr id="manAdmAccount" style="display:none">
+                <td><span>用户名</span></td>
+                <td><input class="inp1" name="admuser" value="<!--#exec cmd="web 2860 nvram Login"-->"></td>
+              </tr>
+              <tr>
+                <td><span>现有密码</span></td>
+                <td><input class="inp1" type="password" name="oldpass" value="<!--#exec cmd="web 2860 nvram Password"-->"></td>
+                <td id="defaultpwd"><font color="#CF9E9E"><h5>(初始密码:admin)</h5></font></td>
+              </tr>
+              <tr>
+                <td width="29%"><span>新密码</span></td>
+                <td width="28%"><input class="inp1" type="password" name="newpass" value=""/></td>
+              </tr>
+              <tr>
+                <td><span>重复新密码</span></td>
+                <td><input class="inp1" type="password" name="admpass" value=""/></td>
+              </tr>
+            </table>
+            <div class="subpart">
+                <ul>
+					<li><input type="input" class="apply" value="保存" id="manAdmApply" onClick="save()"></li>
+					<li><b class="cancel" onClick="javascript:parent.TINY.box.hide();">取消</b></li> 
+                </ul>
+            </div>
+        </form>
+      </div>
+    </div>
+</div>
+</body>
+</html>

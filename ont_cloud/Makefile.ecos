@@ -1,0 +1,20 @@
+# Makefile
+
+include $(TOPDIR)/.config
+include $(TOPDIR)/rules.mak
+
+ALL_OBJS += allocator.o device.o log.o ont_buffer.o ont_edp.o ont_edp_private.o ont_list.o ont_tcp_channel.o \
+		packet.o parser.o persistence_util.o string_util.o tcp_util.o time_util.o ont_pkt_formatter.o sample-linux.o \
+		ont_handle.o cJSON.o ont_upgrade.o ont_app.o aes.o md5.o ont_aes_ecb.o MAC_VENDOR.o
+
+
+
+MODULE = $(shell pwd | sed "s/.*\///" ).o
+
+all: $(MODULE)
+
+$(MODULE): $(ALL_OBJS:.o=.d)
+	$(XLD) -r $(ENDIAN) -o $(MODULE) $(ALL_OBJS)
+
+clean:
+	rm $(MODULE) $(ALL_OBJS)

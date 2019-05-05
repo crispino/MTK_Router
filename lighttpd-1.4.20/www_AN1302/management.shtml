@@ -1,0 +1,477 @@
+
+<!-- Copyright 2011, MediaTek Inc. All Rights Reserved. -->
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/style/normal_ws.css" type="text/css">
+<title>系统管理</title>
+</head>
+
+<script type="text/javascript" src="/shareFun.js"></script>
+<script language="JavaScript" type="text/javascript">
+var greenapb = "0";
+//var snortb = '<% getSnortBuilt(); %>';
+var submit_buttons = ["manAdmApply"]; //["manAdmApply", "manNTPSyncWithHost", "manNTPApply", "manGreenAPApply", "manDdnsApply"];
+
+function AdmFormCheck()
+{
+	if (document.Adm.admuser.value == "") {
+		alert("请确认管理账号.");
+		return false;
+	}
+	if (document.Adm.admpass.value == "") {
+		alert("请确认管理密码.");
+		return false;
+	}
+	return true;
+}
+
+function NTPFormCheck()
+{
+	console.log("NTPFormCheck <------");
+	if( document.NTP.NTPServerIP.value != "" &&
+		document.NTP.NTPSync.value == ""){
+		alert("Please specify a value for the interval of synchroniztion.");
+		return false;
+	}
+	if(isNaN( document.NTP.NTPSync.value ) == true){
+		alert("不合法的NTP同步值.");
+		return false;
+	}
+	if( atoi(document.NTP.NTPSync.value, 1) > 300){
+		alert("同步值超出范围.(1~300)");
+		return false;
+	}
+	console.log("NTPFormCheck return true");
+	return true;
+}
+
+function DDNSFormCheck()
+{
+	if(  document.DDNS.DDNSProvider.value != "none" &&
+		(document.DDNS.Account.value == "" ||
+		 document.DDNS.Password.value == "" ||
+		 document.DDNS.DDNS.value == "")){
+		alert("请确认账号、密码和DDNS.");
+		return false;
+	}
+
+	return true;
+}
+
+function disableTextField (field)
+{
+  if(document.all || document.getElementById){
+    field.disabled = true;
+  }else {
+    field.oldOnFocus = field.onfocus;
+    field.onfocus = skip;
+  }
+}
+
+function enableTextField (field)
+{
+  if(document.all || document.getElementById)
+    field.disabled = false;
+  else {
+    field.onfocus = field.oldOnFocus;
+  }
+}
+
+function DDNSupdateState()
+{
+	if(document.DDNS.DDNSProvider.options.selectedIndex != 0){
+		enableTextField(document.DDNS.Account);
+		enableTextField(document.DDNS.Password);
+		enableTextField(document.DDNS.DDNS);
+	}else{
+		disableTextField(document.DDNS.Account);
+		disableTextField(document.DDNS.Password);
+		disableTextField(document.DDNS.DDNS);
+	}
+}
+
+function initValue()
+{
+
+    document.Adm.admuser.value = "<!--#exec cmd="web 2860 nvram Login"-->";
+	
+/*	var tz = "";
+	var ddns_provider = "";
+
+	var dateb = "1";
+	var ddnsb = "0";
+	var watchdogb = "0";
+
+	if (watchdogb == "1") {
+		display("table-row", "div_watchdog");
+		document.Adm.admwatchdog.disabled = false;
+		var watchdogcap = "";
+		if (watchdogcap == "1")
+			document.Adm.admwatchdog[0].checked = true;
+		else
+			document.Adm.admwatchdog[1].checked = true;
+	} else {
+		display("none", "div_watchdog");
+		document.Adm.admwatchdog.disabled = true;
+	}
+
+	if (dateb == "1")
+	{
+		display("table-row", "div_date");
+		document.NTP.ntpcurrenttime.disabled = false;
+	}
+	else
+	{
+		display("none", "div_date");
+		document.NTP.ntpcurrenttime.disabled = true;
+	}
+
+	if (tz == "UCT_-11")
+		document.NTP.time_zone.options.selectedIndex = 0;
+	else if (tz == "UCT_-10")
+		document.NTP.time_zone.options.selectedIndex = 1;
+	else if (tz == "NAS_-09")
+		document.NTP.time_zone.options.selectedIndex = 2;
+	else if (tz == "PST_-08")
+		document.NTP.time_zone.options.selectedIndex = 3;
+	else if (tz == "MST_-07")
+		document.NTP.time_zone.options.selectedIndex = 4;
+	else if (tz == "MST_-07")
+		document.NTP.time_zone.options.selectedIndex = 5;
+	else if (tz == "CST_-06")
+		document.NTP.time_zone.options.selectedIndex = 6;
+	else if (tz == "UCT_-06")
+		document.NTP.time_zone.options.selectedIndex = 7;
+	else if (tz == "UCT_-05")
+		document.NTP.time_zone.options.selectedIndex = 8;
+	else if (tz == "EST_-05")
+		document.NTP.time_zone.options.selectedIndex = 9;
+	else if (tz == "AST_-04")
+		document.NTP.time_zone.options.selectedIndex = 10;
+	else if (tz == "UCT_-04")
+		document.NTP.time_zone.options.selectedIndex = 11;
+	else if (tz == "UCT_-03")
+		document.NTP.time_zone.options.selectedIndex = 12;
+	else if (tz == "EBS_-03")
+		document.NTP.time_zone.options.selectedIndex = 13;
+	else if (tz == "NOR_-02")
+		document.NTP.time_zone.options.selectedIndex = 14;
+	else if (tz == "EUT_-01")
+		document.NTP.time_zone.options.selectedIndex = 15;
+	else if (tz == "UCT_000")
+		document.NTP.time_zone.options.selectedIndex = 16;
+	else if (tz == "GMT_000")
+		document.NTP.time_zone.options.selectedIndex = 17;
+	else if (tz == "MET_001")
+		document.NTP.time_zone.options.selectedIndex = 18;
+	else if (tz == "MEZ_001")
+		document.NTP.time_zone.options.selectedIndex = 19;
+	else if (tz == "UCT_001")
+		document.NTP.time_zone.options.selectedIndex = 20;
+	else if (tz == "EET_002")
+		document.NTP.time_zone.options.selectedIndex = 21;
+	else if (tz == "SAS_002")
+		document.NTP.time_zone.options.selectedIndex = 22;
+	else if (tz == "IST_003")
+		document.NTP.time_zone.options.selectedIndex = 23;
+	else if (tz == "MSK_003")
+		document.NTP.time_zone.options.selectedIndex = 24;
+	else if (tz == "UCT_004")
+		document.NTP.time_zone.options.selectedIndex = 25;
+	else if (tz == "UCT_005")
+		document.NTP.time_zone.options.selectedIndex = 26;
+	else if (tz == "UCT_006")
+		document.NTP.time_zone.options.selectedIndex = 27;
+	else if (tz == "UCT_007")
+		document.NTP.time_zone.options.selectedIndex = 28;
+	else if (tz == "CST_008")
+		document.NTP.time_zone.options.selectedIndex = 29;
+	else if (tz == "CCT_008")
+		document.NTP.time_zone.options.selectedIndex = 30;
+	else if (tz == "SST_008")
+		document.NTP.time_zone.options.selectedIndex = 31;
+	else if (tz == "AWS_008")
+		document.NTP.time_zone.options.selectedIndex = 32;
+	else if (tz == "JST_009")
+		document.NTP.time_zone.options.selectedIndex = 33;
+	else if (tz == "KST_009")
+		document.NTP.time_zone.options.selectedIndex = 34;
+	else if (tz == "UCT_010")
+		document.NTP.time_zone.options.selectedIndex = 35;
+	else if (tz == "AES_010")
+		document.NTP.time_zone.options.selectedIndex = 36;
+	else if (tz == "UCT_011")
+		document.NTP.time_zone.options.selectedIndex = 37;
+	else if (tz == "UCT_012")
+		document.NTP.time_zone.options.selectedIndex = 38;
+	else if (tz == "NZS_012")
+		document.NTP.time_zone.options.selectedIndex = 39;
+
+	if (greenapb == "1")
+	{
+		display("table", "div_greenap");
+		display("table", "div_greenap_submit");
+	}
+	else
+	{
+		display("none", "div_greenap");
+		display("none", "div_greenap_submit");
+	}
+	set_greenap();
+
+	if (ddnsb == "1")
+	{
+		display("table", "div_ddns");
+		display("table", "div_ddns_submit");
+		document.DDNS.Account.disabled = false;
+		document.DDNS.Password.disabled = false;
+		document.DDNS.DDNS.disabled = false;
+		if (ddns_provider == "none")
+			document.DDNS.DDNSProvider.options.selectedIndex = 0;
+		else if (ddns_provider == "dyndns.org")
+			document.DDNS.DDNSProvider.options.selectedIndex = 1;
+		else if (ddns_provider == "freedns.afraid.org")
+			document.DDNS.DDNSProvider.options.selectedIndex = 2;
+		else if (ddns_provider == "zoneedit.com")
+			document.DDNS.DDNSProvider.options.selectedIndex = 3;
+		else if (ddns_provider == "no-ip.com")
+			document.DDNS.DDNSProvider.options.selectedIndex = 4;
+
+		DDNSupdateState();
+	}
+	else
+	{
+		display("none", "div_ddns");
+		display("none", "div_ddns_submit");
+		document.DDNS.Account.disabled = true;
+		document.DDNS.Password.disabled = true;
+		document.DDNS.DDNS.disabled = true;
+	}*/
+/*
+	if (snortb == "1")
+	{
+		var snort_enable = "";
+		display("table", "div_snort");
+		display("table", "div_snort_submit");
+
+		if(snort_enable == "1")
+			document.Snort.SnortSelect.options.selectedIndex = 1;
+		else
+			document.Snort.SnortSelect.options.selectedIndex = 0;
+	}
+	else
+	{
+		display("none", "div_snort");
+		display("none", "div_snort_submit");
+	}
+*/
+}
+
+function set_greenap()
+{
+	var ntp_server = "";
+
+	for(var j=1;j<=4;j++)
+	{
+	    var shour_e = eval("document.GreenAP.GAPSHour"+j);
+	    var sminute_e = eval("document.GreenAP.GAPSMinute"+j);
+	    var ehour_e = eval("document.GreenAP.GAPEHour"+j);
+	    var eminute_e = eval("document.GreenAP.GAPEMinute"+j);
+	    var action_e = eval("document.GreenAP.GAPAction"+j);
+
+	    shour_e.disabled = true;
+	    sminute_e.disabled = true;
+	    ehour_e.disabled = true;
+	    eminute_e.disabled = true;
+	    action_e.disabled = true;
+	    if (ntp_server != "" && greenapb == "1")
+	    {
+		action_e.disabled = false;
+		switch(j)
+		{
+		case 1:
+		    var action = "";
+		    var time = "";
+		    var stimeArray = time.split(" ");
+		    time = "";
+		    var etimeArray = time.split(" ");
+		    break;
+		case 2:
+		    var action = "";
+		    var time = "";
+		    var stimeArray = time.split(" ");
+		    time = "";
+		    var etimeArray = time.split(" ");
+		    break;
+		case 3:
+		    var action = "";
+		    var time = "";
+		    var stimeArray = time.split(" ");
+		    time = "";
+		    var etimeArray = time.split(" ");
+		    break;
+		case 4:
+		    var action = "";
+		    var time = "";
+		    var stimeArray = time.split(" ");
+		    time = "";
+		    var etimeArray = time.split(" ");
+		    break;
+		}
+		if (action == "Disable")
+		    action_e.options.selectedIndex = 0;
+		else if (action == "WiFiOFF")
+		    action_e.options.selectedIndex = 1;
+		else if (action == "TX25")
+		    action_e.options.selectedIndex = 2;
+		else if (action == "TX50")
+		    action_e.options.selectedIndex = 3;
+		else if (action == "TX75")
+		    action_e.options.selectedIndex = 4;
+		greenap_action_switch(j);
+		if (action != "" && action != "Disable")
+		{
+		    shour_e.options.selectedIndex = stimeArray[1];
+		    sminute_e.options.selectedIndex = stimeArray[0];
+		    ehour_e.options.selectedIndex = etimeArray[1];
+		    eminute_e.options.selectedIndex = etimeArray[0];
+		}
+	    }
+	}
+}
+
+function setLanguage()
+{
+	document.cookie="language="+document.Lang.langSelection.value+"; path=/";
+	parent.menu.location.reload();
+	return true;
+}
+
+function syncWithHost()
+{
+	var currentTime = new Date();
+
+	var seconds = currentTime.getSeconds();
+	var minutes = currentTime.getMinutes();
+	var hours = currentTime.getHours();
+	var month = currentTime.getMonth() + 1;
+	var day = currentTime.getDate();
+	var year = currentTime.getFullYear();
+
+	var seconds_str = " ";
+	var minutes_str = " ";
+	var hours_str = " ";
+	var month_str = " ";
+	var day_str = " ";
+	var year_str = " ";
+
+	if(seconds < 10)
+		seconds_str = "0" + seconds;
+	else
+		seconds_str = ""+seconds;
+
+	if(minutes < 10)
+		minutes_str = "0" + minutes;
+	else
+		minutes_str = ""+minutes;
+
+	if(hours < 10)
+		hours_str = "0" + hours;
+	else
+		hours_str = ""+hours;
+
+	if(month < 10)
+		month_str = "0" + month;
+	else
+		month_str = ""+month;
+
+	if(day < 10)
+		day_str = "0" + day;
+	else
+		day_str = day;
+
+	var tmp = month_str + day_str + hours_str + minutes_str + year + " ";
+	document.NTP.hostTime.value = tmp;
+	//document.NTP.submit()
+	return true;
+}
+
+function greenap_action_switch(index)
+{
+	var shour_e = eval("document.GreenAP.GAPSHour"+index);
+	var sminute_e = eval("document.GreenAP.GAPSMinute"+index);
+	var ehour_e = eval("document.GreenAP.GAPEHour"+index);
+	var eminute_e = eval("document.GreenAP.GAPEMinute"+index);
+	var action_e = eval("document.GreenAP.GAPAction"+index);
+
+	shour_e.disabled = true;
+	sminute_e.disabled = true;
+	ehour_e.disabled = true;
+	eminute_e.disabled = true;
+
+	if (action_e.options.selectedIndex != 0)
+	{
+		shour_e.disabled = false;
+		sminute_e.disabled = false;
+		ehour_e.disabled = false;
+		eminute_e.disabled = false;
+	}
+}
+</script>
+
+<body onload="initValue()">
+<div class="long_ndiv">
+<table class="body"><tr><td>
+<h1 id="manTitle">系统管理</h1>
+<p id="manIntroduction">你可以在这里管理密码设置</p>
+<hr />
+
+<!-- ================= Adm Settings ================= -->
+<form method="post" name="Adm" action="/cgi-bin/adm.cgi">
+<input type=hidden name=page value=sysAdm>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+  <tr>
+    <td class="title" colspan="2" id="manAdmSet">密码修改</td>
+  </tr>
+  <tr style="display:none;">
+    <td class="head" id="manAdmAccount">账号</td>
+    <td><input type="text" name="admuser" size="16" maxlength="16" value="user"></td>
+  </tr>
+  <tr>
+    <td class="head" id="manAdmPasswd">密码</td>
+    <td><input type="password" name="admpass" size="16" maxlength="32" value="admin"></td>
+  </tr>
+  <tr id="div_watchdog" style="display:none;">
+    <td class="head" id="manAdmWatchDog">监视者</td>
+    <td>
+      <input type="radio" name="admwatchdog" value="1"><font id="manAdmwatchdogEnabled">开启</font>
+      <input type="radio" name="admwatchdog" value="0"><font id="manAdmwatchdogDisabled">关闭</font>
+    </td>
+  </tr>
+</table>
+<table width="540" border="0" cellpadding="2" cellspacing="1">
+  <tr align="center">
+    <td>
+      <input type="button" style="{width:120px;}" value="应用" id="manAdmApply" onClick="submit_form(this, 5, submit_buttons, AdmFormCheck)"> &nbsp; &nbsp;
+      <input type=reset  style="{width:120px;}" value="取消" id="manAdmCancel" onClick="window.location.reload()">
+    </td>
+  </tr>
+</table>
+</form>
+
+<tr><td>
+<!-- =============================== Waiting info ================================== -->
+<table name="div_waiting_img" id="div_waiting_img" width="600" style="visibility: hidden;">
+  <tr align="center"><td id="cooldown_time_text"></td></tr>
+  <tr align="center">
+    <td><img src="/graphics/ajax-loader.gif"></td>
+  </tr>
+</table>
+</td></tr>
+
+</td></tr></table>
+</div>
+</body>
+</html>

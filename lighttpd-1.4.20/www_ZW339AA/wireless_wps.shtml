@@ -1,0 +1,196 @@
+<!doctype html> 
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<title>互联网设置</title>
+<link href="css/style_main.css" rel="stylesheet" type="text/css" />
+<link href="css/mainstyle.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/herouter.js"></script>
+<style type="text/css">
+<!--
+.configbtn{ height:52px; padding-left:4px; padding-top:10px;}
+.configbtn .cancel{display:block; cursor:pointer; width:150px; font-weight:normal;
+				background:#77d1df; font-size:16px; color:#fff; text-align:center; text-vlaign:center;}
+.configbtn b:hover{ background:#56bbcb;}
+-->
+</style>
+<script type="text/javascript">
+
+var wpsenable = "<!--#exec cmd="web 2860 nvram WscModeOption"-->";
+var click_num;
+
+function isHiddenField(ishidden,hid_id){
+    if(ishidden == 1){
+	      document.getElementById(hid_id).style.display = "none";
+    } else {
+	      document.getElementById(hid_id).style.display = "";
+    }
+} 
+
+
+function isCloseWps(close){
+	
+    if(close == 1) {
+	       isHiddenField(1,"wpsconfig");
+	  }else {
+	       isHiddenField(0,"wpsconfig");
+	}
+}
+
+function afterSubmit() {
+  parent.TINY.box.hide();
+  parent.location.reload();
+}
+
+
+$(document).ready(function() {
+	click_num = 0;
+	if(wpsenable == 0){
+	    $("#state").addClass("switchoff");
+	    document.wps_setting.WPSEnable.value= 0; 
+		isCloseWps(1);
+	    
+	} else {
+		$("#state").removeClass("switchoff");
+		document.wps_setting.WPSEnable.value= 1; 
+     	isCloseWps(0);
+	}
+	
+	$("#switch").click(function(){
+		click_num++;
+		if(click_num%2 == 1){
+			//turn to open
+		  if(wpsenable==0){
+			  $("#state").removeClass("switchoff");
+			    document.wps_setting.WPSEnable.value= 1;	
+			    isCloseWps(0);
+			  }else{
+			  $("#state").addClass("switchoff");
+			    document.wps_setting.WPSEnable.value= 0;
+			    isCloseWps(1);
+			 }
+		} else {
+		  if(wpsenable == 0){
+			  $("#state").addClass("switchoff");
+			    document.wps_setting.WPSEnable.value= 0;
+			    isCloseWps(1);
+			  } else {
+			  $("#state").removeClass("switchoff");
+			    document.wps_setting.WPSEnable.value= 1;
+			    isCloseWps(0);
+			 }			
+		}
+	})
+
+});
+
+function wpsEnableSumbit()
+{
+	Alert("正在保存设置，请稍候", 10);	
+	setTimeout("Alert('设置成功，无线网络将断开，请在30秒后重新进入本页面',25)", 10100);
+	$.ajax({
+		type: "post",
+		url: "/cgi-bin/wireless.cgi",     
+		data: $("#wps_setting").serialize(),    
+		success: function(data){
+			//alert("保存成功！");
+		},
+		error: function(data) {
+			//alert("保存失败！\n" + data);
+		}
+	});
+	
+	var wps_enable = 1- parseInt(document.wps_setting.WPSEnable.value);
+	isCloseWps(wps_enable);
+}
+
+function wpsConfigSubmit()
+{
+	Alert("正在保存设置，请稍候", 10);	
+	setTimeout("Alert('设置成功，无线网络将断开，请在30秒后重新进入本页面',25)", 10100);
+	$.ajax({
+		type: "post",
+		url: "/cgi-bin/wireless.cgi",
+		data: $("#wps_config").serialize(),    
+		success: function(data){
+			//alert("保存成功！");
+		},
+		error: function(data) {
+			//alert("保存失败！\n" + data);
+		}
+	});
+}
+
+//防止缓存
+window.setInterval("refreshCookie()", 1000);  
+
+</script>
+</head>
+
+<body>
+<h1 id="lTitle"></h1>
+<p id="lIntroduction"></p>
+<div class="int">
+	<h1>无线设置</h1>
+    <div class="cfg">
+        <div class="cfgleft">
+            <ul>
+                <li style="display:none"><a href="wireless_guest.shtml">访客网络</a></li>
+				<li class="on"><a href="wireless_wps.shtml">WPS设置</a></li>
+				<li><a href="wireless_mac.shtml">无线访问控制</a></li>
+            </ul>
+        </div>
+
+
+<form method="post" name="wps_setting" id="wps_setting" action="/cgi-bin/wireless.cgi">
+<input type=hidden name=page value="WPSConfig">
+<input type=hidden name=wlan_conf value="2860">
+<div class="cfgright" style="padding-top:12px;">
+    <div style="border-bottom:1px #efefef solid; padding-bottom:15px;">
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+		    <tr>
+			    <td width="25%" colspan="2"><span>WPS开关</span></td>
+				<td width="75%">
+				    <div class="selectswitch" id="state">
+					    <em class="closestate"></em><span><strong id="switch"></strong></span><em class="openstate"></em>
+					</div>
+					<input type="hidden" id="WPSEnable" name="WPSEnable" value="1">
+				</td>
+			</tr>
+		</table>
+
+	<div class="subpart">
+	    <ul>
+		    <li><b onclick="wpsEnableSumbit();">保存</b></li>
+			<li><b class="cancel" onClick="javascript:parent.TINY.box.hide();">取消</b></li>
+		</ul>
+	</div>
+</div>
+</form>
+<form method="post" name="wps_config" id="wps_config" action="/cgi-bin/wireless.cgi">
+<input type=hidden name=page value="WPS">
+<input type=hidden name=wlan_conf value="2860">
+<input type=hidden name="PINPBCRadio" id="PINPBCRadio" value="2">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" id="wpsconfig">
+	    <tr>
+			<td style="width:118px;"><span>PIN码</span></td>
+			<td>
+			    <span id="pin_num" name="pin_num"><!--#exec cmd="web 2860 wifi wpsPINCode"--></span>
+			</td>
+		</tr>
+	    <tr>
+		    <td style="width:118px;"><span>WPS按键</span></td>
+			<td>
+			    <span class="configbtn">
+				    <b class="cancel" onclick="wpsConfigSubmit();" style="height:26px;line-height:26px;width:95px;">开始配置</b>
+				</span>
+			</td>
+		</tr>
+	</table>
+   </div>
+</form>
+  </div>
+</div>
+</body>
+</html>
+

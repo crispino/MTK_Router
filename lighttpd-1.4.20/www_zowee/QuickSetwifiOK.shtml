@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="KEYWords" Content="wifisetting1pageFlag">
+<meta http-equiv="Pragma" CONTENT="no-cache">
+<meta http-equiv="Cache-Control" CONTENT="no-cache">
+<meta http-equiv="Expires" CONTENT="-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<title>互联网设置</title>
+<link href="css/mainstyle.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/herouter.js"></script>
+<style type="text/css">
+<!--
+body{ color:#676767;}
+*{-moz-transition: all 0.3s ease-in;-webkit-transition: all 0.3s ease-in;-o-transition: all 0.3s ease-in;transition: all 0.3s ease-in;}
+*:hover{-moz-transition: all 0.3s ease-in;-webkit-transition: all 0.3s ease-in;-o-transition: all 0.3s ease-in;transition: all 0.3s ease-in;}
+.int { height:410px; width:670px; overflow:hidden; background:#fcfcfa url(images/fullbg.gif) repeat-x; padding:5px 15px;}
+.int h1{ font-size:16px; line-height:50px; 	color: #cccccc; border-bottom:1px #d3d3d3 solid;}
+.wifiset{ padding:30px; }
+.wifiset td{ height:36px;}
+.wifiset td span{ padding-left:70px; font-size:14px;}
+.wifiset td b{ font-weight:normal; padding-right:22px; color:#999; line-height:26px; display:block; height:26px; float:left; background:url(images/help.png) no-repeat right center;}
+.wifiset td i{ color:#999; font-style:normal;}
+ .content{ color:#56bbcb; font-family:"微软雅黑"; font-size:16px;}
+ .Txttype {
+font-size:20px;
+ line-height:50px; 
+	color: #000000;
+	
+}
+-->
+</style>
+<script type="text/javascript">
+	function cancel(){
+		parent.TINY.box.hide();
+	}
+	
+	$(document).ready(function(){
+		setTimeout("cancel();",20000);
+	});
+	
+</script>
+</head>
+
+<body>
+<form method="post" name="wireless_setting" id="wireless_setting" action="/cgi-bin/wireless.cgi">
+ 
+<div class="int">	
+	<h1 align="center">(第一步)互联网设置—>(第二步)无线设置—><span class="Txttype">(第三步)完成</span></h1>
+	<div class="wifiset">
+	<br />
+	<br />
+	<br />
+	<br />
+		<div class="content">
+			<table style="margin:auto;">
+				<tr>	
+					<td><img src="./images/check2_19.png"/></td>
+					<td>&nbsp;&nbsp;</td>
+					<td>
+						<h2 id="msg" class="content">WIFI设置成功，无线网络将断开，请关闭页面并在30秒后重新进入。</h2>
+					</td>
+				</tr>
+			</table>					
+	</div>
+	
+</div>
+</form>
+</body>
+</html>

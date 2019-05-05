@@ -1,0 +1,76 @@
+
+<!-- Copyright 2011, MediaTek Inc. All Rights Reserved. -->
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/style/normal_ws.css" type="text/css">
+<title>无线客户端列表</title>
+</head>
+
+<script type="text/javascript" src="/shareFun.js"></script>
+<script language="JavaScript" type="text/javascript">
+
+function PageInit()
+{
+	var txbf = "0";
+
+	if (txbf == "1")
+		display("none", "div_info_normal");
+	else
+		display("none", "div_info_txbf");
+}
+</script>
+
+<body onLoad="PageInit()">
+<div class="long_ndiv">
+<table class="body"><tr><td>
+
+<h1 id="stalistTitle">客户端列表</h1>
+<p id="stalistIntroduction"> 您能在此监视连结上这台无线存取节点的客户端。 </p>
+<hr />
+
+<table width="540" border="1" cellpadding="2" cellspacing="1">
+  <tr>
+    <td class="title" id="stalistWirelessNet">无线网络</td>
+  </tr>
+</table>
+<table id="div_info_normal" width="540" border="1" cellpadding="2" cellspacing="1">
+  <tr>
+    <td bgcolor=#E8F8FF id="stalistMacAddr">MAC 地址</td>
+    <td bgcolor=#E8F8FF>Aid</td>
+    <td bgcolor=#E8F8FF>PSM</td>
+    <td bgcolor=#E8F8FF>MimoPS</td>
+    <td bgcolor=#E8F8FF>MCS</td>
+    <td bgcolor=#E8F8FF>BW</td>
+    <td bgcolor=#E8F8FF>SGI</td>
+    <td bgcolor=#E8F8FF>STBC</td>
+  </tr>
+  
+</table>
+<table id="div_info_txbf" width="540" border="1" cellpadding="2" cellspacing="1">
+  <tr>
+    <td bgcolor=#E8F8FF id="stalistMacAddr">MAC 地址</td>
+    <td bgcolor=#E8F8FF>Aid</td>
+    <td bgcolor=#E8F8FF>PSM</td>
+    <td bgcolor=#E8F8FF>MIMO<br>PS</td>
+    <td bgcolor=#E8F8FF>TX Rate</td>
+    <td bgcolor=#E8F8FF>TxBF</td>
+    <td bgcolor=#E8F8FF>RSSI</td>
+    <td bgcolor=#E8F8FF>Stream<br>SNR</td>
+    <td bgcolor=#E8F8FF>Snd Rsp<br>SNR</td>
+    <td bgcolor=#E8F8FF>Last<br>RX Rate</td>
+    <td bgcolor=#E8F8FF>Connect<br>Time</td>
+  </tr>
+  
+</table>
+
+</td></tr></table>
+</div>
+</body>
+<head>
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+</head>
+</html>

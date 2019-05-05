@@ -1,0 +1,203 @@
+<!doctype html> 
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<title>互联网设置</title>
+<style type="text/css">
+.init { color:#676767;width:670px;font-size:12px; }
+</style>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="/shareFun.js"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script language="JavaScript" type="text/javascript">
+var gPageRecord = 16; 
+var gPageTotal = 0;
+var gTotalCount = 0;
+var gPageNum = 0;
+var http_request = false;
+
+function uploadLogField()
+{
+	var str = "<!--#exec cmd="web 2860 sys syslog_Hemu"-->";
+	
+	var myArray = new Array();
+	myArray = str.split("&&&&");//分割符
+	var buffer = "";
+	gTotalCount = 0;
+	for(i = 0; i < myArray.length; i++)
+	{	
+		var id = "log_display" + (i+1);
+		if(i < gPageRecord)
+		{
+			buffer += "<tr id='" + id + "' style='display:'><td>" +myArray[i] + "</td></tr>";
+		}
+		else
+		{
+			buffer += "<tr id='" + id + "' style='display:none'><td>" +myArray[i] + "</td></tr>";
+		}
+		
+		gTotalCount++;
+	}
+	
+	if(str == "-1"){
+		document.getElementById("showLog").innerHTML =
+		" <tr><td>Not support.\n(Busybox->\n  System Logging Utilitie ->\n	syslogd\n    Circular Buffer\n    logread</td></tr>"
+	}else{
+		var docTable = document.getElementById('showLog');
+		//var newDiv = document.createElement('div');
+		docTable.innerHTML = '<table><tbody>'+buffer+'</tbody></table>';
+	//	var newTbody = newDiv.childNodes[0];
+	//	var oldTbody = docTable.tBodies[0];
+	//	docTable.replaceChild(newTbody, oldTbody);
+	}
+	
+	initPageNum();
+} 
+
+function alertContents() 
+{
+	if (http_request.readyState == 4) {
+		if (http_request.status == 200) {
+			uploadLogField(http_request.responseText);
+		} else {
+			alert('There was a problem with the request.'+http_request.readyState+':'+http_request.status);
+		}
+	}
+}
+
+function updateLog()
+{
+	uploadLogField();
+	//makeRequest("/cgi-bin/makeRequest.cgi", "GetSysLog", alertContents);
+}
+
+function initTranslation()
+{
+	e = document.getElementById("syslogSysLogRefresh");
+	e.value = _("刷新");
+}
+
+function pageInit()
+{
+	//initTranslation();
+	updateLog();
+}
+
+
+
+function refreshlogclick()
+{
+	updateLog();
+
+	return true;
+}
+
+function initPageNum(){
+
+	// count =document.getElementById("showLog").rows.length ;//记录总数 
+	 gPageTotal = ((gTotalCount + gPageRecord - 1)/gPageRecord)|0;//总页数
+	 //gPageNum = 1;
+	 document.getElementById("PTotal").innerText = "" + gPageTotal;
+	// setPagenum(); 
+
+	coordinatePagenum(gPageTotal); 
+
+	showhiddenRecord(gPageTotal);
+}
+
+function showhiddenRecord(pagenum1){
+	var number = document.getElementById("number");
+	var theFirstPage = document.getElementById("theFirstPage");
+	var thePrePage = document.getElementById("thePrePage");
+	var theNextPage = document.getElementById("theNextPage");
+	var theLastPage = document.getElementById("theLastPage");
+	
+    number.innerText = pagenum1; 
+    if(pagenum1<=1){ 
+        theFirstPage.innerHTML="第一页"; 
+        thePrePage.innerHTML="上一页"; 
+    }else{ 
+        theFirstPage.innerHTML="<a href=\"javascript:firstPage()\">第一页</a>"; 
+        thePrePage.innerHTML="<a href=\"javascript:prePage()\">上一页</a>"; 
+    } 
+    if(pagenum1>=gPageTotal){ 
+        theNextPage.innerHTML="下一页"; 
+        theLastPage.innerHTML="最后一页"; 
+    }else{ 
+        theNextPage.innerHTML="<a href=\"javascript:nextPage()\">下一页</a>"; 
+        theLastPage.innerHTML="<a href=\"javascript:lastPage()\">最后一页</a>"; 
+    } 
+    //根据当前要显示的页码取得当前面里第一条记录的号码 
+    pageBegin = (gPageRecord*(pagenum1-1)+1)|0; 
+
+    //根据当前要显示的页码取得当前面里最后一条记录的号码 
+    pageEnd = gPageRecord*pagenum1; 
+    for(i = 0; i < gTotalCount; i++){ 
+		var id_num = "log_display" + (i+1);
+		//console.log(document.getElementById(id_num));
+        if(i + 1>=pageBegin && i + 1<=pageEnd){
+            document.getElementById(id_num).style.display="";
+        }else{ 
+            document.getElementById(id_num).style.display="none"; 
+        } 
+    }
+	
+	gPageNum = pagenum1; 
+} 
+
+function firstPage(){ 
+    gPageNum = 1; 
+    showhiddenRecord(gPageNum); 
+} 
+
+function lastPage(){ 
+    showhiddenRecord(gPageTotal); 
+} 
+
+//重新整理当前页码，如果页面小于1，则赋值为1，如果大于总页数，则等于总页数 
+function coordinatePagenum(num){ 
+    if(num<1){ 
+        num=1; 
+    }else if(num>gPageTotal){ 
+        num=gPageTotal; 
+    } 
+} 
+
+function prePage(){ 
+    gPageNum--; 
+    coordinatePagenum(gPageNum); 
+    showhiddenRecord(gPageNum); 
+} 
+
+function nextPage(){ 
+    gPageNum++; 
+    coordinatePagenum(gPageNum); 
+    showhiddenRecord(gPageNum); 
+} 
+
+function gotoPage(num){ 
+    coordinatePagenum(gPageNum); 
+    showhiddenRecord(num); 
+} 
+
+</script>
+
+</head>
+<body onload="pageInit()">
+<form  method="post" name="syslogs" id="syslogs">
+<center>
+共 <span id="PTotal">?</span> 页当前第 <span id="number">1</span> 页 
+<span id="theFirstPage"><a href="javascript:firstPage()">第一页</a></span> 
+<span id="thePrePage"><a href="javascript:prePage()">上一页</a></span> 
+<span id="theNextPage"><a href="javascript:nextPage()">下一页</a></span> 
+<span id="theLastPage"><a href="javascript:lastPage()">最后一页</a></span> 
+<span>
+	<input type="button" value="刷新" id="syslogSysLogRefresh"
+	name="refreshlog" onclick="refreshlogclick();"></span>
+	<table class="init">
+<tr><td>
+<!-- ================= System log ================= -->
+<dev name="showLog" id="showLog" border="1" align="left"
+width="100%"></dev>
+</td></tr></table></center> 
+</form>
+</body></html>

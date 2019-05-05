@@ -1,0 +1,162 @@
+<!doctype html> 
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>互联网设置</title>
+<link href="css/mainstyle.css" rel="stylesheet" type="text/css" />
+<link href="css/and.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/herouter.js"></script>
+<style type="text/css">
+<!--
+body{ color:#676767;}
+*{-moz-transition: all 0.3s ease-in;-webkit-transition: all 0.3s ease-in;-o-transition: all 0.3s ease-in;transition: all 0.3s ease-in;}
+*:hover{-moz-transition: all 0.3s ease-in;-webkit-transition: all 0.3s ease-in;-o-transition: all 0.3s ease-in;transition: all 0.3s ease-in;}
+.int { height:410px; width:670px; overflow:hidden; background:#fcfcfa url(images/fullbg.gif) repeat-x; padding:5px 15px;}
+.int h1{ font-size:16px; line-height:50px;	color: #cccccc; border-bottom:1px #d3d3d3 solid;}
+.mainsetting{ padding:30px; }
+.mainsetting h2{ font-size:14px; line-height:38px;}
+.c1{ height:48px;}
+.c1 b{ display:block; height:48px; cursor:pointer; width:190px; font-weight:normal; float:left; background:#77d1df; font-size:18px; color:#fff; text-align:center; line-height:48px;}
+.c1 a{ background:url(images/help.png) no-repeat center center; display:block; float:left; height:48px; width:30px;}
+.c1 b:hover{ background:#56bbcb;}
+.c1 span{  font-size:12px; color:#919191; padding:0 0 0 15px; float:left; font-weight:normal; line-height:48px;}
+.c1 .err{ background:#e71b1b;}
+.c1 .err:hover{ background:#da1515;}
+.mainsetting h3{ font-size:24px; font-weight:normal; line-height:50px; color:#29b8e4;}
+//.c2{ border-top:1px #e6e6e6 solid; margin-top:80px; line-height:30px;}
+.c2{ border-top:1px #e6e6e6 solid; line-height:30px; text-align:right; position:relative; bottom:120px}
+.cfg{ padding:15px 0; height:330px;}
+.cfgleft{ float:left; width:185px; height:330px; background:url(images/cfgleftbg.png) repeat-y;}
+.cfgleft ul{}
+.cfgleft li{ cursor:pointer; height:40px; line-height:40px; font-size:14px; color:#666; border-left:4px #dfdfdf solid ; padding-left:12px;}
+.cfgleft li:hover{ border-left:4px #1e9ec5 solid;  font-weight:bold;}
+.cfgleft li.on{ border-left:4px #1e9ec5 solid; color:#1e9ec5; font-weight:bold; font-size:16px; background:#fff url(images/arrow1.png) no-repeat 170px center;}
+.cfgright{padding-left:210px; height:330px;}
+.cfgright td{ height:36px; font-size:14px;}
+.cfgright td span{ padding-left:100px; font-size:14px;}
+.cfgright .spheight{padding-left:100px; height:60px; }
+.cfgright td label{ font-size:14px; line-height:60px;}
+.radiobox{ margin-top:-2px;}
+.inp1 {height:26px; border:1px #d2d2d2 solid; width:160px;font-family:"微软雅黑"; color:#666; padding:0 10px;}
+.subpart{ height:48px; padding-left:120px; padding-top:25px;}
+.subpart ul{}
+.subpart li{ float:left; padding-right:10px;}
+.subpart b{ display:block; height:48px; cursor:pointer; width:170px; font-weight:normal; float:left; background:#77d1df; font-size:18px; color:#fff; text-align:center; line-height:48px;}
+.subpart b:hover{ background:#56bbcb;}
+.subpart .cancel{ width:110px; background:#99e4f0; }
+.state{ padding:15px 0; color:#757575;}
+.state1{ float:left; width:315px;; padding:10px ;}
+.state2{ float:right; width:315px;  padding:10px ;}
+.entstate{padding-top:50px;padding-left:50px;}
+.entstate h3{font-size:16px; color:#3aaec1; line-height:30px;}
+.entstate ul{}
+.entstate li{line-height:30px; font-size:14px; height:30px;}
+.entstate li b{display:block; float:left;}
+.entstate li span{display:block; float:left;}
+.entstate li a,.intstate li a:visited{ display:block; height:30px; padding:0 12px; background:#77d1df; float:left; color:#fff; margin-left:10px; }
+.entstate li a:hover,.intstate li a:active{ text-decoration:none; background:#56bbcb;}
+.wifistate .wifiok{float:right; }
+.animation{background:url(./images/waitinganimation.gif) no-repeat; }
+.box{ width:500px; height:40px; margin:auto auto; }      
+.r1{ height:1px; overflow:hidden; margin:0 5px; background:#56bbcb; }     
+.r2{ height:1px; overflow:hidden; margin:0 3px; border-left:2px solid #56bbcb; border-right:2px solid #56bbcb; }      
+.r3{ height:1px; overflow:hidden; margin:0 2px; border-left:1px solid #56bbcb; border-right:1px solid #56bbcb; }      
+.r4{ height:2px; margin:0 1px; overflow:hidden; border-left:1px solid #56bbcb; border-right:1px solid #56bbcb; }       
+.content{ height:30px; border-left:1px solid #56bbcb; border-right:1px solid #56bbcb; padding:7px 10px; } 
+.content h2{ color:#56bbcb; font-family:"微软雅黑"; font-size:16px;}
+.Txttype {
+font-size:20px;
+line-height:50px; 
+color: #000000;	
+}
+
+-->
+</style>
+</head>
+
+<script type="text/javascript">
+
+var WIFIAuthMode = "<!--#exec cmd="web 2860 nvram AuthMode"-->";
+var timer;
+
+function run(){
+    var s = document.getElementById("wait");
+     s.innerHTML = s.innerHTML * 1 - 1;
+    if(s.innerHTML == 1){
+    	clearInterval(timer);
+        return false;
+    }
+   
+}
+function cancel(){
+	parent.TINY.box.hide();
+}
+
+$(document).ready(function(){
+
+	var WIFIAuthModeArray = WIFIAuthMode.split(";");
+	if(WIFIAuthModeArray[0] == "OPEN"){
+		$("#netpwd").text("无");
+	}else{
+		$("#netpwd").text("<!--#exec cmd="web 2860 nvram WPAPSK1"-->");
+	}
+	//setTimeout('$("h2").text("正在设置和目面板AP，请稍侯...");', 0);
+	document.getElementById("msg").innerHTML = "正在设置和目面板AP，请稍候...<span id=\"wait\">10</span>秒";
+	setTimeout(function(){
+		timer = window.setInterval("run();", 1000);
+	},300);
+	setTimeout('$("#wait").css("display","none"); $("h2").text("设置成功，无线网络将断开，请在1分钟后重新进入");', 10000);
+	setTimeout("cancel();",20000);
+});	
+
+</script>
+
+<body>
+<form method="post" name="wifi_status" id="wifi_status">	
+<div class="int">
+<h1 align="center">(第一步)无线设置—><span class="Txttype">(第二步)完成</span></h2>
+    <div class="cfg">
+		<div class="box">   
+			<div class="top">
+				<div class="r1"></div>
+				<div class="r2"></div>
+				<div class="r3"></div>
+				<div class="r4"></div>
+			</div>
+			<div class="content">
+				<table style="margin:auto;">
+	        		<tr>
+					    <td><img src="./images/check3_07.png"/></td>
+						<td>&nbsp;&nbsp;</td>
+	     				<td>
+	     				   <h2 id="msg"></h2>
+	     			    </td>
+	        	    </tr> 
+			    </table>					
+			</div>
+			<div class="bottom">
+				<div class="r4"></div>
+				<div class="r3"></div>
+				<div class="r2"></div>
+				<div class="r1"></div>
+			</div>
+	    </div>        		     	
+        <div class="cfgright">  				       		
+            <div class="state">
+				<div class="entstate">
+				    <!--h3>*无线设置完成，请手动连接到新的Wi-Fi</h3-->
+				    <ul>
+				       <li><b>网络名称：</b><span>
+				       <!--#exec cmd="web 2860 nvram SSID1"-->
+				       </span></li>
+				       <li><b>网络密码：</b><span id="netpwd">   </span></li>
+				    </ul>
+				</div>            	
+		    </div>
+        </div>
+        <div class="c2" align="right"><p>设置完成后，向导自动关闭 &gt;&gt;</p></div>   
+    </div>    
+   </div>
+</form>
+</body>
+</html>

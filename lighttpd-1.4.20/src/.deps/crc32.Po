@@ -1,0 +1,77 @@
+crc32.o: crc32.c crc32.h ../config.h \
+ /home/xiaoning/CMCC_CY/source/lib/include/linux/autoconf.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/types.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/features.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/uClibc_config.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/cdefs.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/types.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/wordsize.h \
+ /opt/buildroot-gcc463/usr/lib/gcc/mipsel-buildroot-linux-uclibc/4.6.3/include/stddef.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/typesizes.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/pthreadtypes.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sched.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/time.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/endian.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/endian.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/byteswap.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/byteswap.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/byteswap-common.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/select.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/select.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sigset.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/time.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/sysmacros.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/stdint.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/wchar.h
+
+crc32.h:
+
+../config.h:
+
+/home/xiaoning/CMCC_CY/source/lib/include/linux/autoconf.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/types.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/features.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/uClibc_config.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/cdefs.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/types.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/wordsize.h:
+
+/opt/buildroot-gcc463/usr/lib/gcc/mipsel-buildroot-linux-uclibc/4.6.3/include/stddef.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/typesizes.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/pthreadtypes.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sched.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/time.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/endian.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/endian.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/byteswap.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/byteswap.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/byteswap-common.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/select.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/select.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sigset.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/time.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/sysmacros.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/stdint.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/wchar.h:

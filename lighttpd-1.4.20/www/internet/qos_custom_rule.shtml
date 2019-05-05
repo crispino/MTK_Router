@@ -1,0 +1,402 @@
+<!-- Copyright 2004, Ralink Technology Corporation All Rights Reserved. -->
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/style/normal_ws.css" type="text/css">
+<title>QoS/Bandwidth Management Settings </title>
+</head>
+
+<script type="text/javascript" src="/shareFun.js"></script>
+<script language="JavaScript" type="text/javascript">
+
+
+var direction = "";
+var layer7_all = "<!--#exec cmd="web 2860 firewall getLayer7"-->";
+var layer7_filter_entries = new Array();
+var layer7_filter_item = new Array();
+var layer7_filename = new Array();
+var layer7_name = new Array();
+var layer7_intro = new Array();
+var QoS = "<!--#exec cmd="web 2860 nvram QoSEnable"-->";
+/*
+	Upload AF Group init
+*/
+
+var AF1ULName = "<!--#exec cmd="web 2860 nvram QoSAF1ULName"-->";
+var AF2ULName = "<!--#exec cmd="web 2860 nvram QoSAF2ULName"-->";
+var AF3ULName = "<!--#exec cmd="web 2860 nvram QoSAF3ULName"-->";
+var AF4ULName = "<!--#exec cmd="web 2860 nvram QoSAF4ULName"-->";
+var AF5ULName = "<!--#exec cmd="web 2860 nvram QoSAF5ULName"-->";
+var AF6ULName = "<!--#exec cmd="web 2860 nvram QoSAF6ULName"-->";
+/*
+	Download AF Group init
+*/
+
+var AF1DLName = "<!--#exec cmd="web 2860 nvram QoSAF1DLName"-->";
+var AF2DLName = "<!--#exec cmd="web 2860 nvram QoSAF2DLName"-->";
+var AF3DLName = "<!--#exec cmd="web 2860 nvram QoSAF3DLName"-->";
+var AF4DLName = "<!--#exec cmd="web 2860 nvram QoSAF4DLName"-->";
+var AF5DLName = "<!--#exec cmd="web 2860 nvram QoSAF5DLName"-->";
+var AF6DLName = "<!--#exec cmd="web 2860 nvram QoSAF6DLName"-->";
+layer7_filter_entries = layer7_all.split(";");
+for(i=0; i<layer7_filter_entries.length; i++){
+	layer7_filter_item = layer7_filter_entries[i].split("#");
+	layer7_filename[i] = layer7_filter_item[0];
+	layer7_name[i] = layer7_filter_item[1];
+	layer7_intro[i] = layer7_filter_item[2];
+}
+
+
+
+AF1ULName = (AF1ULName == "") ? "qos Low" : AF1ULName;
+AF2ULName = (AF2ULName == "") ? "qos High" : AF2ULName;
+AF3ULName = (AF3ULName == "") ? "NoName3(UL)" : AF3ULName;
+AF4ULName = (AF4ULName == "") ? "NoName4(UL)" : AF4ULName;
+AF5ULName = (AF5ULName == "") ? "qos Highest" : AF5ULName;
+AF6ULName = (AF6ULName == "") ? "qos Default" : AF6ULName;
+
+
+AF1DLName = (AF1DLName == "") ? "qos Low" : AF1DLName;
+AF2DLName = (AF2DLName == "") ? "qos High" : AF2DLName;
+AF3DLName = (AF3DLName == "") ? "NoName3(DL)" : AF3DLName;
+AF4DLName = (AF4DLName == "") ? "NoName4(DL)" : AF4DLName;
+AF5DLName = (AF5DLName == "") ? "qos Highest" : AF5DLName;
+AF6DLName = (AF6DLName == "") ? "qos Default" : AF6DLName;
+
+
+function initTranslation()
+{
+	var e;
+
+	e = document.getElementById("QoSClassifierTitleStr");
+	e.innerHTML = _("qos classifier title");
+	e = document.getElementById("QoSClassifierNameStr");
+	e.innerHTML = _("qos classifier name");
+	e = document.getElementById("QoSClassifierDirStr");
+	e.innerHTML = _("qos classifier dir");
+	e = document.getElementById("QoSClassifierGroupStr");
+	e.innerHTML = _("qos classifier group");
+	e = document.getElementById("QoSClassifierMacStr");
+	e.innerHTML = _("qos classifier mac");
+/*	e = document.getElementById("QoSClassifierInIf");
+	e.innerHTML = _("qos classifier ingress if");  */
+	e = document.getElementById("QoSClassifierDIPStr");
+	e.innerHTML = _("qos classifier dip");
+	e = document.getElementById("QoSClassifierSIPStr");
+	e.innerHTML = _("qos classifier sip");
+	e = document.getElementById("QoSClassifierPktLenStr");
+	e.innerHTML = _("qos classifier pktlen");
+
+	e = document.getElementById("QoSClassifierDSCPStr");
+	e.innerHTML = _("qos classifier dscp");
+	e = document.getElementById("QoSClassifierProtoStr");
+	e.innerHTML = _("qos classifier proto");
+	e = document.getElementById("QoSClassifierDPortStr");
+	e.innerHTML = _("qos classifier dport");
+	e = document.getElementById("QoSClassifierSPortStr");
+	e.innerHTML = _("qos classifier sport");
+	e = document.getElementById("QoSClassifierL7Str");
+	e.innerHTML = _("qos classifier l7");
+	e = document.getElementById("QoSClassifierRemarkStr");
+	e.innerHTML = _("qos classifier remark");
+	e = document.getElementById("QoSClassifierAutoStr");
+	e.innerHTML = _("qos classifier auto");
+
+	e = document.getElementById("QoSClassifierNewStr")
+	if(opener.document.forms[0].AddruleDir.value == 'DL')
+		e.value = _("qos rule dl add");
+	else
+		e.value = _("qos rule add");
+}
+	
+function initValue()
+{
+	//initTranslation();
+	
+}
+
+function checkPortNum(num)
+{
+	if( num > 65535 || num < 0)
+		return false;
+	return true;
+}
+
+function checkInjection(str)
+{
+	var len = str.length;
+	for (var i=0; i<str.length; i++) {
+		if ( str.charAt(i) == '\r' || str.charAt(i) == '\n' || str.charAt(i) == ';' || str.charAt(i) == ','){
+			return false;
+		}else
+			continue;
+	}
+	return true;
+}
+
+function atoi(str, num)
+{
+	i=1;
+	if(num != 1 ){
+		while (i != num && str.length != 0){
+			if(str.charAt(0) == '.'){
+				i++;
+			}
+			str = str.substring(1);
+		}
+	  	if(i != num )
+			return -1;
+	}
+	
+	for(i=0; i<str.length; i++){
+		if(str.charAt(i) == '.'){
+			str = str.substring(0, i);
+			break;
+		}
+	}
+	if(str.length == 0)
+		return -1;
+	return parseInt(str, 10);
+}
+
+
+function checkMac(str){
+	var len = str.length;
+	if(len!=17)
+		return false;
+
+	for (var i=0; i<str.length; i++) {
+		if((i%3) == 2){
+			if(str.charAt(i) == ':')
+				continue;
+		}else{
+			if (    (str.charAt(i) >= '0' && str.charAt(i) <= '9') ||
+					(str.charAt(i) >= 'a' && str.charAt(i) <= 'f') ||
+					(str.charAt(i) >= 'A' && str.charAt(i) <= 'F') )
+				continue;
+		}
+		return false;
+	}
+	return true;
+}
+
+function checkRange(str, num, min, max)
+{
+    d = atoi(str,num);
+    if(d > max || d < min)
+        return false;
+    return true;
+}
+
+function isAllNumAndSlash(str)
+{
+	for (var i=0; i<str.length; i++){
+		if( (str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) == '.') || (str.charAt(i) == '/'))
+			continue;
+		return 0;
+	}
+	return 1;
+}
+
+function checkIpAddr(str)
+{
+	if(str == "")
+		return false;
+
+	if (isAllNumAndSlash(str) == 0)
+		return false;
+
+	var ip_pair = new Array();
+	ip_pair = str.split("/");
+
+	if(ip_pair.length > 2){
+		return false;
+	}
+
+	if(ip_pair.length == 2){
+		// sub mask
+		if(!ip_pair[1].length)
+			return false;
+		if(!isNumOnly(ip_pair[1])){
+			return false;
+		}
+		tmp = parseInt(ip_pair[1], 10);
+		if(tmp < 0 || tmp > 32){
+			return false;
+		}
+	}
+
+    if( (!checkRange(ip_pair[0],1,0,255)) ||
+		(!checkRange(ip_pair[0],2,0,255)) ||
+		(!checkRange(ip_pair[0],3,0,255)) ||
+		(!checkRange(ip_pair[0],4,0,254)) ){
+		return false;
+    }
+	return true;
+}
+
+function checkNum(str)
+{
+	if(str.length < 2)
+		return false;
+	for(i=0; i<str.length-1; i++){
+		if( str.charAt(i) >= '0' && str.charAt(i) <= '9')
+			continue;
+		return false;
+	}
+	if( str.charAt(str.length-1) == 'k' || str.charAt(str.length-1) == 'K' ||
+		str.charAt(str.length-1) == 'm' || str.charAt(str.length-1) == 'M' || 
+		(str.charAt(str.length-1) >= '0' && str.charAt(str.length-1) <= '9') )
+		return true;
+	return false;
+}
+function checkForm()
+{
+	if(document.classifier.comment.value == ""){
+		alert("Please input a name.");
+		return false;
+	}
+	if(document.classifier.mac_address.value == ""){
+		alert("Please input mac address.");
+		return false;
+	}
+	if(document.classifier.QoSClassMaxUPSpeedStr_value.value == ""){
+		alert("Please input Max Uplink Speed.");
+		return false;
+	}
+	if(document.classifier.QoSClassMaxDLSpeedStr_value.value == ""){
+		alert("Please input Max Download Speed.");
+		return false;
+	}
+
+	if(!checkInjection(document.classifier.comment.value)){
+		alert("There is an illegal character in the name.");
+		return false;
+	}
+	
+	if(document.classifier.mac_address.value != ""){
+		if(!checkMac(document.classifier.mac_address.value)){
+			alert("The MAC address format is invalid.");
+			return false;
+		}
+	}
+
+	if(!checkNum(document.classifier.QoSClassMaxUPSpeedStr_value.value)){
+		alert("Max Uplink Speed format is wrong. (ex. \"10k\" \"20M\")");
+		return false;
+	}
+/*	var value = getTrueValue(document.classifier.QoSClassMaxUPSpeedStr_value.value);
+	if( value  > getTrueValue(QOS_MAX_HARD_LIMITED) ){
+		alert("The value of upload bandwidth is too large.(" + QOS_MAX_HARD_LIMITED + ")");
+		return false;
+	}
+	if( value < QOS_MIN_HARD_LIMITED ){
+		var ret = confirm("The value of upload bandwidth is too small, are you sure?");
+		if(ret == false)
+			return false;
+	}
+	*/
+	if(!checkNum(document.classifier.QoSClassMaxDLSpeedStr_value.value)){
+		alert("The Max Download Speed format is wrong. (ex. \"10k\" \"20M\")");
+		return false;
+	}
+		
+	/*var value = getTrueValue(document.classifier.QoSClassMaxDLSpeedStr_value.value);
+	if( value  > getTrueValue(QOS_MAX_HARD_LIMITED) ){
+		alert("The value of upload bandwidth is too large.(" + QOS_MAX_HARD_LIMITED + ")");
+		return false;
+	}
+	if( value < QOS_MIN_HARD_LIMITED ){
+		var ret = confirm("The value of upload bandwidth is too small, are you sure?");
+		if(ret == false)
+			return false;
+	}
+  */
+	return true;
+}
+
+
+</script>
+</head>
+
+
+<body onload="initValue()">
+<table class="body"><tr><td>
+
+
+<form method=post name="classifier" action="/cgi-bin/qos.cgi">
+<input type=hidden name=qos value=qos_rule>	
+<table width="500" border="1" cellpadding="2" cellspacing="1">
+<tr>
+	<td class="title" colspan="4" id="QoSClassifierTitleStr">Client setting</td>
+</tr>
+
+<tr>
+	<td class="head" colspan="2" id="QoSClassifierNameStr">
+		Name
+	</td>
+	<td colspan="2">
+		<input type="text" name="comment" id="comment" size="16" maxlength="32">
+	</td>
+</tr>
+<tr>
+	<td class="head" colspan="2" id="QoSClassifierStatusStr">
+		Status
+	</td>
+	<td colspan="2">
+		<select name="status" id="status">
+		<option value=1 id="ClientQoSEnableStr">Enable</option>
+		<option value=0 id="ClientQoSDisableStr">Disable</option>
+		</select>&nbsp;&nbsp;
+	</td>
+</tr>
+
+<tr>
+	<td class="head" colspan="2" id="QoSClassifierMacStr">
+		MAC address
+	</td>
+	<td colspan="2">
+		 <input type="text" size="18" name="mac_address" id="mac_address">
+	</td>
+</tr>
+
+<!-- <tr>
+	<td class="head" colspan="2" id="QoSClassifierDIPStr">
+		IP Address
+	</td>
+	<td colspan="2">
+		<input type="text" size="16" name="ip_address" id="ip_address">
+		
+	</td>
+</tr> -->
+
+<tr>
+	<td class="head" colspan="2" id="QoSClassMaxUPSpeedStr">
+		Max Uplink Speed
+	</td>
+	<td colspan="2">
+		<input type=text name=QoSClassMaxUPSpeedStr_value size=6 maxlength=8> kbps
+	</td>
+</tr>
+
+<tr>
+	<td class="head" colspan="2" id="QoSClassMaxDLSpeedStr">
+		Max Download Speed
+	</td>
+	<td colspan="2">
+		<input type=text name=QoSClassMaxDLSpeedStr_value size=6 maxlength=8> kbps
+	</td>
+</tr>
+
+</table>
+
+
+<input type="submit" name="modify" value="new" id="QoSClassifierNewStr" onClick="return checkForm()">
+
+</form>
+
+</td></tr></table>
+
+</body>
+</html>

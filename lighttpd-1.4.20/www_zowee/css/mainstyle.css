@@ -1,0 +1,40 @@
+/*common*/
+body,ul,ol,li,dl,dt,dd,p,h1,h2,h3,h4,h5,h6,form,fieldset,table,td,img,div{margin:0;padding:0;border:0;}
+body,ul,ol,li,p,form,fieldset,table,td{ font-family:Arial,"microsoft yahei", sans-serif;}
+td,p,li,select,input,textarea,div{font-size:12px;}
+body{ }
+/*{-moz-transition: all 0.3s ease-in;-webkit-transition: all 0.3s ease-in;-o-transition: all 0.3s ease-in;transition: all 0.3s ease-in;}
+*:hover{-moz-transition: all 0.3s ease-in;-webkit-transition: all 0.3s ease-in;-o-transition: all 0.3s ease-in;transition: all 0.3s ease-in;}*/
+ul{list-style-type:none;}
+li{display:block;}
+select,input{vertical-align:middle;}
+a{text-decoration:none;}
+a:link{color:#136fbc;}
+a:visited{color:#136fbc;}
+a:hover,a:active,a:focus{color:#136fbc; text-decoration:underline;}
+
+/*ext*/
+.clearit{clear:both;}
+.cuts{white-space:nowrap;overflow:hidden;-o-text-overflow:ellipsis;text-overflow:ellipsis;}
+.f14{font-size:14px;}
+.f18{font-size:18px;}
+.fb{font-weight:bold;}
+.hide{display:none;}
+.split{height:0;font-size:0;line-height:0;clear:both;overflow:hidden;display:block;visibility:hidden;}
+.tin{text-indent:2em;}
+.trans{filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;}
+.spc15{height:15px;font-size:0;line-height:0;clear:both;overflow:hidden;display:block;}
+.spc10{height:10px;font-size:0;line-height:0;clear:both;overflow:hidden;display:block;}
+.spc5{height:5px;font-size:0;line-height:0;clear:both;overflow:hidden;display:block;}
+.clean{ display:block; clear:both; margin:0px; padding:0px; visibility:hidden;}
+
+.a01,.a01 a:link,.a01 a:visited{color:#7b6558;text-decoration:none;}
+.a01 a:hover,.a01 a:active{color:#c00;text-decoration:underline;}
+.a02,.a02 a:link,.a02 a:visited{color:#bb0c20;text-decoration:none;}
+.a02 a:hover,.a02 a:active{color:#c00;text-decoration:underline;}
+.a03,.a03 a:link,.a03 a:visited{color:#999;text-decoration:none;}
+.a03 a:hover,.a03 a:active{color:#c00;text-decoration:underline;}
+.a04,.a04 a:link,.a04 a:visited{color:#fff;text-decoration:none;}
+.a04 a:hover,.a04 a:active{color:#fff;text-decoration:underline;}
+
+

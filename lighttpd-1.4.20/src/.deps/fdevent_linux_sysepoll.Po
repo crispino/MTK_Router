@@ -1,0 +1,200 @@
+fdevent_linux_sysepoll.o: fdevent_linux_sysepoll.c \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/types.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/features.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/uClibc_config.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/cdefs.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/types.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/wordsize.h \
+ /opt/buildroot-gcc463/usr/lib/gcc/mipsel-buildroot-linux-uclibc/4.6.3/include/stddef.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/typesizes.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/pthreadtypes.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sched.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/time.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/endian.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/endian.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/byteswap.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/byteswap.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/byteswap-common.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/select.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/select.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sigset.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/time.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/sysmacros.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/unistd.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/posix_opt.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/confname.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/getopt.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/stdlib.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/alloca.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/stdio.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/uClibc_stdio.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/wchar.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/wchar.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/uClibc_mutex.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/pthread.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sched.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/uClibc_clk_tck.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/signal.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/initspin.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sigthread.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/uClibc_pthread.h \
+ /opt/buildroot-gcc463/usr/lib/gcc/mipsel-buildroot-linux-uclibc/4.6.3/include/stdarg.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/stdio_lim.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/string.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/errno.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/errno.h \
+ /home/xiaoning/CMCC_CY/source/lib/include/linux/errno.h \
+ /home/xiaoning/CMCC_CY/source/lib/include/asm/errno.h \
+ /home/xiaoning/CMCC_CY/source/lib/include/asm-generic/errno-base.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/signum.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/siginfo.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sigaction.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sigcontext.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sgidefs.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sigstack.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/fcntl.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/fcntl.h \
+ fdevent.h ../config.h \
+ /home/xiaoning/CMCC_CY/source/lib/include/linux/autoconf.h settings.h \
+ bitset.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/stdint.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/epoll.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/epoll.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/poll.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/poll.h \
+ /home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/poll.h \
+ buffer.h
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/types.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/features.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/uClibc_config.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/cdefs.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/types.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/wordsize.h:
+
+/opt/buildroot-gcc463/usr/lib/gcc/mipsel-buildroot-linux-uclibc/4.6.3/include/stddef.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/typesizes.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/pthreadtypes.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sched.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/time.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/endian.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/endian.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/byteswap.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/byteswap.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/byteswap-common.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/select.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/select.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sigset.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/time.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/sysmacros.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/unistd.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/posix_opt.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/confname.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/getopt.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/stdlib.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/alloca.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/stdio.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/uClibc_stdio.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/wchar.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/wchar.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/uClibc_mutex.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/pthread.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sched.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/uClibc_clk_tck.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/signal.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/initspin.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sigthread.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/uClibc_pthread.h:
+
+/opt/buildroot-gcc463/usr/lib/gcc/mipsel-buildroot-linux-uclibc/4.6.3/include/stdarg.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/stdio_lim.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/string.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/errno.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/errno.h:
+
+/home/xiaoning/CMCC_CY/source/lib/include/linux/errno.h:
+
+/home/xiaoning/CMCC_CY/source/lib/include/asm/errno.h:
+
+/home/xiaoning/CMCC_CY/source/lib/include/asm-generic/errno-base.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/signum.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/siginfo.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sigaction.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sigcontext.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sgidefs.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/sigstack.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/fcntl.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/fcntl.h:
+
+fdevent.h:
+
+../config.h:
+
+/home/xiaoning/CMCC_CY/source/lib/include/linux/autoconf.h:
+
+settings.h:
+
+bitset.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/stdint.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/epoll.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/epoll.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/poll.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/sys/poll.h:
+
+/home/xiaoning/CMCC_CY/source/uClibc-0.9.33.2/app_headers/include/bits/poll.h:
+
+buffer.h:

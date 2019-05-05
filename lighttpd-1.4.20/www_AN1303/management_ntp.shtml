@@ -1,0 +1,529 @@
+
+<!-- Copyright 2011, MediaTek Inc. All Rights Reserved. -->
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/style/normal_ws.css" type="text/css">
+<title>系统管理</title>
+</head>
+
+<script type="text/javascript" src="/shareFun.js"></script>
+<script language="JavaScript" type="text/javascript">
+var greenapb = "0";
+//var snortb = '<% getSnortBuilt(); %>';
+var submit_buttons = ["manNTPSyncWithHost", "manNTPApply"]; //"manAdmApply", "manGreenAPApply", "manDdnsApply"];
+
+function AdmFormCheck()
+{
+	if (document.Adm.admuser.value == "") {
+		alert("请确认管理账号.");
+		return false;
+	}
+	if (document.Adm.admpass.value == "") {
+		alert("请确认管理密码.");
+		return false;
+	}
+	return true;
+}
+
+function NTPFormCheck()
+{
+	console.log("NTPFormCheck <------");
+	if( document.NTP.NTPServerIP.value != "" &&
+		document.NTP.NTPSync.value == ""){
+		alert("Please specify a value for the interval of synchroniztion.");
+		return false;
+	}
+	if(isNaN( document.NTP.NTPSync.value ) == true){
+		alert("不合法的NTP同步值.");
+		return false;
+	}
+	if( atoi(document.NTP.NTPSync.value, 1) > 300){
+		alert("同步值超出范围.(1~300)");
+		return false;
+	}
+	console.log("NTPFormCheck return true");
+	return true;
+}
+
+function DDNSFormCheck()
+{
+	if(  document.DDNS.DDNSProvider.value != "none" &&
+		(document.DDNS.Account.value == "" ||
+		 document.DDNS.Password.value == "" ||
+		 document.DDNS.DDNS.value == "")){
+		alert("请确认账号、密码和DDNS.");
+		return false;
+	}
+
+	return true;
+}
+
+function disableTextField (field)
+{
+  if(document.all || document.getElementById){
+    field.disabled = true;
+  }else {
+    field.oldOnFocus = field.onfocus;
+    field.onfocus = skip;
+  }
+}
+
+function enableTextField (field)
+{
+  if(document.all || document.getElementById)
+    field.disabled = false;
+  else {
+    field.onfocus = field.oldOnFocus;
+  }
+}
+
+function DDNSupdateState()
+{
+	if(document.DDNS.DDNSProvider.options.selectedIndex != 0){
+		enableTextField(document.DDNS.Account);
+		enableTextField(document.DDNS.Password);
+		enableTextField(document.DDNS.DDNS);
+	}else{
+		disableTextField(document.DDNS.Account);
+		disableTextField(document.DDNS.Password);
+		disableTextField(document.DDNS.DDNS);
+	}
+}
+
+function initValue()
+{
+	var tz = "<!--#exec cmd="web 2860 nvram TZ"-->";
+	var ddns_provider = "";
+
+	var dateb = "1";
+	var ddnsb = "0";
+	var watchdogb = "0";
+
+/*	if (watchdogb == "1") {
+		display("table-row", "div_watchdog");
+		document.Adm.admwatchdog.disabled = false;
+		var watchdogcap = "";
+		if (watchdogcap == "1")
+			document.Adm.admwatchdog[0].checked = true;
+		else
+			document.Adm.admwatchdog[1].checked = true;
+	} else {
+		display("none", "div_watchdog");
+		document.Adm.admwatchdog.disabled = true;
+	}
+*/
+	if (dateb == "1")
+	{
+		display("table-row", "div_date");
+		document.NTP.ntpcurrenttime.disabled = false;
+	}
+	else
+	{
+		display("none", "div_date");
+		document.NTP.ntpcurrenttime.disabled = true;
+	}
+
+	if (tz == "UCT_-11")
+		document.NTP.time_zone.options.selectedIndex = 0;
+	else if (tz == "UCT_-10")
+		document.NTP.time_zone.options.selectedIndex = 1;
+	else if (tz == "NAS_-09")
+		document.NTP.time_zone.options.selectedIndex = 2;
+	else if (tz == "PST_-08")
+		document.NTP.time_zone.options.selectedIndex = 3;
+	else if (tz == "MST_-07")
+		document.NTP.time_zone.options.selectedIndex = 4;
+	else if (tz == "MST_-07")
+		document.NTP.time_zone.options.selectedIndex = 5;
+	else if (tz == "CST_-06")
+		document.NTP.time_zone.options.selectedIndex = 6;
+	else if (tz == "UCT_-06")
+		document.NTP.time_zone.options.selectedIndex = 7;
+	else if (tz == "UCT_-05")
+		document.NTP.time_zone.options.selectedIndex = 8;
+	else if (tz == "EST_-05")
+		document.NTP.time_zone.options.selectedIndex = 9;
+	else if (tz == "AST_-04")
+		document.NTP.time_zone.options.selectedIndex = 10;
+	else if (tz == "UCT_-04")
+		document.NTP.time_zone.options.selectedIndex = 11;
+	else if (tz == "UCT_-03")
+		document.NTP.time_zone.options.selectedIndex = 12;
+	else if (tz == "EBS_-03")
+		document.NTP.time_zone.options.selectedIndex = 13;
+	else if (tz == "NOR_-02")
+		document.NTP.time_zone.options.selectedIndex = 14;
+	else if (tz == "EUT_-01")
+		document.NTP.time_zone.options.selectedIndex = 15;
+	else if (tz == "UCT_000")
+		document.NTP.time_zone.options.selectedIndex = 16;
+	else if (tz == "GMT_000")
+		document.NTP.time_zone.options.selectedIndex = 17;
+	else if (tz == "MET_001")
+		document.NTP.time_zone.options.selectedIndex = 18;
+	else if (tz == "MEZ_001")
+		document.NTP.time_zone.options.selectedIndex = 19;
+	else if (tz == "UCT_001")
+		document.NTP.time_zone.options.selectedIndex = 20;
+	else if (tz == "EET_002")
+		document.NTP.time_zone.options.selectedIndex = 21;
+	else if (tz == "SAS_002")
+		document.NTP.time_zone.options.selectedIndex = 22;
+	else if (tz == "IST_003")
+		document.NTP.time_zone.options.selectedIndex = 23;
+	else if (tz == "MSK_003")
+		document.NTP.time_zone.options.selectedIndex = 24;
+	else if (tz == "UCT_004")
+		document.NTP.time_zone.options.selectedIndex = 25;
+	else if (tz == "UCT_005")
+		document.NTP.time_zone.options.selectedIndex = 26;
+	else if (tz == "UCT_006")
+		document.NTP.time_zone.options.selectedIndex = 27;
+	else if (tz == "UCT_007")
+		document.NTP.time_zone.options.selectedIndex = 28;
+	else if (tz == "CST_008")
+		document.NTP.time_zone.options.selectedIndex = 29;
+	else if (tz == "CCT_008")
+		document.NTP.time_zone.options.selectedIndex = 30;
+	else if (tz == "SST_008")
+		document.NTP.time_zone.options.selectedIndex = 31;
+	else if (tz == "AWS_008")
+		document.NTP.time_zone.options.selectedIndex = 32;
+	else if (tz == "JST_009")
+		document.NTP.time_zone.options.selectedIndex = 33;
+	else if (tz == "KST_009")
+		document.NTP.time_zone.options.selectedIndex = 34;
+	else if (tz == "UCT_010")
+		document.NTP.time_zone.options.selectedIndex = 35;
+	else if (tz == "AES_010")
+		document.NTP.time_zone.options.selectedIndex = 36;
+	else if (tz == "UCT_011")
+		document.NTP.time_zone.options.selectedIndex = 37;
+	else if (tz == "UCT_012")
+		document.NTP.time_zone.options.selectedIndex = 38;
+	else if (tz == "NZS_012")
+		document.NTP.time_zone.options.selectedIndex = 39;
+
+	/*if (greenapb == "1")
+	{
+		display("table", "div_greenap");
+		display("table", "div_greenap_submit");
+	}
+	else
+	{
+		display("none", "div_greenap");
+		display("none", "div_greenap_submit");
+	}
+	set_greenap();
+
+	if (ddnsb == "1")
+	{
+		display("table", "div_ddns");
+		display("table", "div_ddns_submit");
+		document.DDNS.Account.disabled = false;
+		document.DDNS.Password.disabled = false;
+		document.DDNS.DDNS.disabled = false;
+		if (ddns_provider == "none")
+			document.DDNS.DDNSProvider.options.selectedIndex = 0;
+		else if (ddns_provider == "dyndns.org")
+			document.DDNS.DDNSProvider.options.selectedIndex = 1;
+		else if (ddns_provider == "freedns.afraid.org")
+			document.DDNS.DDNSProvider.options.selectedIndex = 2;
+		else if (ddns_provider == "zoneedit.com")
+			document.DDNS.DDNSProvider.options.selectedIndex = 3;
+		else if (ddns_provider == "no-ip.com")
+			document.DDNS.DDNSProvider.options.selectedIndex = 4;
+
+		DDNSupdateState();
+	}
+	else
+	{
+		display("none", "div_ddns");
+		display("none", "div_ddns_submit");
+		document.DDNS.Account.disabled = true;
+		document.DDNS.Password.disabled = true;
+		document.DDNS.DDNS.disabled = true;
+	}*/
+	
+/*
+	if (snortb == "1")
+	{
+		var snort_enable = "";
+		display("table", "div_snort");
+		display("table", "div_snort_submit");
+
+		if(snort_enable == "1")
+			document.Snort.SnortSelect.options.selectedIndex = 1;
+		else
+			document.Snort.SnortSelect.options.selectedIndex = 0;
+	}
+	else
+	{
+		display("none", "div_snort");
+		display("none", "div_snort_submit");
+	}
+*/
+}
+
+function set_greenap()
+{
+	var ntp_server = "";
+
+	for(var j=1;j<=4;j++)
+	{
+	    var shour_e = eval("document.GreenAP.GAPSHour"+j);
+	    var sminute_e = eval("document.GreenAP.GAPSMinute"+j);
+	    var ehour_e = eval("document.GreenAP.GAPEHour"+j);
+	    var eminute_e = eval("document.GreenAP.GAPEMinute"+j);
+	    var action_e = eval("document.GreenAP.GAPAction"+j);
+
+	    shour_e.disabled = true;
+	    sminute_e.disabled = true;
+	    ehour_e.disabled = true;
+	    eminute_e.disabled = true;
+	    action_e.disabled = true;
+	    if (ntp_server != "" && greenapb == "1")
+	    {
+		action_e.disabled = false;
+		switch(j)
+		{
+		case 1:
+		    var action = "";
+		    var time = "";
+		    var stimeArray = time.split(" ");
+		    time = "";
+		    var etimeArray = time.split(" ");
+		    break;
+		case 2:
+		    var action = "";
+		    var time = "";
+		    var stimeArray = time.split(" ");
+		    time = "";
+		    var etimeArray = time.split(" ");
+		    break;
+		case 3:
+		    var action = "";
+		    var time = "";
+		    var stimeArray = time.split(" ");
+		    time = "";
+		    var etimeArray = time.split(" ");
+		    break;
+		case 4:
+		    var action = "";
+		    var time = "";
+		    var stimeArray = time.split(" ");
+		    time = "";
+		    var etimeArray = time.split(" ");
+		    break;
+		}
+		if (action == "Disable")
+		    action_e.options.selectedIndex = 0;
+		else if (action == "WiFiOFF")
+		    action_e.options.selectedIndex = 1;
+		else if (action == "TX25")
+		    action_e.options.selectedIndex = 2;
+		else if (action == "TX50")
+		    action_e.options.selectedIndex = 3;
+		else if (action == "TX75")
+		    action_e.options.selectedIndex = 4;
+		greenap_action_switch(j);
+		if (action != "" && action != "Disable")
+		{
+		    shour_e.options.selectedIndex = stimeArray[1];
+		    sminute_e.options.selectedIndex = stimeArray[0];
+		    ehour_e.options.selectedIndex = etimeArray[1];
+		    eminute_e.options.selectedIndex = etimeArray[0];
+		}
+	    }
+	}
+}
+
+function setLanguage()
+{
+	document.cookie="language="+document.Lang.langSelection.value+"; path=/";
+	parent.menu.location.reload();
+	return true;
+}
+
+function syncWithHost()
+{
+	var currentTime = new Date();
+
+	var seconds = currentTime.getSeconds();
+	var minutes = currentTime.getMinutes();
+	var hours = currentTime.getHours();
+	var month = currentTime.getMonth() + 1;
+	var day = currentTime.getDate();
+	var year = currentTime.getFullYear();
+
+	var seconds_str = " ";
+	var minutes_str = " ";
+	var hours_str = " ";
+	var month_str = " ";
+	var day_str = " ";
+	var year_str = " ";
+
+	if(seconds < 10)
+		seconds_str = "0" + seconds;
+	else
+		seconds_str = ""+seconds;
+
+	if(minutes < 10)
+		minutes_str = "0" + minutes;
+	else
+		minutes_str = ""+minutes;
+
+	if(hours < 10)
+		hours_str = "0" + hours;
+	else
+		hours_str = ""+hours;
+
+	if(month < 10)
+		month_str = "0" + month;
+	else
+		month_str = ""+month;
+
+	if(day < 10)
+		day_str = "0" + day;
+	else
+		day_str = day;
+
+	var tmp = month_str + day_str + hours_str + minutes_str + year + " ";
+	document.NTP.hostTime.value = tmp;
+	//document.NTP.submit()
+	return true;
+}
+
+function greenap_action_switch(index)
+{
+	var shour_e = eval("document.GreenAP.GAPSHour"+index);
+	var sminute_e = eval("document.GreenAP.GAPSMinute"+index);
+	var ehour_e = eval("document.GreenAP.GAPEHour"+index);
+	var eminute_e = eval("document.GreenAP.GAPEMinute"+index);
+	var action_e = eval("document.GreenAP.GAPAction"+index);
+
+	shour_e.disabled = true;
+	sminute_e.disabled = true;
+	ehour_e.disabled = true;
+	eminute_e.disabled = true;
+
+	if (action_e.options.selectedIndex != 0)
+	{
+		shour_e.disabled = false;
+		sminute_e.disabled = false;
+		ehour_e.disabled = false;
+		eminute_e.disabled = false;
+	}
+}
+</script>
+
+<body onload="initValue()">
+<div class="long_ndiv">
+<table class="body"><tr><td>
+<h1 id="manTitle">系统管理</h1>
+<p id="manIntroduction">你可以在这里管理NTP和NTP动态设置</p>
+<hr />
+
+<!-- ================= NTP Settings ================= -->
+<form method="post" name="NTP" action="/cgi-bin/adm.cgi">
+<input type=hidden name=page value=ntp>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+<tbody><tr>
+  <td class="title" colspan="2" id="manNTPSet">NTP设置</td>
+</tr>
+<tr id="div_date">
+	<td class="head"  id="manNTPCurrentTime">当前时间</td>
+	<td>
+		<input size="24" name="ntpcurrenttime" value="<!--#exec cmd="web 2860 sys currentTime"-->" type="text" readonly="1">
+		<input type=hidden name="hostTime" value="">
+		<input type="button" value="主机同步" id="manNTPSyncWithHost" name="manNTPSyncWithHost" onClick="submit_form(this, 5, submit_buttons, syncWithHost)">
+	</td>
+</tr>
+<tr>
+  <td class="head" id="manNTPTimeZone">时区:</td>
+  <td>
+    <select name="time_zone">
+      <option value="UCT_-11" id="manNTPMidIsland">(GMT-11:00) 中途岛, 萨摩亚</option>
+      <option value="UCT_-10" id="manNTPHawaii">(GMT-10:00) 夏威夷</option>
+      <option value="NAS_-09" id="manNTPAlaska">(GMT-09:00) 阿拉斯加</option>
+      <option value="PST_-08" id="manNTPPacific">(GMT-08:00) 太平洋标准时间</option>
+      <option value="MST_-07" id="manNTPMountain">(GMT-07:00) 落基山标准时间</option>
+      <option value="MST_-07" id="manNTPArizona">(GMT-07:00) 亚利桑那间</option>
+      <option value="CST_-06" id="manNTPCentral">(GMT-06:00) 中央时间</option>
+      <option value="UCT_-06" id="manNTPMidUS">(GMT-06:00) 中美洲</option>
+      <option value="UCT_-05" id="manNTPIndianaEast">(GMT-05:00) 印第安纳州（东部）, 哥伦比亚时间</option>
+      <option value="EST_-05" id="manNTPEastern">(GMT-05:00) 东部时间</option>
+      <option value="AST_-04" id="manNTPAtlantic">(GMT-04:00) 大西洋标准时间, 巴西(西)</option>
+      <option value="UCT_-04" id="manNTPBolivia">(GMT-04:00) 玻利维亚, 委内瑞拉</option>
+      <option value="UCT_-03" id="manNTPGuyana">(GMT-03:00) 盖亚纳</option>
+      <option value="EBS_-03" id="manNTPBrazilEast">(GMT-03:00) 巴西(东), 格陵兰</option>
+      <option value="NOR_-02" id="manNTPMidAtlantic">(GMT-02:00) 中大西洋</option>
+      <option value="EUT_-01" id="manNTPAzoresIslands">(GMT-01:00) 亚速尔群岛</option>
+      <option value="UCT_000" id="manNTPGambia">(GMT) 甘比亚，懒比瑞亚</option>
+      <option value="GMT_000" id="manNTPEngland">(GMT) 英格兰</option>
+      <option value="MET_001" id="manNTPCzechRepublic">(GMT+01:00) 捷克共和国</option>
+      <option value="MEZ_001" id="manNTPGermany">(GMT+01:00) 德国</option>
+      <option value="UCT_001" id="manNTPTunisia">(GMT+01:00) 突尼西亚</option>
+      <option value="EET_002" id="manNTPGreece">(GMT+02:00) 吸纳, 乌克兰, 土耳其</option>
+      <option value="SAS_002" id="manNTPSouthAfrica">(GMT+02:00) 南非</option>
+      <option value="IST_003" id="manNTPIraq">(GMT+03:00) 伊拉克, 约旦, 科威特</option>
+      <option value="MSK_003" id="manNTPMoscowWinter">(GMT+03:00) 莫斯科冬令时</option>
+      <option value="UCT_004" id="manNTPArmenia">(GMT+04:00) 亚美尼亚</option>
+      <option value="UCT_005" id="manNTPPakistan">(GMT+05:00) 巴基斯坦、俄罗斯</option>
+      <option value="UCT_006" id="manNTPBangladesh">(GMT+06:00) 孟加拉、俄罗斯</option>
+      <option value="UCT_007" id="manNTPThailand">(GMT+07:00) 泰国、俄罗斯</option>
+      <option value="CST_008" id="manNTPChinaCoast" selected>(GMT+08:00) 中国、香港</option>
+      <option value="CCT_008" id="manNTPTaipei">(GMT+08:00) 台北</option>
+      <option value="SST_008" id="manNTPSingapore">(GMT+08:00) 新加坡</option>
+      <option value="AWS_008" id="manNTPAustraliaWA">(GMT+08:00) 澳大利亚(西)</option>
+      <option value="JST_009" id="manNTPJapan">(GMT+09:00) 日本、韩国</option>
+      <option value="KST_009" id="manNTPKorean">(GMT+09:00) 朝鲜</option>
+      <option value="UCT_010" id="manNTPGuam">(GMT+10:00) 关岛, 俄罗斯</option>
+      <option value="AES_010" id="manNTPAustraliaQLD">(GMT+10:00) 澳大利亚 (昆士兰, 塔斯马尼亚,新南威尔斯,首都特别行政区,维多利亚)</option>
+      <option value="UCT_011" id="manNTPSolomonIslands">(GMT+11:00) 所罗门群岛</option>
+      <option value="UCT_012" id="manNTPFiji">(GMT+12:00) 斐济</option>
+      <option value="NZS_012" id="manNTPNewZealand">(GMT+12:00) 新西兰</option>
+    </select>
+  </td>
+</tr>
+<tr>
+  <td class="head" id="manNTPServer">NTP 服务器</td>
+  <td><input size="32" maxlength="64" name="NTPServerIP" value="<!--#exec cmd="web 2860 nvram NTPServerIP"-->" type="text"
+       onChange="if(this.value == '') document.NTP.NTPSync.disabled = true; else document.NTP.NTPSync.disabled = false;">
+	<br>&nbsp;&nbsp;<font color="#808080">例如:&nbsp;time.nist.gov</font>
+	<br>&nbsp;&nbsp;<font color="#808080">&nbsp;&nbsp;&nbsp;&nbsp;cn.pool.ntp.org</font>
+	<br>&nbsp;&nbsp;<font color="#808080">&nbsp;&nbsp;&nbsp;&nbsp;time.stdtime.gov.tw</font>
+  </td>
+</tr>
+<tr>
+  <td class="head" id="manNTPSync">同步周期</td>
+  <td><input size="4" name="NTPSync" value="<!--#exec cmd="web 2860 nvram NTPSync"-->" type="text"> </td>
+</tr>
+</tbody></table>
+
+<table width="540" border="0" cellpadding="2" cellspacing="1">
+  <tr align="center">
+    <td>
+      <input type="button" style="{width:120px;}" value="应用" id="manNTPApply" onClick="submit_form(this, 10, submit_buttons, NTPFormCheck)"> &nbsp; &nbsp;
+      <input type=reset  style="{width:120px;}" value="取消"id="manNTPCancel" onClick="window.location.reload()">
+    </td>
+  </tr>
+</table>
+</form>
+
+<tr><td>
+<!-- =============================== Waiting info ================================== -->
+<table name="div_waiting_img" id="div_waiting_img" width="600" style="visibility: hidden;">
+  <tr align="center"><td id="cooldown_time_text"></td></tr>
+  <tr align="center">
+    <td><img src="/graphics/ajax-loader.gif"></td>
+  </tr>
+</table>
+</td></tr>
+
+</td></tr></table>
+</div>
+</body>
+</html>

@@ -1,0 +1,1 @@
+cmd_net/statfilter/statfilter.ko := /opt/buildroot-gcc463/usr/bin/mipsel-linux-ld -r  -m elf32ltsmip -T /home/xiaoning/CMCC_CY/source/linux-2.6.36.x/scripts/module-common.lds --build-id  -o net/statfilter/statfilter.ko net/statfilter/statfilter.o net/statfilter/statfilter.mod.o

@@ -1,0 +1,155 @@
+
+<!-- Copyright 2011, MediaTek Inc. All Rights Reserved. -->
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/style/normal_ws.css" type="text/css">
+<title>设置管理</title>
+
+<script type="text/javascript" src="/shareFun.js"></script>
+<script language="JavaScript" type="text/javascript">
+var rai = "0";
+var rae = "0";
+
+function submit_export_form(form)
+{
+/*	var wifi_if = document.ExportSettings.WiFiIF.value;
+	console.log("wifi_if="+wifi_if);
+
+	if ( wifi_if == "RT2860")
+		//document.ExportSettings.action = "ExportRT2860Settings.sh";
+		form.action = "/cgi-bin/ExportRT2860Settings.sh";
+	else if ( wifi_if == "RTDEV")
+		//document.ExportSettings.action = "ExportRTDEVSettings.sh";
+		form.action = "/cgi-bin/ExportRTDEVSettings.sh";
+	else if ( wifi_if == "WIFI3")
+		//document.ExportSettings.action = "ExportWIFI3Settings.sh";
+		form.action = "/cgi-bin/ExportWIFI3Settings.sh";
+	else
+		form.action = "/cgi-bin/ExportAllSettings.sh";
+*/
+	form.submit();
+}
+
+function submit_import_form(form)
+{
+	console.log("RebootLater="+form.RebootLater.value);
+	if (form.RebootLater.value == 1)
+		alert("Please remeber to reboot device manually after finish the setting importing process to apply the new setting.");
+
+	form.submit();
+}
+
+function initValue()
+{
+/*
+	len = document.ExportSettings.WiFiIF.length;
+	//console.log("rai=" + rai + " len="+len);
+	if (rai == "1"){
+		document.ExportSettings.WiFiIF.options[len] = new Option("2nd Wi-Fi", "RTDEV", false, false);
+		len++;
+	}
+
+	if (rae == "1"){
+		document.ExportSettings.WiFiIF.options[len] = new Option("3nd Wi-Fi", "WIFI3", false, false);
+	}
+*/
+}
+
+</script>
+</head>
+<body onLoad="initValue()">
+<div class="long_ndiv">
+<table class="body"><tr><td>
+<h1 id="setmanTitle">设置管理</h1>
+<p id="setmanIntroduction">您可以在此页面进行设备重启，也可以重设回系统默认值.</p>
+<hr />
+
+<!-- ================= reboot ================= -->
+<form method="post" name="reboot" action="/cgi-bin/adm.cgi">
+	<input type=hidden name=page value=loadreboot>
+	<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+		<tr>
+			<td class="title" colspan="2" id="reboot">设备重启</td>
+		</tr>
+		<tr>
+			<td class="head" id="setmanLoadFactDefaultButton">设备重新启动</td>
+			<td><input value="立刻重启" id="rebootNow" style="{width:120px;}" type="submit"></td>
+		</tr>
+	</table>
+</form>
+
+<!-- ================= Export ================= -->
+<br />
+<!--form method="post" name="ExportSettings" action="/cgi-bin/ExportSettings.sh">
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+  <tr>
+    <td class="title" colspan="2" id="setmanExpSet">导出配置</td>
+  </tr>
+  <tr>
+    <td class="head">选择配置</td>
+    <td>
+      <select name="WiFiIF" id="WiFiIF">
+        <option value="ALL">所有配置</option>
+        <option value="RT2860">设备和WiFi配置</option>
+<!--        <option value="RTDEV">2nd Wi-Fi</option> -->
+      <!--/select>
+    </td>
+  </tr>
+  <tr>
+    <td class="head" id="setmanExpSetButton">导出按钮</td>
+    <td><input value="导出" id="setmanExpSetExport" name="Export" style="{width:120px;}" type="button" onClick="submit_export_form(this.form)"></td>
+  </tr>
+</table>
+</form>
+<br />-->
+
+<!-- ================= Import ================= -->
+<!--form method="post" name="ImportSettings" action="/cgi-bin/upload_settings.cgi" enctype="multipart/form-data">
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+  <tr>
+    <td class="title" colspan="2" id="setmanImpSet">导入设置</td>
+  </tr>
+  <tr>
+    <td class="head">导入配置后重启</td>
+    <td>
+      <input type=radio name="RebootLater" value="0" checked>立刻
+      <input type=radio name="RebootLater" value="1">延后
+    </td>
+  </tr>
+  <tr>
+    <td class="head" id="setmanImpSetFileLocation">请选择配置文件</td>
+    <td><input type="File" name="filename" size="20" maxlength="256"></td>
+  </tr>
+</table>
+<table width="540" border="0" cellpadding="2" cellspacing="1">
+  <tr align="center">
+    <td>
+      <input type=button style="{width:120px;}" value="导入" id="setmanImpSetImport" onClick="submit_import_form(this.form)"> &nbsp; &nbsp;
+      <input type=reset  style="{width:120px;}" value="取消" id="setmanImpSetCancel">
+    </td>
+  </tr>
+</table>
+</form>
+<br />-->
+
+<!-- ================= Load FactoryDefaults  ================= -->
+<form method="post" name="LoadDefaultSettings" action="/cgi-bin/adm.cgi">
+<input type=hidden name=page value=loaddefault>
+<table width="540" border="1" cellspacing="1" cellpadding="3" bordercolor="#9BABBD">
+  <tr>
+    <td class="title" colspan="2" id="setmanLoadFactDefault">恢复出厂设置</td>
+  </tr>
+  <tr>
+    <td class="head" id="setmanLoadFactDefaultButton">恢复出厂按钮</td>
+    <td><input value="恢复出厂设置" id="setmanLoadDefault" name="LoadDefault" style="{width:120px;}" type="submit"></td>
+  </tr>
+</table>
+</form>
+
+
+<br>
+</td></tr></table>
+</div>
+</body></html>

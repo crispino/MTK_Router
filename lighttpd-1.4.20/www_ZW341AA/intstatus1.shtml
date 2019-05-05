@@ -1,0 +1,239 @@
+<!doctype html> 
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>互联网设置</title>
+<link href="css/style_main.css" rel="stylesheet" type="text/css" />
+<link href="css/mainstyle.css" rel="stylesheet" type="text/css" />
+<link href="css/and.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/herouter.js"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery.vegas.min.js"></script>
+
+<style type="text/css">
+<!--
+.cfgright1{height:330px;}
+.cfgright1 td{ height:36px; font-size:14px;}
+.cfgright1 td span{ padding-left:100px; font-size:14px;}
+.cfgright1 .spheight{padding-left:100px; height:60px; }
+.cfgright1 td label{ font-size:14px; line-height:60px;}
+
+.c4{ border-top:1px #e6e6e6 solid; line-height:30px; text-align:right; position:relative; bottom:120px}
+.state{ padding:15px 0; color:#757575;}
+.entstate{padding-top:50px;padding-left:230px;}
+.entstate ul{}
+.entstate li{line-height:30px; font-size:14px; height:30px;}
+.entstate li b{width:100px; display:block; float:left;}
+.entstate li span{display:block; float:left;}
+.entstate li a,.intstate li a:visited{ display:block; height:30px; padding:0 12px; background:#77d1df; float:left; color:#fff; margin-left:10px; }
+.entstate li a:hover,.intstate li a:active{ text-decoration:none; background:#56bbcb;}
+.box{ width:500px; height:40px; margin:auto auto; }      
+.r1{ height:1px; overflow:hidden; margin:0 5px; background:#56bbcb; }     
+.r2{ height:1px; overflow:hidden; margin:0 3px; border-left:2px solid #56bbcb; border-right:2px solid #56bbcb; }      
+.r3{ height:1px; overflow:hidden; margin:0 2px; border-left:1px solid #56bbcb; border-right:1px solid #56bbcb; }      
+.r4{ height:2px; margin:0 1px; overflow:hidden; border-left:1px solid #56bbcb; border-right:1px solid #56bbcb; }       
+.content{ height:30px; border-left:1px solid #56bbcb; border-right:1px solid #56bbcb; padding:7px 10px; } 
+.content h2{ color:#56bbcb; font-family:"微软雅黑"; font-size:16px;}
+-->
+</style>
+
+
+<script type="text/javascript">
+var mode = "<!--#exec cmd="web 2860 sys wanConnectionMode"-->";
+var pppoe_u = "<!--#exec cmd="web 2860 sys wan_pppoe_user"-->";
+var pppoe_p = "<!--#exec cmd="web 2860 sys wan_pppoe_pass"-->";
+
+function isHiddenField(ishidden,hid_id)
+{
+	if(ishidden == 1){
+		document.getElementById(hid_id).style.display = "none";
+	}else{
+		document.getElementById(hid_id).style.display = "block";
+	}
+} 
+function parseResponse() {
+	var internet_ok = "<!--#exec cmd="web 2860 sys internetStatus"-->";
+	var port_status = "<!--#exec cmd="web 2860 sys portStatus"-->";
+	var every_port = new Array();
+	every_port = port_status.split(",");
+	mode = "<!--#exec cmd="web 2860 sys wanConnectionMode"-->";
+
+	$("#wait").css("display","none");
+
+	//internet isn't OK
+	if(internet_ok != 1) {
+		//WAN port isn't OK
+		if (every_port[3] != 0)
+		{
+			$("h2").text("网线未插,此设置将会在您插上网线后生效,继续设置请点击<跳过>按钮");	
+		}
+		else
+		{
+			//PPPoE
+			if(mode == "PPPOE")
+			{
+				$("h2").text("可能是PPPOE账户/密码错误，请<重新设置>，或PPPOE服务器暂无响应,请点击<跳过>按钮直接进行下一步操作");
+			}
+			//DHCP...
+			else 
+			{
+				$("h2").text("互联网不可达,请检查配置及网线连接");
+			}
+		}
+
+		$("div.c2").css("display", "none");
+		$("div.c3").css("display", "none");
+		$("ul").css("display","block");
+	}else{
+		$("h2").text("互联网畅通，可以上网冲浪");
+
+		document.getElementById("lineinfo").innerHTML = "<p>3秒后自动跳到下一个配置页面 &gt;&gt;<span id=\"dd\">3</span></p>";
+
+		window.setInterval("run2();", 1000);
+	}
+
+	isHiddenField(0,"renetwizard");
+	isHiddenField(1,"renetconfig");
+	isHiddenField(0,"setquickwifi");
+	isHiddenField(1,"closewebpage");
+}
+
+function ReQueryNetStateResult()
+{
+	http_request.onreadystatechange = NetStateResult;
+	http_request.open('POST', "", true);
+	http_request.send("netState=true");
+}
+
+function NetStateResult() {
+	if (http_request.readyState == 4) {
+	//alert(http_request.status);
+	if (http_request.status == 200) {
+			parseResponse(http_request.responseText);
+		}
+		else
+		{
+			setTimeout(ReQueryNetStateResult,2000);
+		}
+	}
+}
+
+function requestNetState() {
+	location.href="intstatus1.shtml?number=" + Math.random();
+}
+
+function GetQueryString(name)
+{
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+	var r = window.location.search.substr(1).match(reg);
+	if (r != null) return unescape(r[2]); return null;
+}
+
+function run(){
+    var s = document.getElementById("wait");
+    if(s.innerHTML == 0){
+        return false;
+    }
+    s.innerHTML = s.innerHTML * 1 - 1;
+}
+function run2(){
+	var s = document.getElementById("dd");
+	if(s.innerHTML == 0){
+		location.href="./QuickSetwifi.shtml?number=" + Math.random();
+		return false;
+	}
+	s.innerHTML = s.innerHTML * 1 - 1;
+}
+
+function wizardreconfig(){
+	window.location.href="QuickSetUp.shtml?number=" + Math.random();
+}
+
+function renetconfig(){
+	window.location.href="./QuickSetUp.shtml?number=" + Math.random();
+}
+
+function jump(){
+	window.location.href="./QuickSetwifi.shtml?number=" + Math.random();
+}
+
+$(document).ready(function(){
+
+	parseResponse();
+
+	if (mode == "DHCP"){
+		document.getElementById("connectmode").innerHTML = "<b>上网方式：</b><span>自动获取（DHCP）</span>"; 
+		$("li#pppoename").css("visibility", "hidden");
+		$("li#pppoepwd").css("visibility", "hidden");
+	}else if (mode == "STATIC"){
+		$("li#pppoename").css("visibility", "hidden");
+		$("li#pppoepwd").css("visibility", "hidden"); 
+	}else if(mode == "PPPOE"){
+		document.getElementById("connectmode").innerHTML = "<b>上网方式：</b><span>宽带拨号（PPPoE）</span>"; 
+		$("li#pppoename").css("visibility", "visible");
+		$("li#pppoepwd").css("visibility", "visible");
+		document.getElementById("pppoename").innerHTML = "<b>PPPOE账户：</b><span>" + pppoe_u + "</span>";
+		document.getElementById("pppoepwd").innerHTML = "<b>PPPOE密码：</b><span>" + pppoe_p + "</span>";
+	}
+
+	document.getElementById("Toptitle").innerHTML='<span style="font-size:20px;line-height:50px; color: #000000;padding-left:0;font-weight:bold;">(第一步)互联网设置<em>--></em></span><span style="font-size:16px;line-height:50px; color: #cccccc;padding-left:0;font-weight:bold;">(第二步)无线设置—>(第三步)完成</span>';
+});
+
+</script>
+
+</head>
+
+<body>
+<form method="post" name="internet_status" id="internet_status">
+<div class="int">
+	<h1 id="Toptitle" align="center">互联网设置</h1>
+    <div class="cfg">
+			<div class="box">   
+				<div class="top">
+					<div class="r1"></div>
+					<div class="r2"></div>
+					<div class="r3"></div>
+					<div class="r4"></div>
+				</div>
+				<div class="content">
+						<table style="margin:auto;">
+        			<tr>
+								<td><img src="./images/check3_07.png"/></td>
+								<td>&nbsp;&nbsp;</td>
+     						<td>
+     							<h2 id="msg"></h2>
+     						</td>
+        			</tr> 
+						</table>					
+				</div>
+				<div class="bottom">
+					<div class="r4"></div>
+					<div class="r3"></div>
+					<div class="r2"></div>
+					<div class="r1"></div>
+				</div>
+			</div>    	  	
+        <div class="cfgright1">    	 	
+            <div class="state">
+					  	<div class="entstate">
+				        <ul>
+				          <li id="connectmode"></li>				        	
+				          <li id="pppoename"></li>
+				          <li id="pppoepwd"></li>
+				        </ul>
+				        </div>
+			</div>
+			<div class="subpart" style="padding-left:180px;padding-top:60px;">
+                <ul style="display:none">
+					<li style="display:none;" id="renetwizard" onClick="wizardreconfig()"><b>重新设置</b></li>
+					<li style="display:;" id="renetconfig" onClick="renetconfig();"><b>重新设置</b></li>
+					<li style="display:none;" id="setquickwifi" onClick="jump();"><b>跳过</b></li>
+				  <li style="display:;" id="closewebpage" class="cancel" onClick="javascript:parent.TINY.box.hide();"><b>关闭</b></li>
+                </ul>
+            </div>
+        </div>
+      <div id="lineinfo" class="c4"></div>
+    </div>    
+</div>
+</form>
+</body>
+</html>

@@ -1,0 +1,119 @@
+
+<!-- Copyright 2011, MediaTek Inc. All Rights Reserved. -->
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/style/normal_ws.css" type="text/css">
+<title>无线AP统计</title>
+</head>
+
+<script type="text/javascript" src="/shareFun.js"></script>
+<script language="JavaScript" type="text/javascript">
+var submit_buttons = ["apStatResetCounter"];
+function ResetCounter()
+{
+	
+	window.location.reload();
+}
+function PageInit()
+{
+	var txbf = "0";
+
+	if (txbf != "1")
+		dispaly("none", "div_stats_txbf");
+}
+</script>
+
+<body onload="PageInit()">
+<div class="long_ndiv">
+<table class="body"><tr><td>
+
+<h1 id="apStatisticTitle">AP 无线统计</h1>
+<p id="apStatisticIntroduction">无线发送接收统计</p>
+<hr />
+
+<table width="540" border="1" cellpadding="2" cellspacing="1">
+  <tr>
+    <td class="title" colspan="2" id="statisticTx">传送统计资料</td>
+  </tr>
+  <tr>
+    <td width="65%" bgcolor="#E8F8FF">上行成功</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td width="65%" bgcolor="#E8F8FF">上行重传数</td>
+    <td>0</td>
+  <tr>
+    <td width="65%" bgcolor="#E8F8FF">上行失败（重传后）</td>
+    <td>0</td>
+  <tr>
+    <td width="65%" bgcolor="#E8F8FF">RTS成功接收CTS</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td width="65%" bgcolor="#E8F8FF">RTS无法接收CTS</td>
+    <td>0</td>
+  </tr>
+</table>
+
+<table width="540" border="1" cellpadding="2" cellspacing="1">
+  <tr>
+    <td class="title" colspan="2" id="statisticRx">接收统计</td>
+  </tr>
+  <tr>
+    <td width="65%" bgcolor="#E8F8FF">框架成功接收</td>
+    <td>2</td>
+  </tr>
+  <tr>
+    <td width="65%" bgcolor="#E8F8FF">帧错误接收帧</td>
+    <td>0</td>
+  </tr>
+</table>
+
+<table width="540" border="1" cellpadding="2" cellspacing="1">
+  <tr>
+    <td class="title" colspan="2">SNR</td>
+  </tr>
+  <tr>
+    <td class="head">SNR</td>
+    <td>n/a, n/a, n/a</td>
+  </tr>
+</table>
+
+<table id="div_stats_txbf" width="540" border="1" cellpadding="2" cellspacing="1">
+    <td></td>
+</table>
+
+<form method=post name="ap_statistics" action="/cgi-bin/wireless.cgi">
+<input type=hidden name=page value=apstatistics>
+<input type=hidden name=wlan_conf value="2860">
+<table width="540" border="0" cellpadding="2" cellspacing="1">
+  <tr align="center">
+    <td>
+      <input type="button" style="{width:120px;}" value="重置计数器" id="apStatResetCounter" onClick="submit_form(this, 1, submit_buttons, null)">
+    </td>
+  </tr>
+</table>
+<input type=hidden name=dummyData value="1">
+</form>
+</td></tr>
+
+<!-- =============================== Waiting info ================================== -->
+<tr><td>
+<table name="div_waiting_img" id="div_waiting_img" width="600" style="visibility: hidden;">
+  <tr align="center"><td id="cooldown_time_text"></td></tr>
+  <tr align="center">
+    <td><img src="/graphics/ajax-loader.gif"></td>
+  </tr>
+</table>
+
+</td></tr></table>
+</div>
+</body>
+<head>
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+</head>
+</html>

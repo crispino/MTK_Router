@@ -1,0 +1,476 @@
+<!-- Copyright 2004, Ralink Technology Corporation All Rights Reserved. -->
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/style/normal_ws.css" type="text/css">
+<title>QoS/Bandwidth Management Settings</title>
+</head>
+
+<script type="text/javascript" src="/shareFun.js"></script>
+<script language="JavaScript" type="text/javascript">
+
+var QOS_MAX_HARD_LIMITED = "1000M";						// Our max bandwidth that we can deal with.
+var QOS_MIN_HARD_LIMITED = "32k";						// Our min bandwidth that we hope.
+
+
+var QoS = "<!--#exec cmd="web 2860 nvram QoSEnable_zw"-->";
+var uploadBandwidth = "<!--#exec cmd="web 2860 nvram QoSUploadBandwidth_zw"-->";
+var downloadBandwidth = "<!--#exec cmd="web 2860 nvram QoSDownloadBandwidth_zw"-->";
+var uploadBandwidth_custom = "<!--#exec cmd="web 2860 nvram QoSUploadBandwidth_custom_zw"-->";
+var downloadBandwidth_custom = "<!--#exec cmd="web 2860 nvram QoSDownloadBandwidth_custom_zw"-->";
+var ULRules = "<!--#exec cmd="web 2860 nvram QoSRules_zw"-->";
+QoS = (QoS == "") ? "0" : QoS;
+
+function checkMac(str){
+	var len = str.length;
+	if(len!=17)
+		return false;
+
+	for (var i=0; i<str.length; i++) {
+		if((i%3) == 2){
+			if(str.charAt(i) == ':')
+				continue;
+		}else{
+			if (    (str.charAt(i) >= '0' && str.charAt(i) <= '9') ||
+					(str.charAt(i) >= 'a' && str.charAt(i) <= 'f') ||
+					(str.charAt(i) >= 'A' && str.charAt(i) <= 'F') )
+				continue;
+		}
+		return false;
+	}
+	return true;
+}
+
+function PrintRules(Rules)
+{
+	if(Rules == "")
+		return;
+	var a_rule = new Array();
+	a_rule = Rules.split(";");
+	for(i = 0; i < a_rule.length; i++){
+		var j=0;
+		var desc = "";
+		var entry = new Array();
+		entry = a_rule[i].split(",");
+
+		var name = entry[j++];
+		var status = entry[j++];
+		var mac_address = entry[j++];
+		var upload_speed = entry[j++];
+		var download_speed = entry[j++];
+		
+		var status_value ;
+		if(status == 1){
+			status_value = "enable"
+		}
+		else{
+			status_value = "disable"
+		}
+
+		document.write("<td>"+ (i+1) +"<input type=checkbox name=del_qos_" + i + "> </td> <td>" + name + "</td> <td>" + status_value + "</td>  <td>" + mac_address + "</td>  <td>" + upload_speed + "</td> <td>" + download_speed + "</td>  </tr>");
+	}
+}
+
+function hideULRulesTable()
+{
+	document.getElementById("div_qos_ul_rules").style.visibility = "hidden";
+	document.getElementById("div_qos_ul_rules").style.display = "none";
+}
+
+function showULRulesTable()
+{
+	if (window.ActiveXObject) { // IE
+		document.getElementById("div_qos_ul_rules").style.display = "block";
+	}else if (window.XMLHttpRequest) { // Mozilla, Safari...
+		document.getElementById("div_qos_ul_rules").style.display = "table";
+	}
+}
+function showULRule()
+{
+	if (window.ActiveXObject) { // IE
+		document.getElementById("div_qos_ul_group_test").style.display = "block";
+		document.getElementById("div_qos_ul_rules").style.display = "block";
+
+	}else if (window.XMLHttpRequest) { // Mozilla, Safari...
+		document.getElementById("div_qos_ul_group_test").style.display = "table";
+		document.getElementById("div_qos_ul_rules").style.display = "table";
+	}
+
+	document.getElementById("div_qos_ul_group_test").style.visibility = "visible";
+	document.getElementById("div_qos_ul_rules").style.visibility = "visible";
+
+	document.QoSDeleteULRules.add_ul_rule.style.display = '';
+	document.QoSDeleteULRules.del_ul_rule.style.display = '';
+}
+
+function hideULRule()
+{
+	document.QoSDeleteULRules.add_ul_rule.style.display = 'none';
+	document.QoSDeleteULRules.del_ul_rule.style.display = 'none';
+
+	document.getElementById("div_qos_ul_group_test").style.visibility = "hidden";
+	document.getElementById("div_qos_ul_group_test").style.display = "none";
+
+	hideULRulesTable();
+}
+
+function AddRule(dir)
+{
+	//document.trans_addrule.AddruleDir.value = dir;
+
+	openwindow = window.open("qos_custom_rule.shtml", "Add", "toolbar=no, location=yes, scrollbars=no, resizable=yes, width=600, height=700");
+	openwindow.focus();
+}
+
+function QoSSetupCheck()
+{
+	
+	if(document.QoSSetup.QoSSelect.options.selectedIndex == 0){
+		;  // do nothing
+	}else if(	document.QoSSetup.QoSSelect.options.selectedIndex == 1 ){
+		//check mac address
+	//	if(document.QoSSetup.mac_address.value != ""){
+	//		if(!checkMac(document.QoSSetup.mac_address.value)){
+	//			alert("The MAC address format is invalid.");
+	//			return false;
+	//		}
+	//	}
+		
+		if(document.QoSSetup.UploadBandwidth.value == "custom"){
+			if(document.QoSSetup.UploadBandwidth_Custom.value == ""){
+				alert("Please fill the upload bandwidth.");
+				return false;
+			}
+			if(!checkNum(document.QoSSetup.UploadBandwidth_Custom.value)){
+				alert("The upload bandwidth format is wrong. (ex. \"10k\" \"20M\")");
+				return false;
+			}
+				
+			var value = getTrueValue(document.QoSSetup.UploadBandwidth_Custom.value);
+			if( value  > getTrueValue(QOS_MAX_HARD_LIMITED) ){
+				alert("The value of upload bandwidth is too large.(" + QOS_MAX_HARD_LIMITED + ")");
+				return false;
+			}
+			if( value < QOS_MIN_HARD_LIMITED ){
+				var ret = confirm("The value of upload bandwidth is too small, are you sure?");
+				if(ret == false)
+					return false;
+			}
+		}
+		if(document.QoSSetup.DownloadBandwidth.value == "custom"){
+			if(document.QoSSetup.DownloadBandwidth_Custom.value == ""){
+				alert("Please fill the down bandwidth.");
+				return false;
+			}
+			if(!checkNum(document.QoSSetup.DownloadBandwidth_Custom.value)){
+				alert("The download bandwidth format is wrong. (ex. \"10k\" \"20M\")");
+				return false;
+			}
+
+			var value = getTrueValue(document.QoSSetup.DownloadBandwidth_Custom.value);
+			if( value <= 0 ){
+				alert("The value of download bandwidth is too small.");
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+function LoadUploadBW()
+{
+	if(document.QoSSetup.UploadBandwidth.options.selectedIndex == 0){
+		document.QoSSetup.UploadBandwidth_Custom.value = uploadBandwidth_custom;
+		document.QoSSetup.UploadBandwidth_Custom.disabled = false;
+		document.QoSSetup.UploadBandwidth_Custom.style.display = '';
+	}else{
+		document.QoSSetup.UploadBandwidth_Custom.disabled = true;
+		document.QoSSetup.UploadBandwidth_Custom.style.display = 'none';
+	    if(uploadBandwidth != "custom"){
+	  		for(var i=0; i< document.QoSSetup.UploadBandwidth.length; i++){
+	  			if(document.QoSSetup.UploadBandwidth.options[i].value == uploadBandwidth){
+	  				document.QoSSetup.UploadBandwidth.options.selectedIndex = i;
+	  				break;
+	  			}
+	  		}
+	    }
+	}
+}
+
+function UploadBWChange()
+{
+	if(document.QoSSetup.UploadBandwidth.options.selectedIndex == 0){
+		document.QoSSetup.UploadBandwidth_Custom.value = uploadBandwidth_custom;
+		document.QoSSetup.UploadBandwidth_Custom.disabled = false;
+		document.QoSSetup.UploadBandwidth_Custom.style.display = '';
+	}else{
+		document.QoSSetup.UploadBandwidth_Custom.disabled = true;
+		document.QoSSetup.UploadBandwidth_Custom.style.display = 'none';
+	}
+}
+
+function LoadDownloadBW()
+{
+	if(document.QoSSetup.DownloadBandwidth.options.selectedIndex == 0){
+		document.QoSSetup.DownloadBandwidth_Custom.value = downloadBandwidth_custom;
+		document.QoSSetup.DownloadBandwidth_Custom.disabled = false;
+		document.QoSSetup.DownloadBandwidth_Custom.style.display = '';
+	}else{
+		document.QoSSetup.DownloadBandwidth_Custom.disabled = true;
+		document.QoSSetup.DownloadBandwidth_Custom.style.display = 'none';
+		if(downloadBandwidth != "custom"){
+			for(var i=0; i< document.QoSSetup.DownloadBandwidth.length; i++){
+				if(document.QoSSetup.DownloadBandwidth.options[i].value == downloadBandwidth){
+					document.QoSSetup.DownloadBandwidth.options.selectedIndex = i;
+					break;
+				}
+			}
+		}
+	}
+}
+
+function DownloadBWChange()
+{
+	if(document.QoSSetup.DownloadBandwidth.options.selectedIndex == 0){
+		document.QoSSetup.DownloadBandwidth_Custom.value = downloadBandwidth_custom;
+		document.QoSSetup.DownloadBandwidth_Custom.disabled = false;
+		document.QoSSetup.DownloadBandwidth_Custom.style.display = '';
+	}else{
+		document.QoSSetup.DownloadBandwidth_Custom.disabled = true;
+		document.QoSSetup.DownloadBandwidth_Custom.style.display = 'none';
+	}
+}
+
+function QoSSelectChange()
+{
+	var QoSSetup = document.QoSSetup.QoSSelect.options.selectedIndex;
+
+	if(QoSSetup == 1 && QoS == "1"){
+		showULRule();
+	}
+	if(QoSSetup == 0 /* disable */){
+		document.QoSSetup.UploadBandwidth.disabled = true;
+		document.QoSSetup.DownloadBandwidth.disabled = true;
+		document.QoSSetup.UploadBandwidth_Custom.disabled = true;
+		document.QoSSetup.DownloadBandwidth_Custom.disabled = true;
+	}else{
+		document.QoSSetup.UploadBandwidth.disabled = false;
+		LoadUploadBW();
+		document.QoSSetup.DownloadBandwidth.disabled = false;
+		LoadDownloadBW();
+
+		if( QoSSetup == 1 /* Bi */ ){
+		
+		}
+	}
+
+}
+
+
+function onInit()
+{
+	//initTranslation();
+
+	document.QoSSetup.UploadBandwidth_Custom.disabled = true;
+	document.QoSSetup.DownloadBandwidth_Custom.disabled = true;
+	document.QoSSetup.UploadBandwidth_Custom.style.display = 'none';
+	document.QoSSetup.DownloadBandwidth_Custom.style.display = 'none';
+
+	hideULRule();
+
+	if(QoS == "0"){
+		document.QoSSetup.UploadBandwidth.disabled = true;
+		document.QoSSetup.DownloadBandwidth.disabled = true;
+	}else{
+		document.QoSSetup.UploadBandwidth.disabled = false;
+		document.QoSSetup.DownloadBandwidth.disabled = false;
+
+		if(QoS == "1"){
+			showULRule();
+		}
+
+		if(uploadBandwidth == "custom"){
+			document.QoSSetup.UploadBandwidth_Custom.disabled = false;
+			document.QoSSetup.UploadBandwidth_Custom.style.display = '';
+			document.QoSSetup.UploadBandwidth_Custom.value = uploadBandwidth_custom;
+		}else{
+			for(var i=0; i < document.QoSSetup.UploadBandwidth.length; i++){
+				if(document.QoSSetup.UploadBandwidth.options[i].value == uploadBandwidth){
+					document.QoSSetup.UploadBandwidth.options.selectedIndex = i;
+					break;
+				}
+			}
+		}
+		if(downloadBandwidth == "custom"){
+			document.QoSSetup.DownloadBandwidth_Custom.disabled = false;
+			document.QoSSetup.DownloadBandwidth_Custom.style.display = '';
+			document.QoSSetup.DownloadBandwidth_Custom.value = downloadBandwidth_custom;
+		}else{
+			for(var i=0; i< document.QoSSetup.DownloadBandwidth.length; i++){
+				if(document.QoSSetup.DownloadBandwidth.options[i].value == downloadBandwidth){
+					document.QoSSetup.DownloadBandwidth.options.selectedIndex = i;
+					break;
+				}
+			}
+		}
+	}
+
+	if(QoS == "0"){
+		document.QoSSetup.QoSSelect.options.selectedIndex = 0;
+		hideULRule();
+	}
+	else if(QoS == "1")
+		document.QoSSetup.QoSSelect.options.selectedIndex = 1;
+
+}
+
+</script>
+
+<!--     body      -->
+<body onload="onInit()">
+<table class="body"><tbody><tr><td>
+<h1 id="QoSTitleStr">Quality of Service Settings </h1>
+<p id="QoSIntroStr"> You may setup rules to provide Quality of Service guarantees for specific client.</p>
+<hr>
+
+<form method="post" name="QoSSetup" action="/cgi-bin/qos.cgi">
+<input type=hidden name=qos value=qos_zowee>
+<table border=1 bordercolor=#9BABBD width="540">
+<tr>
+	<td class="title" colspan="2" id="QoSSetupStr">QoS Setup </td>
+</tr>
+<!-- <tr>
+	<td class="head" id="QoSMacStr">
+		MAC Address
+	</td>
+
+	<td>
+	<input type="text" size="18" name="mac_address" id="mac_address">
+	</td>
+</tr> -->
+<tr>
+	<td class="head" id="QoSStr">
+		Quality of Service
+	</td>
+
+	<td>
+	<select name="QoSSelect" size="1" onChange="QoSSelectChange()">
+	<option value=0 id="QoSDisableStr">Disable</option>
+	<option value=1 id="QoSEnableBidirectionStr">Enable</option>
+	</select>
+	</td>
+</tr>
+<tr>
+	<td class="head" id="QoSUpBWStr">
+		Upload Bandwidth:
+	</td>
+	<td>
+		<select name="UploadBandwidth" id="UploadBandwidth" size="1" onChange="UploadBWChange()">
+		<option value="custom" id="QoSBWCustomStr">User defined</option>
+		<option value="64k">64k</option>
+		<option value="96k">96k</option>
+		<option value="128k">128k</option>
+		<option value="192k">192k</option>
+		<option value="256k">256k</option>
+		<option value="384k" >384k</option>
+		<option value="512k">512k</option>
+		<option value="768k">768k</option>
+		<option value="1M">1M</option>
+		<option value="2M">2M</option>
+		<option value="4M">4M</option>
+		<option value="8M">8M</option>
+		<option value="10M">10M</option>
+		<option value="12M">12M</option>
+		<option value="16M">16M</option>
+		<option value="20M">20M</option>
+		<option value="24M">24M</option>
+		<option value="32M">32M</option>
+		<option value="50M">50M</option>
+		<option value="100M">100M</option>
+		</select>
+
+		<input type=text name=UploadBandwidth_Custom size=6 maxlength=8 style="display:none"> Bits/sec
+	</td>
+</tr>
+<tr>
+	<td class="head" id="QoSDownBWStr">
+		Download Bandwidth:
+	</td>
+	<td>
+		<select name="DownloadBandwidth" id="DownloadBandwidth" size="1" onChange="DownloadBWChange()">
+		<option value="custom" id="QoSBWCustomStr2">User defined</option>
+		<option value="64k">64k</option>
+		<option value="96k">96k</option>
+		<option value="128k">128k</option>
+		<option value="192k">192k</option>
+		<option value="256k">256k</option>
+		<option value="384k" >384k</option>
+		<option value="512k">512k</option>
+		<option value="768k">768k</option>
+		<option value="1M">1M</option>
+		<option value="2M">2M</option>
+		<option value="4M">4M</option>
+		<option value="8M">8M</option>
+		<option value="10M">10M</option>
+		<option value="12M">12M</option>
+		<option value="16M">16M</option>
+		<option value="20M">20M</option>
+		<option value="24M">24M</option>
+		<option value="32M">32M</option>
+		<option value="50M">50M</option>
+		<option value="100M">100M</option>
+		</select>
+
+		<input type=text name=DownloadBandwidth_Custom size=6 maxlength=8 style="display:none"> Bits/sec
+	</td>
+</tr>
+
+</table>
+<input value="Submit" id="QoSSetupSubmitStr" name="QoSSetupSubmitStr" onclick="return QoSSetupCheck()" type="submit"> &nbsp;&nbsp;
+<!--
+<input value="Reset" id="QoSSetupResetStr" name="QoSSetupResetStr" type="reset">
+-->
+</form>
+
+
+<table>
+<tbody><tr>
+<td>
+
+<table valign="top" align="left">
+<tbody><tr>
+<td style="visibility: visible; display: table;" id="div_qos_ul_group_test" align="left" valign="top">
+
+<form method="post" name="QoSDeleteULRules" action="/cgi-bin/qos.cgi">
+<input type=hidden name=qos value=QoS_del_Rules>	
+<table id="div_qos_ul_rules" name="div_qos_ul_rules" style="visibility: visible; display: table;" border="1" bordercolor="#9babbd" width="400">
+<tbody>
+<tr style="visibility: visible; display: table-row;">
+	<td class="title" colspan="4">QoS Rule Settings</td>
+</tr>
+<tr>
+	<td class="title" id="QoSRuleNoStr" width="20">No</td>
+	<td class="title" id="QoSRuleNameStr" width="50">Name</td>
+	<td class="title" id="QoSRuleStatusStr" width="30">status</td>
+	<td class="title" id="QoSRuleIPAddrStr" width="30">MAC Address</td>
+	<td class="title" id="QoSRuleMaxUPSpeedStr" width="30">Max Uplink Speed (Bits/sec)</td>
+	<td class="title" id="QoSRuleMaxDLSpeedStr" width="200">Max Downlink Speed (Bits/sec)</td>
+</tr>
+<script language="JavaScript" type="text/javascript">
+	PrintRules(ULRules);
+</script>
+</tbody></table>
+<input style="" id="QoSRuleAddStr" name="add_ul_rule" value="Add" onclick="AddRule('UL');" type="button">
+<input style="" id="QoSRuleDelStr" name="del_ul_rule" value="Delete" type="submit">
+</form>
+
+</td>
+</tr>
+</tbody></table>
+
+
+</td></tr></tbody></table>
+
+</td></tr></tbody></table></body></html>
